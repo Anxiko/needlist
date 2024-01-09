@@ -28,7 +28,7 @@ defmodule Needlist.Discogs.Pagination do
              is_non_neg_integer(items) do
     case Urls.parse(urls) do
       {:ok, urls} ->
-        %__MODULE__{page: page, pages: pages, per_page: per_page, items: items, urls: urls}
+        {:ok, %__MODULE__{page: page, pages: pages, per_page: per_page, items: items, urls: urls}}
 
       :error ->
         :error
