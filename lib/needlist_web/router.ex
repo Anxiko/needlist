@@ -19,7 +19,7 @@ defmodule NeedlistWeb.Router do
 
     get "/", PageController, :home
 
-    live "/needlist", NeedlistLive
+    live "/needlist/:username", NeedlistLive
   end
 
   # Other scopes may use custom stacks.

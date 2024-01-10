@@ -14,7 +14,7 @@ defmodule Needlist.Discogs.Pagination.Page do
     with {:ok, items} <- Map.fetch(payload, items_key),
          {:ok, pagination} <- Pagination.parse(pagination),
          {:ok, items} <- Parsing.parse_many(items, parse_one) do
-      %__MODULE__{pagination: pagination, data: items}
+      {:ok, %__MODULE__{pagination: pagination, data: items}}
     end
   end
 end

@@ -1,7 +1,13 @@
+<h1>
+    Hello, <%= @username %>
+</h1>
+
+<hr>
+
 <div>
     <ul>
         <%= for item <- @list do %>
-            <li><%= item %></li>
+            <li><.want item={item} /></li>
         <% end %>
     </ul>
 </div>
