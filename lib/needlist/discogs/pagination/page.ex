@@ -9,6 +9,7 @@ defmodule Needlist.Discogs.Pagination.Page do
 
   @type t(data) :: %__MODULE__{pagination: Pagination.t(), data: [data]}
 
+  @spec parse_page(map(), String.t(), (map() -> item)) :: {:ok, t(item)} | :error when item: var
   def parse_page(%{"pagination" => pagination} = payload, items_key, parse_one) do
     with {:ok, items} <- Map.fetch(payload, items_key),
          {:ok, pagination} <- Pagination.parse(pagination),
