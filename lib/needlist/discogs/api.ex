@@ -1,6 +1,9 @@
 defmodule Needlist.Discogs.Api do
   import Needlist.Discogs.Guards, only: [is_pos_integer: 1]
 
+  alias Needlist.Discogs.Model.Want
+  alias Needlist.Discogs.Pagination.Page
+
   @spec base_api_url() :: String.t()
   def base_api_url(), do: "https://api.discogs.com"
 
@@ -10,5 +13,13 @@ defmodule Needlist.Discogs.Api do
     base_api_url()
     |> Kernel.<>("/users/#{user}/wants")
     |> then(&Req.new(url: &1, method: :get, params: [page: page]))
+    |> Req.request()
+    |> case do
+      {:ok, %Req.Response{status: 200, body: body}} ->
+        Page.parse_page(body, "wants", &Want.parse/1)
+
+      _ ->
+        :error
+    end
   end
 end

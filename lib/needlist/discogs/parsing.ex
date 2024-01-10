@@ -8,7 +8,7 @@ defmodule Needlist.Discogs.Parsing do
       :error, _acc -> {:halt, :error}
     end)
     |> case do
-      {:ok, items} -> {:ok, Enum.reverse(items)}
+      items when is_list(items) -> {:ok, Enum.reverse(items)}
       :error -> :error
     end
   end
