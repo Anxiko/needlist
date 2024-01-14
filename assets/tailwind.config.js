@@ -9,7 +9,8 @@ module.exports = {
   content: [
     "./js/**/*.js",
     "../lib/needlist_web.ex",
-    "../lib/needlist_web/**/*.*ex"
+    "../lib/needlist_web/**/*.*ex",
+    './node_modules/flowbite/**/*.js'
   ],
   theme: {
     extend: {
@@ -63,6 +64,7 @@ module.exports = {
           }
         }
       }, {values})
-    })
+    }),
+    require('flowbite/plugin')
   ]
 }

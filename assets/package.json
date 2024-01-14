@@ -1,0 +1,15 @@
+{
+  "name": "assets",
+  "version": "1.0.0",
+  "description": "Package for Needlist",
+  "main": "tailwind.config.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "flowbite": "^2.2.1",
+    "flowbite-datepicker": "^1.2.6"
+  }
+}
