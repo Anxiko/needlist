@@ -16,4 +16,14 @@ defmodule Needlist.Discogs.Parsing do
       :error -> :error
     end
   end
+
+  @spec empty_to_nil(String.t() | nil) :: String.t() | nil
+  def empty_to_nil(nil), do: nil
+
+  def empty_to_nil(s) when is_binary(s) do
+    case String.trim(s) do
+      "" -> nil
+      trimmed_string -> trimmed_string
+    end
+  end
 end

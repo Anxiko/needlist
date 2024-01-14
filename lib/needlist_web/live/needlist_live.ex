@@ -4,8 +4,6 @@ defmodule NeedlistWeb.NeedlistLive do
   alias Needlist.Discogs.Api
   alias Needlist.Discogs.Pagination
 
-  import NeedlistWeb.Components.Discogs
-
   @impl true
   def mount(%{"username" => username}, _session, socket) do
     items =
