@@ -1,4 +1,8 @@
 defmodule Needlist.Discogs.Pagination do
+  @moduledoc """
+  Page data for a Discogs API paginated response
+  """
+
   alias Needlist.Discogs.Pagination.Urls
 
   import Needlist.Discogs.Guards, only: [is_pos_integer: 1, is_non_neg_integer: 1]

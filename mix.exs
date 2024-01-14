@@ -52,7 +52,8 @@ defmodule Needlist.MixProject do
       {:dns_cluster, "~> 0.1.1"},
       {:plug_cowboy, "~> 2.5"},
       {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false},
-      {:req, "~> 0.4.0"}
+      {:req, "~> 0.4.0"},
+      {:credo, "~> 1.6", only: [:dev, :test], runtime: false}
     ]
   end
 

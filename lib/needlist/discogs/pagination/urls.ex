@@ -1,4 +1,8 @@
 defmodule Needlist.Discogs.Pagination.Urls do
+  @moduledoc """
+  Next and last URLs included in a paginated Discogs API response
+  """
+
   @keys [:last, :next]
   @enforce_keys @keys
   defstruct @keys

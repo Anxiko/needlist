@@ -1,4 +1,8 @@
 defmodule Needlist.Discogs.Pagination.Page do
+  @moduledoc """
+  Contains both items and page infor for a paginated Discogs API response
+  """
+
   alias Needlist.Discogs.Pagination
   alias Needlist.Discogs.Parsing
 

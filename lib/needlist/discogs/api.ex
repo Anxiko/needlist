@@ -1,4 +1,8 @@
 defmodule Needlist.Discogs.Api do
+  @moduledoc """
+  Discogs API client
+  """
+
   import Needlist.Discogs.Guards, only: [is_pos_integer: 1]
 
   alias Needlist.Discogs.Model.Want

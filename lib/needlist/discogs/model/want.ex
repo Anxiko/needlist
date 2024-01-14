@@ -1,4 +1,8 @@
 defmodule Needlist.Discogs.Model.Want do
+  @moduledoc """
+  Contains an entry of a user's needlist
+  """
+
   @keys [:id, :master_id, :title, :year]
   @enforce_keys @keys
   defstruct @keys

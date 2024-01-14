@@ -1,4 +1,8 @@
 defmodule Needlist.Discogs.Parsing do
+  @moduledoc """
+  Shared parsing functionality for Discogs API
+  """
+
   @spec parse_many([map()], (map -> item)) :: {:ok, [item]} | :error when item: var
   def parse_many(raw_items, parse_one) do
     raw_items
