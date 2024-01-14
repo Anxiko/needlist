@@ -12,7 +12,7 @@ defmodule NeedlistWeb.NeedlistLive do
       username
       |> Api.get_user_needlist()
       |> case do
-        {:ok, %Pagination.Page{data: items}} -> items
+        {:ok, %Pagination.Page{data: page_items}} -> page_items
         :error -> []
       end
 

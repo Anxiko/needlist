@@ -11,6 +11,7 @@ defmodule Needlist.Discogs.Api do
   @spec base_api_url() :: String.t()
   def base_api_url(), do: "https://api.discogs.com"
 
+  @spec get_user_needlist(String.t()) :: {:ok, Page.t(Want.t())} | :error
   @spec get_user_needlist(String.t(), pos_integer()) :: {:ok, Page.t(Want.t())} | :error
   def get_user_needlist(user, page \\ 1) when is_pos_integer(page) do
     user = URI.encode(user)
