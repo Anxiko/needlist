@@ -21,4 +21,17 @@ defmodule NeedlistWeb.NeedlistLive do
       |> assign(:username, username)
     }
   end
+
+  defp want_artists(assigns) do
+    ~H"""
+    <span>
+      <%= for artist <- @artists do %>
+        <.artist artist={artist} />
+        <%= if artist.join do %>
+          <%= artist.join %>
+        <% end %>
+      <% end %>
+    </span>
+    """
+  end
 end

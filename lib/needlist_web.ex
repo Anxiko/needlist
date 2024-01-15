@@ -87,6 +87,9 @@ defmodule NeedlistWeb do
       import NeedlistWeb.CoreComponents
       import NeedlistWeb.Gettext
 
+      # Discogs components
+      import NeedlistWeb.Components.Discogs
+
       # Shortcut for generating JS commands
       alias Phoenix.LiveView.JS
 

@@ -3,13 +3,30 @@ defmodule NeedlistWeb.Components.Discogs do
   HTML components for Discogs
   """
 
-  use NeedlistWeb, :html
+  use Phoenix.Component
+
+  alias Needlist.Discogs.Model, as: DiscogsModels
 
   def want(assigns) do
     ~H"""
     <div>
-      <%=@item.title %> - <%= @item.title %>
+      <%= @item.title %> - <%= @item.title %>
     </div>
+    """
+  end
+
+  def artist(assigns) do
+    ~H"""
+    <a
+      class="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+      href={@artist.resource_url}
+    >
+      <%= if @artist.anv do %>
+        <%= @artist.anv %>*
+      <% else %>
+        <%= @artist.name %>
+      <% end %>
+    </a>
     """
   end
 end
