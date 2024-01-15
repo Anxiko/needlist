@@ -5,8 +5,6 @@ defmodule NeedlistWeb.Components.Discogs do
 
   use Phoenix.Component
 
-  alias Needlist.Discogs.Model, as: DiscogsModels
-
   def want(assigns) do
     ~H"""
     <div>
