@@ -13,7 +13,7 @@ defmodule NeedlistWeb.Components.Discogs do
     """
   end
 
-  def artist(assigns) do
+  def want_artist(assigns) do
     ~H"""
     <a
       class="font-medium text-blue-600 dark:text-blue-500 hover:underline"
@@ -25,6 +25,20 @@ defmodule NeedlistWeb.Components.Discogs do
         <%= @artist.name %>
       <% end %>
     </a>
+    """
+  end
+
+  def want_label(assigns) do
+    ~H"""
+    <span>
+      <a
+        class="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+        href={@label.resource_url}
+      >
+        <%= @label.name %>
+      </a>
+      - <%= @label.catno %>
+    </span>
     """
   end
 end

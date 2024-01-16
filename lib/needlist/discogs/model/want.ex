@@ -6,9 +6,11 @@ defmodule Needlist.Discogs.Model.Want do
   import Needlist.Discogs.Parsing, only: [parse_many: 2]
 
   require Logger
-  alias Needlist.Discogs.Model.Artist
 
-  @keys [:id, :master_id, :title, :year, :artists]
+  alias Needlist.Discogs.Model.Artist
+  alias Needlist.Discogs.Model.Label
+
+  @keys [:id, :master_id, :title, :year, :artists, :labels]
   @enforce_keys @keys
   defstruct @keys
 
@@ -17,7 +19,8 @@ defmodule Needlist.Discogs.Model.Want do
           master_id: integer(),
           title: String.t(),
           year: integer(),
-          artists: [Artist.t()]
+          artists: [Artist.t()],
+          labels: [Label.t()]
         }
 
   @spec parse(map()) :: {:ok, Needlist.Discogs.Model.Want.t()} | :error
@@ -28,13 +31,23 @@ defmodule Needlist.Discogs.Model.Want do
           "master_id" => master_id,
           "title" => title,
           "year" => year,
-          "artists" => artists
+          "artists" => artists,
+          "labels" => labels
         }
       })
       when is_integer(id) and is_integer(master_id) and is_binary(title) and is_integer(year) and
-             is_list(artists) do
-    with {:ok, artists} <- parse_many(artists, &Artist.parse/1) do
-      {:ok, %__MODULE__{id: id, master_id: master_id, title: title, year: year, artists: artists}}
+             is_list(artists) and is_list(labels) do
+    with {:ok, artists} <- parse_many(artists, &Artist.parse/1),
+         {:ok, labels} <- parse_many(labels, &Label.parse/1) do
+      {:ok,
+       %__MODULE__{
+         id: id,
+         master_id: master_id,
+         title: title,
+         year: year,
+         artists: artists,
+         labels: labels
+       }}
     end
   end
 

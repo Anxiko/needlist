@@ -26,12 +26,21 @@ defmodule NeedlistWeb.NeedlistLive do
     ~H"""
     <span>
       <%= for artist <- @artists do %>
-        <.artist artist={artist} />
+        <.want_artist artist={artist} />
         <%= if artist.join do %>
           <%= artist.join %>
         <% end %>
       <% end %>
     </span>
+    """
+  end
+
+  defp want_labels(assigns) do
+    ~H"""
+    <.intersperse :let={label} enum={@labels}>
+      <:separator>,</:separator>
+      <.want_label label={label} />
+    </.intersperse>
     """
   end
 end
