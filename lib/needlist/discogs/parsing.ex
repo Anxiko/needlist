@@ -26,4 +26,17 @@ defmodule Needlist.Discogs.Parsing do
       trimmed_string -> trimmed_string
     end
   end
+
+  @spec parse_integer(binary() | integer()) :: {:ok, integer()} | :error
+  def parse_integer(int) when is_integer(int), do: {:ok, int}
+
+  def parse_integer(int) when is_binary(int) do
+    int
+    |> String.trim()
+    |> Integer.parse()
+    |> case do
+      {int, ""} -> {:ok, int}
+      _ -> :error
+    end
+  end
 end

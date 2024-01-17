@@ -43,4 +43,13 @@ defmodule NeedlistWeb.NeedlistLive do
     </.intersperse>
     """
   end
+
+  defp want_formats(assigns) do
+    ~H"""
+    <.intersperse :let={format} enum={@formats}>
+      <:separator>,</:separator>
+      <.want_format format={format} />
+    </.intersperse>
+    """
+  end
 end

@@ -41,4 +41,20 @@ defmodule NeedlistWeb.Components.Discogs do
     </span>
     """
   end
+
+  def want_format(assigns) do
+    ~H"""
+    <span>
+      <%= @format.name %>
+      <%= unless Enum.empty?(@format.descriptions) do %>
+        <span class="before:content-['('] after:content-[')']">
+          <.intersperse :let={description} enum={@format.descriptions}>
+            <:separator>,</:separator>
+            <%=description%>
+          </.intersperse>
+        </span>
+      <% end %>
+    </span>
+    """
+  end
 end
