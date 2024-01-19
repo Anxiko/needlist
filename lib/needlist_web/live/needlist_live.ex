@@ -7,12 +7,7 @@ defmodule NeedlistWeb.NeedlistLive do
   @impl true
   def mount(%{"username" => username}, _session, socket) do
     items =
-      username
-      |> Api.get_user_needlist()
-      |> case do
-        {:ok, %Pagination.Page{data: page_items}} -> page_items
-        :error -> []
-      end
+      if connected?(socket), do: get_items(username), else: []
 
     {
       :ok,
@@ -20,6 +15,15 @@ defmodule NeedlistWeb.NeedlistLive do
       |> assign(:list, items)
       |> assign(:username, username)
     }
+  end
+
+  defp get_items(username) do
+    username
+    |> Api.get_user_needlist()
+    |> case do
+      {:ok, %Pagination.Page{data: page_items}} -> page_items
+      :error -> []
+    end
   end
 
   defp want_artists(assigns) do
@@ -46,10 +50,15 @@ defmodule NeedlistWeb.NeedlistLive do
 
   defp want_formats(assigns) do
     ~H"""
-    <.intersperse :let={format} enum={@formats}>
-      <:separator>,</:separator>
-      <.want_format format={format} />
-    </.intersperse>
+    <span>
+      <%= for format <- Enum.intersperse(@formats, :sep) do %>
+        <%= if format == :sep do %>
+          ,
+        <% else %>
+          <.want_format format={format} />
+        <% end %>
+      <% end %>
+    </span>
     """
   end
 end

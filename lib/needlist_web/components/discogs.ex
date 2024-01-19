@@ -5,6 +5,8 @@ defmodule NeedlistWeb.Components.Discogs do
 
   use Phoenix.Component
 
+  alias Needlist.Discogs.Model, as: DiscogsModels
+
   def want(assigns) do
     ~H"""
     <div>
@@ -12,6 +14,8 @@ defmodule NeedlistWeb.Components.Discogs do
     </div>
     """
   end
+
+  attr :artist, DiscogsModels.Artist, required: true
 
   def want_artist(assigns) do
     ~H"""
@@ -28,6 +32,8 @@ defmodule NeedlistWeb.Components.Discogs do
     """
   end
 
+  attr :label, DiscogsModels.Label, required: true
+
   def want_label(assigns) do
     ~H"""
     <span>
@@ -42,16 +48,16 @@ defmodule NeedlistWeb.Components.Discogs do
     """
   end
 
+  attr :format, DiscogsModels.Format, required: true
+  attr :rest, :global
+
   def want_format(assigns) do
     ~H"""
-    <span>
+    <span {@rest} class="inline-block">
       <%= @format.name %>
       <%= unless Enum.empty?(@format.descriptions) do %>
-        <span class="before:content-['('] after:content-[')']">
-          <.intersperse :let={description} enum={@format.descriptions}>
-            <:separator>,</:separator>
-            <%=description%>
-          </.intersperse>
+        <span>
+          (<%= Enum.join(@format.descriptions, ", ") %>)
         </span>
       <% end %>
     </span>
