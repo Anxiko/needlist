@@ -53,7 +53,7 @@ defmodule NeedlistWeb.Components.Discogs do
 
   def want_format(assigns) do
     ~H"""
-    <span {@rest} class="inline-block">
+    <span {@rest}>
       <%= @format.name %>
       <%= unless Enum.empty?(@format.descriptions) do %>
         <span>

@@ -41,24 +41,21 @@ defmodule NeedlistWeb.NeedlistLive do
 
   defp want_labels(assigns) do
     ~H"""
-    <.intersperse :let={label} enum={@labels}>
-      <:separator>,</:separator>
-      <.want_label label={label} />
-    </.intersperse>
+    <ul>
+      <%= for label <- @labels do %>
+        <li><.want_label label={label} /></li>
+      <% end %>
+    </ul>
     """
   end
 
   defp want_formats(assigns) do
     ~H"""
-    <span>
-      <%= for format <- Enum.intersperse(@formats, :sep) do %>
-        <%= if format == :sep do %>
-          ,
-        <% else %>
-          <.want_format format={format} />
-        <% end %>
+    <ul>
+      <%= for format <- @formats do %>
+        <li><.want_format format={format} /></li>
       <% end %>
-    </span>
+    </ul>
     """
   end
 end
