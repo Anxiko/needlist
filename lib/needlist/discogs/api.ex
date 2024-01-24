@@ -3,7 +3,7 @@ defmodule Needlist.Discogs.Api do
   Discogs API client
   """
 
-  import Needlist.Discogs.Guards, only: [is_pos_integer: 1]
+  import Needlist.Guards, only: [is_pos_integer: 1]
 
   alias Needlist.Discogs.Model.Want
   alias Needlist.Discogs.Pagination.Page

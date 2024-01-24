@@ -11,7 +11,7 @@ defmodule Needlist.Discogs.Model.Format do
           descriptions: [String.t()]
         }
 
-  import Needlist.Discogs.Guards
+  import Needlist.Guards
   alias Needlist.Discogs.Parsing
 
   @spec parse(map()) :: {:ok, t()} | :error

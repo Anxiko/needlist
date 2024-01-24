@@ -5,7 +5,7 @@ defmodule Needlist.Discogs.Pagination do
 
   alias Needlist.Discogs.Pagination.Urls
 
-  import Needlist.Discogs.Guards, only: [is_pos_integer: 1, is_non_neg_integer: 1]
+  import Needlist.Guards, only: [is_pos_integer: 1, is_non_neg_integer: 1]
 
   @keys [:page, :pages, :per_page, :items, :urls]
 

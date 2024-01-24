@@ -1,4 +1,4 @@
-defmodule Needlist.Discogs.Guards do
+defmodule Needlist.Guards do
   @moduledoc """
   Guards to be used on API response parsing and validation
   """
