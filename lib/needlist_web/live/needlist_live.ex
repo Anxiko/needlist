@@ -4,6 +4,8 @@ defmodule NeedlistWeb.NeedlistLive do
   alias Needlist.Discogs.Api
   alias Needlist.Discogs.Pagination
 
+  import NeedlistWeb.Navigation.Components, only: [pagination: 1]
+
   @impl true
   def mount(%{"username" => username}, _session, socket) do
     items =
@@ -56,6 +58,18 @@ defmodule NeedlistWeb.NeedlistLive do
         <li><.want_format format={format} /></li>
       <% end %>
     </ul>
+    """
+  end
+
+  defp table_pagination(assigns) do
+    url = ~p"/needlist/#{assigns[:username]}"
+
+    assigns =
+      assigns
+      |> assign(:url, url)
+
+    ~H"""
+    <.pagination url={url} current={1} total={5} />
     """
   end
 end
