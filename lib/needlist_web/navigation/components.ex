@@ -65,18 +65,38 @@ defmodule NeedlistWeb.Navigation.Components do
     page = PageEntry.page(assigns[:page_entry])
     params = Map.put(assigns[:params], :page, page)
 
+    class_styling =
+      case assigns[:page_entry].state do
+        :active ->
+          "text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+
+        :current ->
+          "text-blue-600 border border-gray-300 bg-blue-50 hover:bg-blue-100 hover:text-blue-700 dark:border-gray-700 dark:bg-gray-700 dark:text-white"
+
+        :disabled ->
+          "text-gray-500 bg-white border border-gray-300 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
+      end
+
     assigns =
       assigns
       |> assign(:params, params)
+      |> assign(:styling, class_styling)
 
     ~H"""
     <li>
-      <.link
-        patch={"#{@url}?#{URI.encode_query(@params)}"}
-        class="flex items-center justify-center h-10 px-4 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-      >
-        <.inner_page_entry page_entry={@page_entry} />
-      </.link>
+      <%= unless @page_entry.state == :disabled do %>
+        <.link
+          patch={if @page_entry.state == :active, do: "#{@url}?#{URI.encode_query(@params)}"}
+          aria-current={if @page_entry.state == :current, do: "page"}
+          class={"flex items-center justify-center h-10 px-4 leading-tight #{@styling}"}
+        >
+          <.inner_page_entry page_entry={@page_entry} />
+        </.link>
+      <% else %>
+        <button class={"flex items-center justify-center h-10 px-4 leading-tight disabled cursor-not-allowed #{@styling}"} disabled>
+          <.inner_page_entry page_entry={@page_entry} />
+        </button>
+      <% end %>
     </li>
     """
   end
@@ -105,7 +125,7 @@ defmodule NeedlistWeb.Navigation.Components do
 
     ~H"""
     <div class="flex justify-center mt-4">
-      <nav aria-label="Page navigation example">
+      <nav aria-label="Page navigation">
         <ul class="flex items-center h-10 -space-x-px text-base">
           <%= for entry <- @entries do %>
             <%= case entry do %>

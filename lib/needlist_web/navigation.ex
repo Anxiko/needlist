@@ -20,7 +20,7 @@ defmodule NeedlistWeb.Navigation do
     do: [PageEntry.relative(:prev, current), PageEntry.absolute(1)]
 
   defp entries_before(current) when current >= 3,
-    do: [PageEntry.relative(:prev, current), PageEntry.absolute(1), :ellipsis]
+    do: [PageEntry.relative(:prev, current), PageEntry.absolute(1), :ellipsis, PageEntry.absolute(current - 1)]
 
   @spec entries_after(current :: pos_integer(), total :: pos_integer()) :: [entry()]
   defp entries_after(total = current, total), do: [PageEntry.relative(:next, current, :disabled)]
@@ -29,5 +29,5 @@ defmodule NeedlistWeb.Navigation do
     do: [PageEntry.absolute(total), PageEntry.relative(:next, current)]
 
   defp entries_after(current, total) when total - current >= 2,
-    do: [PageEntry.absolute(current + 1), :ellipsis, PageEntry.relative(:next, current)]
+    do: [PageEntry.absolute(current + 1), :ellipsis, PageEntry.absolute(total), PageEntry.relative(:next, current)]
 end
