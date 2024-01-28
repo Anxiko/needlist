@@ -69,7 +69,7 @@ defmodule NeedlistWeb.NeedlistLive do
       |> assign(:url, url)
 
     ~H"""
-    <.pagination url={url} current={1} total={5} />
+    <.pagination url={@url} current={1} total={5} />
     """
   end
 end
