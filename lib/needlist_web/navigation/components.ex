@@ -104,7 +104,7 @@ defmodule NeedlistWeb.Navigation.Components do
   defp nav_ellipsis(assigns) do
     ~H"""
     <li>
-      <span class="flex items-center justify-center h-10 px-4 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
+      <span class="flex items-center justify-center h-10 px-4 leading-tight text-gray-500 bg-white border border-gray-300 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400">
         ...
       </span>
     </li>
