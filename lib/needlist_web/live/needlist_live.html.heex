@@ -3,40 +3,39 @@
     Needlist for <%= @username %>
   </h1>
 
-  <div class="relative overflow-x-auto">
-    <table class="w-full text-sm text-left text-gray-500 rtl:text-right dark:text-gray-400">
-      <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-        <tr>
-          <%= for column <- ["Artist", "Title", "Label", "Formats"] do %>
-            <th scope="col" class="px-6 py-3">
-              <%= column %>
-            </th>
-          <% end %>
-        </tr>
-      </thead>
-      <tbody>
-        <%= for item <- @list do %>
-          <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-            <th
-              scope="row"
-              class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
-            >
-              <.want_artists artists={item.artists} />
-            </th>
-            <td class="px-6 py-4">
-              <%= item.title %>
-            </td>
-            <td class="px-6 py-4">
-              <.want_labels labels={item.labels} />
-            </td>
-            <td class="px-6 py-4">
-              <.want_formats formats={item.formats} />
-            </td>
+  <%= if @current_page != nil do %>
+    <div class="relative overflow-x-auto">
+      <table class="w-full text-sm text-left text-gray-500 rtl:text-right dark:text-gray-400">
+        <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+          <tr>
+            <%= for column <- ["Artist", "Title", "Label", "Formats"] do %>
+              <th scope="col" class="px-6 py-3">
+                <%= column %>
+              </th>
+            <% end %>
           </tr>
-        <% end %>
-      </tbody>
-    </table>
-  </div>
+        </thead>
+        <tbody>
+          <%= for item <- @current_page.data do %>
+            <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+              <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                <.want_artists artists={item.artists} />
+              </th>
+              <td class="px-6 py-4">
+                <%= item.title %>
+              </td>
+              <td class="px-6 py-4">
+                <.want_labels labels={item.labels} />
+              </td>
+              <td class="px-6 py-4">
+                <.want_formats formats={item.formats} />
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
 
-  <.table_pagination username={@username} />
+    <.table_pagination username={@username} current_page={@current_page}/>
+  <% end %>
 </div>

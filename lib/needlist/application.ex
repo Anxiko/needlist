@@ -10,7 +10,7 @@ defmodule Needlist.Application do
     children = [
       {Cachex, name: :discogs_cache},
       NeedlistWeb.Telemetry,
-      Needlist.Repo,
+      # Needlist.Repo,
       {DNSCluster, query: Application.get_env(:needlist, :dns_cluster_query) || :ignore},
       {Phoenix.PubSub, name: Needlist.PubSub},
       # Start the Finch HTTP client for sending emails

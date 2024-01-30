@@ -1,14 +1,20 @@
 defmodule NeedlistWeb.NeedlistLive do
+  alias Needlist.Discogs.Pagination.Page
   alias Phoenix.LiveView.Socket
   use NeedlistWeb, :live_view
 
   alias Needlist.Discogs.Api
   alias Needlist.Discogs.Pagination
+  alias Needlist.Discogs.Model.Want
 
   import NeedlistWeb.Navigation.Components, only: [pagination: 1]
+  import Needlist.Guards
+
   require Logger
 
   @cache :discogs_cache
+
+  @typep paginated_wants() :: Pagination.Page.t(Want.t())
 
   @impl true
   def mount(%{"username" => username}, _session, socket) do
@@ -16,40 +22,117 @@ defmodule NeedlistWeb.NeedlistLive do
       :ok,
       socket
       |> assign(:username, username)
-      |> assign(:page, 1)
-      |> assign_items(username, 1)
+      |> assign(:current_page, nil)
+      |> assign(:loading_page, nil)
     }
   end
 
-  @spec get_items(String.t(), pos_integer()) :: [Want.t()]
-  defp get_items(username, page) do
-    case Cachex.get!(@cache, {username, page}) do
-      nil ->
-        case Api.get_user_needlist(username, page) do
-          {:ok, %Pagination.Page{data: page_items}} ->
-            Cachex.put!(@cache, {username, page}, page_items)
-            page_items
+  @impl true
+  def handle_params(params, _uri, socket) do
+    page = parse_page_param(params)
 
-          :error ->
-            []
-        end
+    socket =
+      socket
+      |> load_page(page)
 
-      page_items when is_list(page_items) ->
-        Logger.debug("Using cached items for #{username} -> #{page}")
-        page_items
+    {:noreply, socket}
+  end
+
+  @spec parse_page_param(map()) :: pos_integer()
+  defp parse_page_param(params) do
+    with {:ok, raw_page} <- Map.fetch(params, "page"),
+         {page, ""} when is_pos_integer(page) <- Integer.parse(raw_page) do
+      page
+    else
+      _ -> 1
     end
   end
 
-  @spec assign_items(Socket.t(), String.t(), pos_integer()) :: Socket.t()
-  defp assign_items(socket, username, page) do
-    items =
-      if connected?(socket) do
-        get_items(username, page)
-      else
-        []
-      end
+  @spec load_page(Socket.t(), pos_integer()) :: Socket.t()
+  defp load_page(
+         %Socket{assigns: %{current_page: %Page{pagination: %Pagination{page: page}}}} = socket,
+         page
+       ) do
+    socket
+    |> cancel_async(:table_data)
+    |> assign(:loading_page, nil)
+  end
 
-    assign(socket, :list, items)
+  defp load_page(%Socket{assigns: %{loading_page: page}} = socket, page), do: socket
+
+  defp load_page(socket, page) do
+    socket
+    |> cancel_async(:loading_page)
+    |> assign(:loading_page, page)
+    |> start_async(:table_data, fn ->
+      fetch_page(socket.assigns.username, page)
+      |> case do
+        {:ok, paginated_items} -> paginated_items
+        {:error, error} -> exit(error)
+      end
+    end)
+  end
+
+  @spec fetch_page(String.t(), pos_integer()) :: {:ok, paginated_wants()} | {:error, any()}
+  defp fetch_page(username, page) do
+    case Cachex.get!(@cache, {username, page}) do
+      nil ->
+        case Api.get_user_needlist(username, page) do
+          {:ok, %Pagination.Page{} = paginated_items} ->
+            Cachex.put!(@cache, {username, page}, paginated_items)
+            {:ok, paginated_items}
+
+          :error ->
+            {:error, "Discogs API error"}
+        end
+
+      %Pagination.Page{} = paginated_items ->
+        Logger.debug("Using cached items for #{username} -> #{page}")
+        {:ok, paginated_items}
+    end
+  end
+
+  @impl true
+  def handle_async(
+        :table_data,
+        {:ok, %Pagination.Page{pagination: %Pagination{page: page}} = paginated_items},
+        %Socket{assigns: %{loading_page: page}} = socket
+      ) do
+    socket =
+      socket
+      |> assign(:current_page, paginated_items)
+      |> assign(:loading_page, nil)
+
+    {:noreply, socket}
+  end
+
+  def handle_async(
+        :table_data,
+        {:ok, %Pagination.Page{pagination: %Pagination{page: actual}}},
+        %Socket{
+          assigns: %{loading_page: expected}
+        } = socket
+      )
+      when actual != expected do
+    Logger.warning("Expected page #{expected}, but got #{actual}, ignoring...")
+
+    {:noreply, socket}
+  end
+
+  def handle_async(:table_data, {:ok, paginated_items}, socket) do
+    Logger.warning(
+      "Ignoring unexpected table data (expecting #{socket.assigns[:loading_page]}): #{inspect(paginated_items)}"
+    )
+
+    {:noreply, socket}
+  end
+
+  def handle_async(:table_data, {:exit, reason}, socket) do
+    socket =
+      socket
+      |> put_flash(:error, "Failed to load data: #{reason}")
+
+    {:noreply, socket}
   end
 
   defp want_artists(assigns) do
@@ -86,14 +169,16 @@ defmodule NeedlistWeb.NeedlistLive do
   end
 
   defp table_pagination(assigns) do
-    url = ~p"/needlist/#{assigns[:username]}"
+    url = ~p"/needlist/#{assigns.username}"
 
     assigns =
       assigns
       |> assign(:url, url)
+      |> assign(:current, assigns.current_page.pagination.page)
+      |> assign(:total, assigns.current_page.pagination.pages)
 
     ~H"""
-    <.pagination url={@url} current={1} total={5} />
+    <.pagination url={@url} current={@current} total={@total} />
     """
   end
 end
