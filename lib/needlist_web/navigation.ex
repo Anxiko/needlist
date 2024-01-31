@@ -14,20 +14,31 @@ defmodule NeedlistWeb.Navigation do
   end
 
   @spec entries_before(current :: pos_integer()) :: [entry()]
-  defp entries_before(1 = current), do: [PageEntry.relative(:prev, current, :disabled)]
-
-  defp entries_before(2 = current),
-    do: [PageEntry.relative(:prev, current), PageEntry.absolute(1)]
-
-  defp entries_before(current) when current >= 3,
-    do: [PageEntry.relative(:prev, current), PageEntry.absolute(1), :ellipsis, PageEntry.absolute(current - 1)]
+  defp entries_before(current) do
+    [
+      PageEntry.relative(:prev, current, if(current > 1, do: :active, else: :disabled)) | pages_between(1, current - 1)
+    ]
+  end
 
   @spec entries_after(current :: pos_integer(), total :: pos_integer()) :: [entry()]
-  defp entries_after(total = current, total), do: [PageEntry.relative(:next, current, :disabled)]
+  defp entries_after(current, total) do
+    pages_between(current + 1, total) ++
+      [PageEntry.relative(:next, current, if(current < total, do: :active, else: :disabled))]
+  end
 
-  defp entries_after(current, total) when current + 1 == total,
-    do: [PageEntry.absolute(total), PageEntry.relative(:next, current)]
+  @spec pages_between(range_start :: integer(), range_end :: integer()) :: [entry()]
+  defp pages_between(range_start, range_end) when range_start > range_end, do: []
 
-  defp entries_after(current, total) when total - current >= 2,
-    do: [PageEntry.absolute(current + 1), :ellipsis, PageEntry.absolute(total), PageEntry.relative(:next, current)]
+  defp pages_between(range_start, range_end) do
+    [
+      {range_end >= range_start, PageEntry.absolute(range_start)},
+      {range_end - range_start >= 2, :ellipsis},
+      {range_end > range_start, PageEntry.absolute(range_end)}
+    ]
+    |> filter_entries()
+  end
+
+  defp filter_entries(entries) do
+    for {true, entry} <- entries, do: entry
+  end
 end
