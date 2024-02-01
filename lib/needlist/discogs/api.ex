@@ -22,6 +22,7 @@ defmodule Needlist.Discogs.Api do
     |> Req.request()
     |> case do
       {:ok, %Req.Response{status: 200, body: body}} ->
+        IO.inspect(body, label: "Body")
         Page.parse_page(body, "wants", &Want.parse/1)
 
       _ ->
