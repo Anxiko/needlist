@@ -19,10 +19,7 @@ defmodule NeedlistWeb.Components.Discogs do
 
   def want_artist(assigns) do
     ~H"""
-    <a
-      class="font-medium text-blue-600 dark:text-blue-500 hover:underline"
-      href={@artist.resource_url}
-    >
+    <a class="font-medium text-blue-600 dark:text-blue-500 hover:underline" href={@artist.resource_url}>
       <%= if @artist.anv do %>
         <%= @artist.anv %>*
       <% else %>
@@ -37,10 +34,7 @@ defmodule NeedlistWeb.Components.Discogs do
   def want_label(assigns) do
     ~H"""
     <span>
-      <a
-        class="font-medium text-blue-600 dark:text-blue-500 hover:underline"
-        href={@label.resource_url}
-      >
+      <a class="font-medium text-blue-600 dark:text-blue-500 hover:underline" href={@label.resource_url}>
         <%= @label.name %>
       </a>
       - <%= @label.catno %>

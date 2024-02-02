@@ -11,20 +11,8 @@ defmodule NeedlistWeb.Navigation.Components do
   defp inner_page_entry(%{page_entry: %PageEntry{page: {:prev, _page}}} = assigns) do
     ~H"""
     <span class="sr-only">Previous</span>
-    <svg
-      class="w-3 h-3 rtl:rotate-180"
-      aria-hidden="true"
-      xmlns="http://www.w3.org/2000/svg"
-      fill="none"
-      viewBox="0 0 6 10"
-    >
-      <path
-        stroke="currentColor"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        stroke-width="2"
-        d="M5 1 1 5l4 4"
-      />
+    <svg class="w-3 h-3 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
+      <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 1 1 5l4 4" />
     </svg>
     """
   end
@@ -32,20 +20,8 @@ defmodule NeedlistWeb.Navigation.Components do
   defp inner_page_entry(%{page_entry: %PageEntry{page: {:next, _page}}} = assigns) do
     ~H"""
     <span class="sr-only">Next</span>
-    <svg
-      class="w-3 h-3 rtl:rotate-180"
-      aria-hidden="true"
-      xmlns="http://www.w3.org/2000/svg"
-      fill="none"
-      viewBox="0 0 6 10"
-    >
-      <path
-        stroke="currentColor"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        stroke-width="2"
-        d="m1 9 4-4-4-4"
-      />
+    <svg class="w-3 h-3 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
+      <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 9 4-4-4-4" />
     </svg>
     """
   end
@@ -93,7 +69,10 @@ defmodule NeedlistWeb.Navigation.Components do
           <.inner_page_entry page_entry={@page_entry} />
         </.link>
       <% else %>
-        <button class={"flex items-center justify-center h-10 px-4 leading-tight disabled cursor-not-allowed #{@styling}"} disabled>
+        <button
+          class={"flex items-center justify-center h-10 px-4 leading-tight disabled cursor-not-allowed #{@styling}"}
+          disabled
+        >
           <.inner_page_entry page_entry={@page_entry} />
         </button>
       <% end %>

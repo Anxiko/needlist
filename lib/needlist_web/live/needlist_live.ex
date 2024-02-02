@@ -77,7 +77,7 @@ defmodule NeedlistWeb.NeedlistLive do
   defp fetch_page(username, page) do
     case Cachex.get!(@cache, {username, page}) do
       nil ->
-        case Api.get_user_needlist(username, page) do
+        case Api.get_user_needlist(username, page: page) do
           {:ok, %Pagination.Page{} = paginated_items} ->
             Cachex.put!(@cache, {username, page}, paginated_items)
             {:ok, paginated_items}
