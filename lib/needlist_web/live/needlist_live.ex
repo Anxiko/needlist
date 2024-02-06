@@ -1,11 +1,12 @@
 defmodule NeedlistWeb.NeedlistLive do
-  alias Needlist.Discogs.Pagination.Page
-  alias Phoenix.LiveView.Socket
   use NeedlistWeb, :live_view
 
   alias Needlist.Discogs.Api
   alias Needlist.Discogs.Pagination
+  alias Needlist.Discogs.Pagination.PageInfo
   alias Needlist.Discogs.Model.Want
+
+  alias Phoenix.LiveView.Socket
 
   import NeedlistWeb.Navigation.Components, only: [pagination: 1]
   import Needlist.Guards
@@ -15,7 +16,7 @@ defmodule NeedlistWeb.NeedlistLive do
   @cache :discogs_cache
   @initial_sorting_order :asc
 
-  @typep paginated_wants() :: Pagination.Page.t(Want.t())
+  @typep paginated_wants() :: Pagination.t(Want.t())
 
   @impl true
   def mount(%{"username" => username}, _session, socket) do
@@ -65,7 +66,7 @@ defmodule NeedlistWeb.NeedlistLive do
   @impl true
   def handle_async(
         :table_data,
-        {:ok, %Pagination.Page{pagination: %Pagination{page: page}} = paginated_items},
+        {:ok, %Pagination{page_info: %PageInfo{page: page}} = paginated_items},
         %Socket{assigns: %{loading_page: page}} = socket
       ) do
     socket =
@@ -78,7 +79,7 @@ defmodule NeedlistWeb.NeedlistLive do
 
   def handle_async(
         :table_data,
-        {:ok, %Pagination.Page{pagination: %Pagination{page: actual}}},
+        {:ok, %Pagination{page_info: %PageInfo{page: actual}}},
         %Socket{
           assigns: %{loading_page: expected}
         } = socket
@@ -117,7 +118,7 @@ defmodule NeedlistWeb.NeedlistLive do
 
   @spec load_page(Socket.t(), pos_integer()) :: Socket.t()
   defp load_page(
-         %Socket{assigns: %{current_page: %Page{pagination: %Pagination{page: page}}}} = socket,
+         %Socket{assigns: %{current_page: %Pagination{page_info: %PageInfo{page: page}}}} = socket,
          page
        ) do
     socket
@@ -145,7 +146,7 @@ defmodule NeedlistWeb.NeedlistLive do
     case Cachex.get!(@cache, {username, page}) do
       nil ->
         case Api.get_user_needlist(username, page: page) do
-          {:ok, %Pagination.Page{} = paginated_items} ->
+          {:ok, %Pagination{} = paginated_items} ->
             Cachex.put!(@cache, {username, page}, paginated_items)
             {:ok, paginated_items}
 
@@ -153,7 +154,7 @@ defmodule NeedlistWeb.NeedlistLive do
             {:error, "Discogs API error"}
         end
 
-      %Pagination.Page{} = paginated_items ->
+      %Pagination{} = paginated_items ->
         Logger.debug("Using cached items for #{username} -> #{page}")
         {:ok, paginated_items}
     end
@@ -201,8 +202,8 @@ defmodule NeedlistWeb.NeedlistLive do
     assigns =
       assigns
       |> assign(:url, url)
-      |> assign(:current, assigns.current_page.pagination.page)
-      |> assign(:total, assigns.current_page.pagination.pages)
+      |> assign(:current, assigns.current_page.page_info.page)
+      |> assign(:total, assigns.current_page.page_info.pages)
 
     ~H"""
     <.pagination url={@url} current={@current} total={@total} />

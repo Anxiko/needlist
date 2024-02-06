@@ -6,7 +6,7 @@ defmodule Needlist.Discogs.Api do
   import Needlist.Guards, only: [is_pos_integer: 1]
 
   alias Needlist.Discogs.Model.Want
-  alias Needlist.Discogs.Pagination.Page
+  alias Needlist.Discogs.Pagination
 
   @spec base_api_url() :: String.t()
   def base_api_url(), do: "https://api.discogs.com"
@@ -16,8 +16,8 @@ defmodule Needlist.Discogs.Api do
 
   @type needlist_option() :: [page: pos_integer(), sort_key: sort_key(), sort_order: sort_order()]
 
-  @spec get_user_needlist(String.t()) :: {:ok, Page.t(Want.t())} | :error
-  @spec get_user_needlist(String.t(), needlist_option()) :: {:ok, Page.t(Want.t())} | :error
+  @spec get_user_needlist(String.t()) :: {:ok, Pagination.t(Want.t())} | :error
+  @spec get_user_needlist(String.t(), needlist_option()) :: {:ok, Pagination.t(Want.t())} | :error
   def get_user_needlist(user, opts \\ []) do
     page = extract_page!(opts)
     user = URI.encode(user)
@@ -32,7 +32,7 @@ defmodule Needlist.Discogs.Api do
     |> Req.request()
     |> case do
       {:ok, %Req.Response{status: 200, body: body}} ->
-        Page.parse_page(body, "wants", &Want.parse/1)
+        Pagination.parse_page(body, "wants", &Want.parse/1)
 
       _ ->
         :error

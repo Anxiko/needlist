@@ -1,43 +1,24 @@
 defmodule Needlist.Discogs.Pagination do
   @moduledoc """
-  Page data for a Discogs API paginated response
+  Discogs API paginated response, containing both items and page info
   """
 
-  alias Needlist.Discogs.Pagination.Urls
+  alias Needlist.Discogs.Pagination.PageInfo
+  alias Needlist.Discogs.Parsing
 
-  import Needlist.Guards, only: [is_pos_integer: 1, is_non_neg_integer: 1]
-
-  @keys [:page, :pages, :per_page, :items, :urls]
+  @keys [:page_info, :data]
 
   @enforce_keys @keys
   defstruct @keys
 
-  @type t() :: %__MODULE__{
-          page: pos_integer(),
-          pages: pos_integer(),
-          per_page: pos_integer(),
-          items: non_neg_integer(),
-          urls: Urls.t()
-        }
+  @type t(data) :: %__MODULE__{page_info: PageInfo.t(), data: [data]}
 
-  @spec parse(map()) :: {:ok, t()} | :error
-  def parse(%{
-        "page" => page,
-        "pages" => pages,
-        "per_page" => per_page,
-        "items" => items,
-        "urls" => urls
-      })
-      when is_pos_integer(page) and is_pos_integer(pages) and is_pos_integer(per_page) and
-             is_non_neg_integer(items) do
-    case Urls.parse(urls) do
-      {:ok, urls} ->
-        {:ok, %__MODULE__{page: page, pages: pages, per_page: per_page, items: items, urls: urls}}
-
-      :error ->
-        :error
+  @spec parse_page(map(), String.t(), (map() -> item)) :: {:ok, t(item)} | :error when item: var
+  def parse_page(%{"pagination" => pagination} = payload, items_key, parse_one) do
+    with {:ok, items} <- Map.fetch(payload, items_key),
+         {:ok, page_info} <- PageInfo.parse(pagination),
+         {:ok, items} <- Parsing.parse_many(items, parse_one) do
+      {:ok, %__MODULE__{page_info: page_info, data: items}}
     end
   end
-
-  def parse(_), do: :error
 end
