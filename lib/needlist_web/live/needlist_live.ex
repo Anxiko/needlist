@@ -24,6 +24,7 @@ defmodule NeedlistWeb.NeedlistLive do
       |> assign(:username, username)
       |> assign(:current_page, nil)
       |> assign(:loading_page, nil)
+      |> assign(:sort_by, nil)
     }
   end
 
@@ -34,6 +35,64 @@ defmodule NeedlistWeb.NeedlistLive do
     socket =
       socket
       |> load_page(page)
+
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_event("sort-by", %{"key" => key}, socket) do
+    key = String.to_existing_atom(key)
+    IO.inspect(key, label: "Sort by key")
+
+    sort_by =
+      case socket.assigns.sort_by do
+        {^key, sorting} -> {key, opposite_sorting(sorting)}
+        _ -> {key, :asc}
+      end
+      |> IO.inspect(label: "Sort by result")
+
+    {:noreply, assign(socket, :sort_by, sort_by)}
+  end
+
+  @impl true
+  def handle_async(
+        :table_data,
+        {:ok, %Pagination.Page{pagination: %Pagination{page: page}} = paginated_items},
+        %Socket{assigns: %{loading_page: page}} = socket
+      ) do
+    socket =
+      socket
+      |> assign(:current_page, paginated_items)
+      |> assign(:loading_page, nil)
+
+    {:noreply, socket}
+  end
+
+  def handle_async(
+        :table_data,
+        {:ok, %Pagination.Page{pagination: %Pagination{page: actual}}},
+        %Socket{
+          assigns: %{loading_page: expected}
+        } = socket
+      )
+      when actual != expected do
+    Logger.warning("Expected page #{expected}, but got #{actual}, ignoring...")
+
+    {:noreply, socket}
+  end
+
+  def handle_async(:table_data, {:ok, paginated_items}, socket) do
+    Logger.warning(
+      "Ignoring unexpected table data (expecting #{socket.assigns[:loading_page]}): #{inspect(paginated_items)}"
+    )
+
+    {:noreply, socket}
+  end
+
+  def handle_async(:table_data, {:exit, reason}, socket) do
+    socket =
+      socket
+      |> put_flash(:error, "Failed to load data: #{reason}")
 
     {:noreply, socket}
   end
@@ -92,48 +151,8 @@ defmodule NeedlistWeb.NeedlistLive do
     end
   end
 
-  @impl true
-  def handle_async(
-        :table_data,
-        {:ok, %Pagination.Page{pagination: %Pagination{page: page}} = paginated_items},
-        %Socket{assigns: %{loading_page: page}} = socket
-      ) do
-    socket =
-      socket
-      |> assign(:current_page, paginated_items)
-      |> assign(:loading_page, nil)
-
-    {:noreply, socket}
-  end
-
-  def handle_async(
-        :table_data,
-        {:ok, %Pagination.Page{pagination: %Pagination{page: actual}}},
-        %Socket{
-          assigns: %{loading_page: expected}
-        } = socket
-      )
-      when actual != expected do
-    Logger.warning("Expected page #{expected}, but got #{actual}, ignoring...")
-
-    {:noreply, socket}
-  end
-
-  def handle_async(:table_data, {:ok, paginated_items}, socket) do
-    Logger.warning(
-      "Ignoring unexpected table data (expecting #{socket.assigns[:loading_page]}): #{inspect(paginated_items)}"
-    )
-
-    {:noreply, socket}
-  end
-
-  def handle_async(:table_data, {:exit, reason}, socket) do
-    socket =
-      socket
-      |> put_flash(:error, "Failed to load data: #{reason}")
-
-    {:noreply, socket}
-  end
+  defp opposite_sorting(:asc), do: :desc
+  defp opposite_sorting(:desc), do: :asc
 
   defp want_artists(assigns) do
     ~H"""
@@ -181,4 +200,34 @@ defmodule NeedlistWeb.NeedlistLive do
     <.pagination url={@url} current={@current} total={@total} />
     """
   end
+
+  defp header_sorting(%{sort_by: {key, :asc}, key: key} = assigns),
+    do: ~H"""
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke-width="1.5"
+      stroke="currentColor"
+      class="w-6 h-6"
+    >
+      <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 15.75 7.5-7.5 7.5 7.5" />
+    </svg>
+    """
+
+  defp header_sorting(%{sort_by: {key, :desc}, key: key} = assigns),
+    do: ~H"""
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke-width="1.5"
+      stroke="currentColor"
+      class="w-6 h-6"
+    >
+      <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+    </svg>
+    """
+
+  defp header_sorting(assigns), do: ~H""
 end
