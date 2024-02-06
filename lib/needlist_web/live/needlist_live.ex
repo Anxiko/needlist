@@ -13,6 +13,7 @@ defmodule NeedlistWeb.NeedlistLive do
   require Logger
 
   @cache :discogs_cache
+  @initial_sorting_order :asc
 
   @typep paginated_wants() :: Pagination.Page.t(Want.t())
 
@@ -42,14 +43,21 @@ defmodule NeedlistWeb.NeedlistLive do
   @impl true
   def handle_event("sort-by", %{"key" => key}, socket) do
     key = String.to_existing_atom(key)
-    IO.inspect(key, label: "Sort by key")
 
     sort_by =
       case socket.assigns.sort_by do
-        {^key, sorting} -> {key, opposite_sorting(sorting)}
-        _ -> {key, :asc}
+        {^key, sorting} ->
+          next_sorting = opposite_sorting(sorting)
+
+          if next_sorting != @initial_sorting_order do
+            {key, next_sorting}
+          else
+            nil
+          end
+
+        _ ->
+          {key, @initial_sorting_order}
       end
-      |> IO.inspect(label: "Sort by result")
 
     {:noreply, assign(socket, :sort_by, sort_by)}
   end
@@ -209,7 +217,7 @@ defmodule NeedlistWeb.NeedlistLive do
       viewBox="0 0 24 24"
       stroke-width="1.5"
       stroke="currentColor"
-      class="w-6 h-6"
+      class="w-4 h-4"
     >
       <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 15.75 7.5-7.5 7.5 7.5" />
     </svg>
@@ -223,7 +231,7 @@ defmodule NeedlistWeb.NeedlistLive do
       viewBox="0 0 24 24"
       stroke-width="1.5"
       stroke="currentColor"
-      class="w-6 h-6"
+      class="w-4 h-4"
     >
       <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
     </svg>
