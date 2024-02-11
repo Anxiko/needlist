@@ -5,26 +5,33 @@ defmodule Needlist.Discogs.Api do
 
   import Needlist.Guards, only: [is_pos_integer: 1]
 
+  alias Needlist.Discogs.Api.Types.SortOrder
+  alias Needlist.Discogs.Api.Types.SortKey
   alias Needlist.Discogs.Model.Want
   alias Needlist.Discogs.Pagination
 
   @spec base_api_url() :: String.t()
   def base_api_url(), do: "https://api.discogs.com"
 
-  @type sort_key() :: :label | :artist | :title | :catno | :format | :rating | :added | :year
-  @type sort_order() :: :asc | :desc
+  @type sort_key() :: SortKey.t()
+  @type sort_order() :: SortOrder.t()
 
-  @type needlist_option() :: [page: pos_integer(), sort_key: sort_key(), sort_order: sort_order()]
+  @type needlist_options() :: [
+          page: pos_integer(),
+          per_page: pos_integer(),
+          sort_key: sort_key(),
+          sort_order: sort_order()
+        ]
 
   @spec get_user_needlist(String.t()) :: {:ok, Pagination.t(Want.t())} | :error
-  @spec get_user_needlist(String.t(), needlist_option()) :: {:ok, Pagination.t(Want.t())} | :error
+  @spec get_user_needlist(String.t(), needlist_options()) :: {:ok, Pagination.t(Want.t())} | :error
   def get_user_needlist(user, opts \\ []) do
     page = extract_page!(opts)
     user = URI.encode(user)
 
     params =
       [page: page]
-      |> add_sorting(opts)
+      |> Keyword.merge(opts_to_params(opts))
 
     base_api_url()
     |> Kernel.<>("/users/#{user}/wants")
@@ -48,12 +55,9 @@ defmodule Needlist.Discogs.Api do
     end
   end
 
-  defp add_sorting(params, opts) do
-    opts =
-      opts
-      |> Keyword.take([:sort_key, :sort_value])
-      |> Keyword.new(fn {k, v} -> {k, Atom.to_string(v)} end)
-
-    Keyword.merge(params, opts)
+  @spec opts_to_params(needlist_options()) :: Keyword.t()
+  defp opts_to_params(opts) do
+    [:sort_key, :sort_value]
+    |> Enum.reduce(opts, fn key, opts -> Keyword.replace_lazy(opts, key, &Atom.to_string/1) end)
   end
 end
