@@ -38,10 +38,11 @@ defmodule NeedlistWeb.NeedlistLive do
   @impl true
   @spec handle_params(map(), any(), Phoenix.LiveView.Socket.t()) :: {:noreply, Phoenix.LiveView.Socket.t()}
   def handle_params(params, _uri, socket) do
-    parsed_params = parse_params(params) |> IO.inspect(label: "Parsed params")
+    parsed_params = parse_params(params)
 
     socket =
       socket
+      |> assign(sort_key: nil, sort_order: nil, page: nil)
       |> assign(parsed_params)
       |> load_page()
 
@@ -53,7 +54,7 @@ defmodule NeedlistWeb.NeedlistLive do
     key = String.to_existing_atom(key)
 
     {sort_key, sort_order} =
-      case {socket.assigns.sort_key, socket.assigns.sort_order} do
+      case {assigns.sort_key, assigns.sort_order} do
         {^key, sorting} ->
           next_sorting = Api.Types.SortOrder.inverse(sorting)
 
@@ -153,7 +154,6 @@ defmodule NeedlistWeb.NeedlistLive do
       ])
 
     [page: page, sort_key: sort_key, sort_order: sort_order]
-    |> IO.inspect(label: "Fallible parse params")
     |> Keyword.filter(fn {_k, v} -> Fallible.is_ok?(v) end)
     |> Keyword.new(fn {k, {:ok, v}} -> {k, v} end)
   end
@@ -168,7 +168,6 @@ defmodule NeedlistWeb.NeedlistLive do
   @spec update_params(Socket.t(), map()) :: Socket.t()
   defp update_params(socket, new_params) do
     username = socket.assigns.username
-    IO.inspect(new_params, label: "New params")
 
     push_patch(socket, to: ~p"/needlist/#{username}?#{new_params}")
   end
@@ -307,6 +306,4 @@ defmodule NeedlistWeb.NeedlistLive do
       <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
     </svg>
     """
-
-  defp header_sorting(assigns), do: ~H""
 end
