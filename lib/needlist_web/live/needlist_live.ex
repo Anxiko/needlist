@@ -19,7 +19,7 @@ defmodule NeedlistWeb.NeedlistLive do
 
   @typep paginated_wants() :: Pagination.t(Want.t())
 
-  @request_defaults [page: 1, sort_key: :label, sort_order: @initial_sorting_order]
+  @request_defaults_opts [page: 1, sort_key: :label, sort_order: @initial_sorting_order]
 
   @impl true
   def mount(%{"username" => username}, _session, socket) do
@@ -29,18 +29,21 @@ defmodule NeedlistWeb.NeedlistLive do
       |> assign(:username, username)
       |> assign(:current_page, nil)
       |> assign(:loading_page, nil)
-      |> assign(:sort_by, nil)
+      |> assign(:sort_key, nil)
+      |> assign(:sort_order, nil)
+      |> assign(:page, nil)
     }
   end
 
   @impl true
   @spec handle_params(map(), any(), Phoenix.LiveView.Socket.t()) :: {:noreply, Phoenix.LiveView.Socket.t()}
   def handle_params(params, _uri, socket) do
-    needlist_options = parse_params(params) |> IO.inspect(label: "Parsed params")
+    parsed_params = parse_params(params) |> IO.inspect(label: "Parsed params")
 
     socket =
       socket
-      |> load_page(needlist_options)
+      |> assign(parsed_params)
+      |> load_page()
 
     {:noreply, socket}
   end
@@ -49,15 +52,15 @@ defmodule NeedlistWeb.NeedlistLive do
   def handle_event("sort-by", %{"key" => key}, %Socket{assigns: assigns} = socket) do
     key = String.to_existing_atom(key)
 
-    sort_by =
-      case socket.assigns.sort_by do
+    {sort_key, sort_order} =
+      case {socket.assigns.sort_key, socket.assigns.sort_order} do
         {^key, sorting} ->
           next_sorting = Api.Types.SortOrder.inverse(sorting)
 
           if next_sorting != @initial_sorting_order do
             {key, next_sorting}
           else
-            nil
+            {nil, nil}
           end
 
         _ ->
@@ -66,7 +69,8 @@ defmodule NeedlistWeb.NeedlistLive do
 
     params =
       assigns
-      |> assign(:sort_by, sort_by)
+      |> assign(:sort_key, sort_key)
+      |> assign(:sort_order, sort_order)
       |> serialize_params()
 
     {:noreply, update_params(socket, params)}
@@ -113,7 +117,15 @@ defmodule NeedlistWeb.NeedlistLive do
     {:noreply, socket}
   end
 
-  @spec parse_params(map()) :: Api.needlist_options()
+  @spec needlist_options(map()) :: Api.needlist_options()
+  defp needlist_options(assigns) do
+    assigns
+    |> Map.take([:page, :sort_order, :sort_key])
+    |> Map.filter(fn {_k, v} -> v != nil end)
+    |> Keyword.new()
+  end
+
+  @spec parse_params(map()) :: Keyword.t()
   defp parse_params(params) do
     page =
       params
@@ -140,30 +152,17 @@ defmodule NeedlistWeb.NeedlistLive do
         &Api.Types.SortOrder.cast/1
       ])
 
-    parsed_needlist_options =
-      [page: page, sort_key: sort_key, sort_order: sort_order]
-      |> IO.inspect(label: "Fallible parse params")
-      |> Keyword.filter(fn {_k, v} -> Fallible.is_ok?(v) end)
-      |> Keyword.new(fn {k, {:ok, v}} -> {k, v} end)
-
-    # Sorting is not necessary for the request, but ensures consistent pattern matching of identical keyword lists
-    parsed_needlist_options
-    |> Keyword.validate!(@request_defaults)
-    |> Enum.sort()
+    [page: page, sort_key: sort_key, sort_order: sort_order]
+    |> IO.inspect(label: "Fallible parse params")
+    |> Keyword.filter(fn {_k, v} -> Fallible.is_ok?(v) end)
+    |> Keyword.new(fn {k, {:ok, v}} -> {k, v} end)
   end
 
   @spec serialize_params(map()) :: map()
   defp serialize_params(assigns) do
-    page = assigns |> Map.get(:page) |> Fallible.from_nullable()
-    sort_by = assigns |> Map.get(:sort_by) |> Fallible.from_nullable()
-
-    %{}
-    |> Fallible.apply_if(page, &Map.put(&1, "page", &2))
-    |> Fallible.apply_if(sort_by, fn params, {sort_key, sort_order} ->
-      params
-      |> Map.put("sort_key", sort_key)
-      |> Map.put("sort_order", sort_order)
-    end)
+    assigns
+    |> Map.take([:page, :sort_key, :sort_order])
+    |> Map.filter(fn {_k, v} -> v != nil end)
   end
 
   @spec update_params(Socket.t(), map()) :: Socket.t()
@@ -172,6 +171,18 @@ defmodule NeedlistWeb.NeedlistLive do
     IO.inspect(new_params, label: "New params")
 
     push_patch(socket, to: ~p"/needlist/#{username}?#{new_params}")
+  end
+
+  @spec load_page(Socket.t()) :: Socket.t()
+  defp load_page(%Socket{assigns: assigns} = socket) do
+    opts =
+      assigns
+      |> needlist_options()
+      |> Keyword.validate!(@request_defaults_opts)
+      # Sort to ensure that pattern matching works
+      |> Enum.sort()
+
+    load_page(socket, opts)
   end
 
   # Current loaded page matches the requested page
@@ -269,7 +280,7 @@ defmodule NeedlistWeb.NeedlistLive do
     """
   end
 
-  defp header_sorting(%{sort_by: {key, :asc}, key: key} = assigns),
+  defp header_sorting(%{sort_order: :asc} = assigns),
     do: ~H"""
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -283,7 +294,7 @@ defmodule NeedlistWeb.NeedlistLive do
     </svg>
     """
 
-  defp header_sorting(%{sort_by: {key, :desc}, key: key} = assigns),
+  defp header_sorting(%{sort_order: :desc} = assigns),
     do: ~H"""
     <svg
       xmlns="http://www.w3.org/2000/svg"

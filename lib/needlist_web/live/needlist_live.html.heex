@@ -11,7 +11,10 @@
             <%= for {column_key, column_name} <- [artist: "Artist", title: "Title", label: "Label", format: "Formats"] do %>
               <th phx-click="sort-by" phx-value-key={column_key} scope="col" class="px-6 py-3">
                 <span class="inline-flex items-center cursor-pointer">
-                <%= column_name %><.header_sorting key={column_key} sort_by={@sort_by} />
+                  <%= column_name %>
+                  <%= if @sort_key == column_key do %>
+                    <.header_sorting sort_order={@sort_order} />
+                  <% end %>
                 </span>
               </th>
             <% end %>
