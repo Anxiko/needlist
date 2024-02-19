@@ -19,7 +19,7 @@ defmodule Needlist.Discogs.Api do
   @type needlist_options() :: [
           page: pos_integer(),
           per_page: pos_integer(),
-          sort_key: sort_key(),
+          sort: sort_key(),
           sort_order: sort_order()
         ]
 
@@ -29,9 +29,12 @@ defmodule Needlist.Discogs.Api do
     page = extract_page!(opts)
     user = URI.encode(user)
 
+    IO.inspect(opts, label: "Opts")
+
     params =
       [page: page]
       |> Keyword.merge(opts_to_params(opts))
+      |> IO.inspect(label: "Opts to params")
 
     base_api_url()
     |> Kernel.<>("/users/#{user}/wants")
@@ -57,7 +60,7 @@ defmodule Needlist.Discogs.Api do
 
   @spec opts_to_params(needlist_options()) :: Keyword.t()
   defp opts_to_params(opts) do
-    [:sort_key, :sort_value]
+    [:sort, :sort_value]
     |> Enum.reduce(opts, fn key, opts -> Keyword.replace_lazy(opts, key, &Atom.to_string/1) end)
   end
 end

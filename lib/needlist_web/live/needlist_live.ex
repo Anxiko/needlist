@@ -19,7 +19,7 @@ defmodule NeedlistWeb.NeedlistLive do
 
   @typep paginated_wants() :: Pagination.t(Want.t())
 
-  @request_defaults_opts [page: 1, sort_key: :label, sort_order: @initial_sorting_order]
+  @request_defaults_opts [page: 1, sort: :label, sort_order: @initial_sorting_order]
 
   @impl true
   def mount(%{"username" => username}, _session, socket) do
@@ -122,6 +122,7 @@ defmodule NeedlistWeb.NeedlistLive do
   defp needlist_options(assigns) do
     assigns
     |> Map.take([:page, :sort_order, :sort_key])
+    |> MapUtils.rename_existing(:sort_key, :sort)
     |> Map.filter(fn {_k, v} -> v != nil end)
     |> Keyword.new()
   end
