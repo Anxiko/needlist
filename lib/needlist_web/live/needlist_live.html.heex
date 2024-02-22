@@ -8,7 +8,8 @@
       <table class="w-full text-sm text-left text-gray-500 rtl:text-right dark:text-gray-400">
         <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
           <tr>
-            <%= for {column_key, column_name} <- [artist: "Artist", title: "Title", label: "Label", format: "Formats"] do %>
+            <%= for {column_key, column_name} <- 
+            [artist: "Artist", title: "Title", label: "Label", format: "Formats", year: "Year"] do %>
               <th phx-click="sort-by" phx-value-key={column_key} scope="col" class="px-6 py-3">
                 <span class="inline-flex items-center cursor-pointer">
                   <%= column_name %>
@@ -34,6 +35,9 @@
               </td>
               <td class="px-6 py-4">
                 <.want_formats formats={item.formats} />
+              </td>
+              <td class="px-6 py-4">
+                <%= item.year %>
               </td>
             </tr>
           <% end %>
