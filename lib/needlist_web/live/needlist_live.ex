@@ -266,6 +266,14 @@ defmodule NeedlistWeb.NeedlistLive do
     """
   end
 
+  defp want_year(assigns) do
+    ~H"""
+    <%= if @year != 0 do %>
+      <%= @year %>
+    <% end %>
+    """
+  end
+
   defp table_pagination(assigns) do
     url = ~p"/needlist/#{assigns.username}"
 
