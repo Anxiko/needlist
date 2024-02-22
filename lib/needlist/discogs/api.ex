@@ -29,12 +29,9 @@ defmodule Needlist.Discogs.Api do
     page = extract_page!(opts)
     user = URI.encode(user)
 
-    IO.inspect(opts, label: "Opts")
-
     params =
       [page: page]
       |> Keyword.merge(opts_to_params(opts))
-      |> IO.inspect(label: "Opts to params")
 
     base_api_url()
     |> Kernel.<>("/users/#{user}/wants")

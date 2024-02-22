@@ -41,6 +41,11 @@
       </table>
     </div>
 
-    <.table_pagination username={@username} current_page={elem(@current_page, 1)} />
+    <.table_pagination
+      username={@username}
+      current_page={elem(@current_page, 1)}
+      sort_key={@sort_key}
+      sort_order={@sort_order}
+    />
   <% end %>
 </div>

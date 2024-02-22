@@ -274,9 +274,10 @@ defmodule NeedlistWeb.NeedlistLive do
       |> assign(:url, url)
       |> assign(:current, assigns.current_page.page_info.page)
       |> assign(:total, assigns.current_page.page_info.pages)
+      |> assign(:params, %{"sort_key" => assigns.sort_key, "sort_order" => assigns.sort_order})
 
     ~H"""
-    <.pagination url={@url} current={@current} total={@total} />
+    <.pagination url={@url} current={@current} total={@total} params={@params} />
     """
   end
 
