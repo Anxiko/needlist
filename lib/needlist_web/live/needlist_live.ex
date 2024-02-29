@@ -1,16 +1,19 @@
 defmodule NeedlistWeb.NeedlistLive do
+  alias Needlist.Discogs.Pagination.PageInfo
+  alias Needlist.Discogs.Api.Types.SortOrder
+  alias Needlist.Discogs.Api.Types.SortKey
   use NeedlistWeb, :live_view
 
   alias Needlist.Discogs.Api
   alias Needlist.Discogs.Pagination
   alias Needlist.Discogs.Model.Want
+  alias NeedlistWeb.NeedlistLive.State
 
   alias Nullables.Fallible
 
   alias Phoenix.LiveView.Socket
 
   import NeedlistWeb.Navigation.Components, only: [pagination: 1]
-  import Needlist.Parser, only: [parse_int: 1, validate_pos_integer: 1]
 
   require Logger
 
@@ -29,52 +32,39 @@ defmodule NeedlistWeb.NeedlistLive do
       |> assign(:username, username)
       |> assign(:current_page, nil)
       |> assign(:loading_page, nil)
-      |> assign(:sort_key, nil)
-      |> assign(:sort_order, nil)
-      |> assign(:page, nil)
+      |> assign(:state, State.default())
     }
   end
 
   @impl true
   @spec handle_params(map(), any(), Phoenix.LiveView.Socket.t()) :: {:noreply, Phoenix.LiveView.Socket.t()}
   def handle_params(params, _uri, socket) do
-    parsed_params = parse_params(params)
+    parsed_state =
+      params
+      |> Fallible.apply_if(max_pages(socket), &Map.put(&1, "max_pages", &2))
+      |> State.parse()
 
     socket =
       socket
-      |> assign(sort_key: nil, sort_order: nil, page: nil)
-      |> assign(parsed_params)
+      |> assign(:state, parsed_state)
       |> load_page()
 
     {:noreply, socket}
   end
 
   @impl true
-  def handle_event("sort-by", %{"key" => key}, %Socket{assigns: assigns} = socket) do
-    key = String.to_existing_atom(key)
+  def handle_event("sort-by", %{"key" => key}, socket) do
+    state = socket.assigns.state
 
-    {sort_key, sort_order} =
-      case {assigns.sort_key, assigns.sort_order} do
-        {^key, sorting} ->
-          next_sorting = Api.Types.SortOrder.inverse(sorting)
-
-          if next_sorting != @initial_sorting_order do
-            {key, next_sorting}
-          else
-            {nil, nil}
-          end
-
-        _ ->
-          {key, @initial_sorting_order}
-      end
-
-    params =
-      assigns
-      |> assign(:sort_key, sort_key)
-      |> assign(:sort_order, sort_order)
-      |> serialize_params()
-
-    {:noreply, update_params(socket, params)}
+    with {:ok, key} <- SortKey.cast(key),
+         changes = create_sorting_changes(state, key),
+         {:ok, new_state} <- State.update(state, changes) do
+      {:noreply, update_params(socket, new_state)}
+    else
+      _ ->
+        Logger.warning("Invalid state transition from #{inspect(state)} sort-by #{inspect(key)}")
+        {:noreply, socket}
+    end
   end
 
   @impl true
@@ -111,73 +101,38 @@ defmodule NeedlistWeb.NeedlistLive do
   end
 
   def handle_async(:table_data, {:exit, reason}, socket) do
-    socket =
-      socket
-      |> put_flash(:error, "Failed to load data: #{reason}")
-
-    {:noreply, socket}
+    {:noreply, put_flash(socket, :error, "Failed to load data: #{reason}")}
   end
 
-  @spec needlist_options(map()) :: Api.needlist_options()
-  defp needlist_options(assigns) do
-    assigns
-    |> Map.take([:page, :sort_order, :sort_key])
-    |> MapUtils.rename_existing(:sort_key, :sort)
-    |> Map.filter(fn {_k, v} -> v != nil end)
-    |> Keyword.new()
+  @spec create_sorting_changes(State.t(), SortKey.t()) :: map()
+  defp create_sorting_changes(%State{sort_key: sort_key, sort_order: sort_order}, sort_key) do
+    %{sort_order: SortOrder.inverse(sort_order)}
   end
 
-  @spec parse_params(map()) :: Keyword.t()
-  defp parse_params(params) do
-    page =
-      params
-      |> Fallible.ok()
-      |> Fallible.flat_map_many([
-        &Map.fetch(&1, "page"),
-        &parse_int/1,
-        &validate_pos_integer/1
-      ])
-
-    sort_key =
-      params
-      |> Fallible.ok()
-      |> Fallible.flat_map_many([
-        &Map.fetch(&1, "sort_key"),
-        &Api.Types.SortKey.cast/1
-      ])
-
-    sort_order =
-      params
-      |> Fallible.ok()
-      |> Fallible.flat_map_many([
-        &Map.fetch(&1, "sort_order"),
-        &Api.Types.SortOrder.cast/1
-      ])
-
-    [page: page, sort_key: sort_key, sort_order: sort_order]
-    |> Keyword.filter(fn {_k, v} -> Fallible.is_ok?(v) end)
-    |> Keyword.new(fn {k, {:ok, v}} -> {k, v} end)
+  defp create_sorting_changes(%State{}, sort_key) do
+    %{sort_key: sort_key, sort_order: @initial_sorting_order}
   end
 
-  @spec serialize_params(map()) :: map()
-  defp serialize_params(assigns) do
-    assigns
-    |> Map.take([:page, :sort_key, :sort_order])
-    |> Map.filter(fn {_k, v} -> v != nil end)
-  end
-
-  @spec update_params(Socket.t(), map()) :: Socket.t()
-  defp update_params(socket, new_params) do
+  @spec update_params(Socket.t(), State.t()) :: Socket.t()
+  defp update_params(socket, new_state) do
     username = socket.assigns.username
+    new_params = State.as_params(new_state)
 
     push_patch(socket, to: ~p"/needlist/#{username}?#{new_params}")
   end
 
+  @spec max_pages(Socket.t()) :: {:ok, pos_integer()} | :error
+  defp max_pages(%Socket{assigns: %{current_page: {_, %Pagination{page_info: %PageInfo{pages: pages}}}}}) do
+    {:ok, pages}
+  end
+
+  defp max_pages(%Socket{}), do: :error
+
   @spec load_page(Socket.t()) :: Socket.t()
-  defp load_page(%Socket{assigns: assigns} = socket) do
+  defp load_page(socket) do
     opts =
-      assigns
-      |> needlist_options()
+      socket.assigns.state
+      |> State.as_needlist_options()
       |> Keyword.validate!(@request_defaults_opts)
       # Sort to ensure that pattern matching works
       |> Enum.sort()
@@ -206,8 +161,7 @@ defmodule NeedlistWeb.NeedlistLive do
     |> cancel_async(:loading_page)
     |> assign(:loading_page, requested_needlist_options)
     |> start_async(:table_data, fn ->
-      fetch_page(socket.assigns.username, requested_needlist_options)
-      |> case do
+      case fetch_page(socket.assigns.username, requested_needlist_options) do
         {:ok, paginated_items} -> {requested_needlist_options, paginated_items}
         {:error, error} -> exit(error)
       end
@@ -282,7 +236,7 @@ defmodule NeedlistWeb.NeedlistLive do
       |> assign(:url, url)
       |> assign(:current, assigns.current_page.page_info.page)
       |> assign(:total, assigns.current_page.page_info.pages)
-      |> assign(:params, %{"sort_key" => assigns.sort_key, "sort_order" => assigns.sort_order})
+      |> assign(:params, State.as_params(assigns.state))
 
     ~H"""
     <.pagination url={@url} current={@current} total={@total} params={@params} />

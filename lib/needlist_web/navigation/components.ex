@@ -39,7 +39,7 @@ defmodule NeedlistWeb.Navigation.Components do
 
   defp nav_to_page_entry(assigns) do
     page = PageEntry.page(assigns[:page_entry])
-    params = Map.put(assigns[:params], :page, page)
+    params = Map.put(assigns[:params], "page", page)
 
     class_styling =
       case assigns[:page_entry].state do

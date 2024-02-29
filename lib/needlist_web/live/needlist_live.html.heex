@@ -13,8 +13,8 @@
               <th phx-click="sort-by" phx-value-key={column_key} scope="col" class="px-6 py-3">
                 <span class="inline-flex items-center cursor-pointer">
                   <%= column_name %>
-                  <%= if @sort_key == column_key and @sort_order != nil do %>
-                    <.header_sorting sort_order={@sort_order} />
+                  <%= if @state.sort_key == column_key and @state.sort_order != nil do %>
+                    <.header_sorting sort_order={@state.sort_order} />
                   <% end %>
                 </span>
               </th>
@@ -45,11 +45,6 @@
       </table>
     </div>
 
-    <.table_pagination
-      username={@username}
-      current_page={elem(@current_page, 1)}
-      sort_key={@sort_key}
-      sort_order={@sort_order}
-    />
+    <.table_pagination username={@username} current_page={elem(@current_page, 1)} state={@state} />
   <% end %>
 </div>
