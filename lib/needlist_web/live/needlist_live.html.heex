@@ -46,6 +46,8 @@
       </table>
     </div>
 
-    <.table_pagination username={@username} current_page={elem(@current_page, 1)} state={@state} />
+    <div class="flex mt-4 justify-evenly">
+      <.table_pagination username={@username} current_page={elem(@current_page, 1)} state={@state} />
+    </div>
   <% end %>
 </div>
