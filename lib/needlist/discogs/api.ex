@@ -3,8 +3,6 @@ defmodule Needlist.Discogs.Api do
   Discogs API client
   """
 
-  import Needlist.Guards, only: [is_pos_integer: 1]
-
   alias Needlist.Discogs.Api.Types.SortOrder
   alias Needlist.Discogs.Api.Types.SortKey
   alias Needlist.Discogs.Model.Want
@@ -26,12 +24,9 @@ defmodule Needlist.Discogs.Api do
   @spec get_user_needlist(String.t()) :: {:ok, Pagination.t(Want.t())} | :error
   @spec get_user_needlist(String.t(), needlist_options()) :: {:ok, Pagination.t(Want.t())} | :error
   def get_user_needlist(user, opts \\ []) do
-    page = extract_page!(opts)
     user = URI.encode(user)
 
-    params =
-      [page: page]
-      |> Keyword.merge(opts_to_params(opts))
+    params = opts_to_params(opts)
 
     base_api_url()
     |> Kernel.<>("/users/#{user}/wants")
@@ -46,18 +41,13 @@ defmodule Needlist.Discogs.Api do
     end
   end
 
-  defp extract_page!(opts) do
-    opts
-    |> Keyword.fetch(:page)
-    |> case do
-      {:ok, page} when is_pos_integer(page) -> page
-      :error -> 1
-    end
-  end
-
   @spec opts_to_params(needlist_options()) :: Keyword.t()
   defp opts_to_params(opts) do
-    [:sort, :sort_value]
-    |> Enum.reduce(opts, fn key, opts -> Keyword.replace_lazy(opts, key, &Atom.to_string/1) end)
+    opts
+    |> Keyword.filter(fn {_k, v} -> v != nil end)
+    |> Keyword.new(fn {k, v} -> {k, atom_to_string(v)} end)
   end
+
+  defp atom_to_string(v) when is_atom(v), do: Atom.to_string(v)
+  defp atom_to_string(v), do: v
 end

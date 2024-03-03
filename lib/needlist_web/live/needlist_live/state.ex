@@ -5,14 +5,17 @@ defmodule NeedlistWeb.NeedlistLive.State do
   alias Needlist.Discogs.Api
   alias Needlist.Discogs.Api.Types
 
-  @required_fields [:page, :sort_key, :sort_order]
+  @required_fields [:page, :per_page, :sort_key, :sort_order]
   @optional_fields [:max_pages]
   @fields @required_fields ++ @optional_fields
+
+  @serializable_fields @required_fields
 
   @primary_key false
   embedded_schema do
     field :page, :integer, default: 1
     field :max_pages, :integer, default: nil
+    field :per_page, :integer, default: 50
     field :sort_key, Ecto.Enum, values: Types.SortKey.values(), default: Types.SortKey.label()
     field :sort_order, Ecto.Enum, values: Types.SortOrder.values(), default: Types.SortOrder.asc()
   end
@@ -20,6 +23,7 @@ defmodule NeedlistWeb.NeedlistLive.State do
   @type t() :: %__MODULE__{
           page: pos_integer(),
           max_pages: pos_integer() | nil,
+          per_page: pos_integer(),
           sort_key: Types.SortKey.t(),
           sort_order: Types.SortOrder.t()
         }
@@ -52,6 +56,7 @@ defmodule NeedlistWeb.NeedlistLive.State do
     |> Changeset.validate_required(@required_fields)
     |> Changeset.validate_number(:page, greater_than_or_equal_to: 1)
     |> Changeset.validate_number(:max_pages, greater_than_or_equal_to: 1)
+    |> Changeset.validate_number(:per_page, greater_than_or_equal_to: 1)
     |> validate_page_under_limit()
   end
 
@@ -59,7 +64,7 @@ defmodule NeedlistWeb.NeedlistLive.State do
   def as_params(%__MODULE__{} = state) do
     state
     |> Map.from_struct()
-    |> Map.take([:page, :sort_key, :sort_order])
+    |> Map.take(@serializable_fields)
     |> MapUtils.atoms_as_strings()
   end
 
@@ -67,7 +72,7 @@ defmodule NeedlistWeb.NeedlistLive.State do
   def as_needlist_options(state) do
     state
     |> Map.from_struct()
-    |> Map.take([:page, :sort_order, :sort_key])
+    |> Map.take(@serializable_fields)
     |> MapUtils.rename_existing(:sort_key, :sort)
     |> Map.filter(fn {_k, v} -> v != nil end)
     |> Keyword.new()

@@ -22,8 +22,6 @@ defmodule NeedlistWeb.NeedlistLive do
 
   @typep paginated_wants() :: Pagination.t(Want.t())
 
-  @request_defaults_opts [page: 1, sort: :label, sort_order: @initial_sorting_order]
-
   @impl true
   def mount(%{"username" => username}, _session, socket) do
     {
@@ -133,7 +131,6 @@ defmodule NeedlistWeb.NeedlistLive do
     opts =
       socket.assigns.state
       |> State.as_needlist_options()
-      |> Keyword.validate!(@request_defaults_opts)
       # Sort to ensure that pattern matching works
       |> Enum.sort()
 
