@@ -103,7 +103,6 @@ defmodule NeedlistWeb.Navigation.Components do
       |> assign(:entries, entries)
 
     ~H"""
-    <div class="flex justify-center mt-4">
       <nav aria-label="Page navigation">
         <ul class="flex items-center h-10 -space-x-px text-base">
           <%= for entry <- @entries do %>
@@ -116,7 +115,6 @@ defmodule NeedlistWeb.Navigation.Components do
           <% end %>
         </ul>
       </nav>
-    </div>
     """
   end
 end

@@ -45,6 +45,13 @@
       </table>
     </div>
 
-    <.table_pagination username={@username} current_page={elem(@current_page, 1)} state={@state} />
+    <div class="flex items-end mt-4 justify-evenly">
+      <div>
+        <.table_pagination username={@username} current_page={elem(@current_page, 1)} state={@state} />
+      </div>
+      <div>
+      <.per_page_selector per_page_options={[10, 20, 50]} selected_per_page={@state.per_page} />
+      </div>
+    </div>
   <% end %>
 </div>

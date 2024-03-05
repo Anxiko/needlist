@@ -22,8 +22,6 @@ defmodule NeedlistWeb.NeedlistLive do
 
   @typep paginated_wants() :: Pagination.t(Want.t())
 
-  @request_defaults_opts [page: 1, sort: :label, sort_order: @initial_sorting_order]
-
   @impl true
   def mount(%{"username" => username}, _session, socket) do
     {
@@ -64,6 +62,14 @@ defmodule NeedlistWeb.NeedlistLive do
       _ ->
         Logger.warning("Invalid state transition from #{inspect(state)} sort-by #{inspect(key)}")
         {:noreply, socket}
+    end
+  end
+
+  def handle_event("per-page", params, socket) do
+    with {:ok, new_state} <- State.update(socket.assigns.state, params) do
+      {:noreply, update_params(socket, new_state)}
+    else
+      _ -> {:noreply, socket}
     end
   end
 
@@ -133,7 +139,6 @@ defmodule NeedlistWeb.NeedlistLive do
     opts =
       socket.assigns.state
       |> State.as_needlist_options()
-      |> Keyword.validate!(@request_defaults_opts)
       # Sort to ensure that pattern matching works
       |> Enum.sort()
 
@@ -270,4 +275,26 @@ defmodule NeedlistWeb.NeedlistLive do
       <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
     </svg>
     """
+
+  defp per_page_selector(assigns) do
+    assigns =
+      assigns
+      |> assign(:form, to_form(%{"per_page" => assigns.selected_per_page}))
+
+    ~H"""
+    <.form for={@form} class="max-w-sm mx-auto" phx-change="per-page" id="per-page-form">
+      <label for="per-page-input" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+        Per page items
+      </label>
+      <.input
+        id="per-page-input"
+        field={@form[:per_page]}
+        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+        options={for option <- @per_page_options, do: {option, option}}
+        type="select"
+      >
+      </.input>
+    </.form>
+    """
+  end
 end
