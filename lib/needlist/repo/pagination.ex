@@ -1,7 +1,10 @@
 defmodule Needlist.Repo.Pagination do
-  alias Needlist.Discogs.Pagination.PageInfo
+  alias Needlist.Repo.Pagination.Page
+  alias Needlist.Repo.Pagination.Page.Schema, as: PageSchema
 
-  alias Ecto.Changeset
+  alias Needlist.Repo.Pagination.PageInfo
+
+  alias Nullables.Result
 
   defstruct [:page_info, :items]
 
@@ -12,29 +15,25 @@ defmodule Needlist.Repo.Pagination do
 
   @type t() :: t(any())
 
-  @required_fields [:page_info, :items]
-  @optional_fields []
-  @embedded_fields [:items]
-  @items @required_fields ++ @optional_fields ++ @embedded_fields
-
   @spec parse(
           params :: map(),
-          items_key :: String.t(),
+          items_key :: atom(),
           item_type :: item_type
-        ) :: Ecto.Changeset.t(t(item_type))
+        ) :: Result.result(t(item_type))
         when item_type: var
   def parse(params, items_key, item_type) do
-    params = rename_items(params, items_key)
-    types = %{page_info: PageInfo, items: {:array, item_type}}
+    page_schema = PageSchema.new(items_key, item_type)
 
-    {%__MODULE__{}, types}
-    |> Changeset.cast(params, @items)
-    |> Changeset.validate_required(@required_fields)
-    |> EctoExtra.cast_many_embeds(@embedded_fields)
+    params
+    |> Page.parse(page_schema)
+    |> Result.map(&from_page/1)
+    |> Result.map_error(fn %Ecto.Changeset{errors: errors} -> errors end)
   end
 
-  @spec rename_items(map(), String.t()) :: map()
-  defp rename_items(params, items_key) do
-    MapUtils.rename_existing(params, items_key, "items")
+  defp from_page(%Page{schema: %PageSchema{items_key: items_key}, data: %{pagination: page_info} = data}) do
+    %__MODULE__{
+      page_info: page_info,
+      items: Map.fetch!(data, items_key)
+    }
   end
 end

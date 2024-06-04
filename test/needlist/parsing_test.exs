@@ -1,7 +1,7 @@
 defmodule Needlist.ParsingTest do
   use ExUnit.Case
 
-  alias Needlist.Repo.Pagination.Page
+  alias Needlist.Repo.Pagination
   alias Needlist.Repo.Want
 
   @paginated_wants_response "test/fixtures/wants.json"
@@ -18,7 +18,6 @@ defmodule Needlist.ParsingTest do
 
     def changeset(struct, params \\ %{}) do
       struct
-      |> IO.inspect(label: "Embedded changeset")
       |> Ecto.Changeset.cast(params, [:inner])
       |> Ecto.Changeset.validate_required([:inner])
     end
@@ -78,13 +77,11 @@ defmodule Needlist.ParsingTest do
     end
 
     test "the entire response" do
-      schema = Page.Schema.new(:wants, Want)
-
       parse_result =
         @paginated_wants_response
         |> File.read!()
         |> Jason.decode!()
-        |> then(&Page.parse(schema, &1))
+        |> then(&Pagination.parse(&1, :wants, Want))
 
       assert {:ok, _parsed_data} = parse_result
     end

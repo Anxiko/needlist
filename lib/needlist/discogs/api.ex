@@ -4,10 +4,12 @@ defmodule Needlist.Discogs.Api do
   """
 
   alias Nullables.Fallible
+  alias Nullables.Result
   alias Needlist.Discogs.Api.Types.SortOrder
   alias Needlist.Discogs.Api.Types.SortKey
   alias Needlist.Discogs.Model.Want
   alias Needlist.Discogs.Pagination
+  alias Needlist.Repo.Pagination, as: RepoPagination
 
   @spec base_api_url() :: String.t()
   def base_api_url(), do: "https://api.discogs.com"
@@ -47,6 +49,15 @@ defmodule Needlist.Discogs.Api do
     user
     |> get_user_needlist_raw(opts)
     |> Fallible.map(fn body -> Pagination.parse_page(body, "wants", &Want.parse/1) end)
+  end
+
+  @spec get_user_needlist_repo(String.t()) ::
+          Result.result(RepoPagination.t(Want.t()), Ecto.Changeset.t(RepoPagination.t(Want.t())))
+  def get_user_needlist_repo(user, opts \\ []) do
+    user
+    |> get_user_needlist_raw(opts)
+    |> Nullables.fallible_to_result(:request)
+    |> Result.map(&RepoPagination.parse(&1, :wants, Want))
   end
 
   @spec opts_to_params(needlist_options()) :: Keyword.t()

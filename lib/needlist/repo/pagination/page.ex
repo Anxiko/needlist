@@ -28,8 +28,8 @@ defmodule Needlist.Repo.Pagination.Page do
     |> Ecto.Changeset.validate_required(keys)
   end
 
-  @spec parse(Schema.t(), map()) :: {:ok, t()} | {:error, Ecto.Changeset.t()}
-  def parse(schema, params) do
+  @spec parse(map(), Schema.t()) :: {:ok, t()} | {:error, Ecto.Changeset.t()}
+  def parse(params, schema) do
     schema
     |> new()
     |> changeset(params)
