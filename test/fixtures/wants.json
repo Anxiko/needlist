@@ -1,0 +1,2945 @@
+{
+    "pagination": {
+        "page": 1,
+        "pages": 20,
+        "per_page": 50,
+        "items": 997,
+        "urls": {
+            "last": "https://api.discogs.com/users/systemfehler/wants?page=20&per_page=50&sort=label&sort_order=asc",
+            "next": "https://api.discogs.com/users/systemfehler/wants?page=2&per_page=50&sort=label&sort_order=asc"
+        }
+    },
+    "wants": [
+        {
+            "id": 29822,
+            "resource_url": "https://api.discogs.com/users/systemfehler/wants/29822",
+            "date_added": "2013-09-24T05:28:51-07:00",
+            "basic_information": {
+                "id": 29822,
+                "master_id": 7175,
+                "master_url": "https://api.discogs.com/masters/7175",
+                "resource_url": "https://api.discogs.com/releases/29822",
+                "title": "X-Mix (Electro Boogie - The Tracks)",
+                "year": 1996,
+                "formats": [
+                    {
+                        "name": "Vinyl",
+                        "qty": "3",
+                        "descriptions": [
+                            "12\"",
+                            "Compilation"
+                        ]
+                    }
+                ],
+                "artists": [
+                    {
+                        "name": "Dave Clarke",
+                        "anv": "",
+                        "join": "",
+                        "role": "",
+                        "tracks": "",
+                        "id": 1000,
+                        "resource_url": "https://api.discogs.com/artists/1000"
+                    }
+                ],
+                "labels": [
+                    {
+                        "name": "!K7",
+                        "catno": "050LP",
+                        "entity_type": "1",
+                        "entity_type_name": "Label",
+                        "id": 30192,
+                        "resource_url": "https://api.discogs.com/labels/30192"
+                    }
+                ],
+                "thumb": "",
+                "cover_image": "",
+                "genres": [
+                    "Electronic"
+                ],
+                "styles": [
+                    "Electro"
+                ]
+            },
+            "rating": 0
+        },
+        {
+            "id": 80435,
+            "resource_url": "https://api.discogs.com/users/systemfehler/wants/80435",
+            "date_added": "2018-08-25T08:59:54-07:00",
+            "basic_information": {
+                "id": 80435,
+                "master_id": 44131,
+                "master_url": "https://api.discogs.com/masters/44131",
+                "resource_url": "https://api.discogs.com/releases/80435",
+                "title": "X-Mix-2 - The Tracks",
+                "year": 1994,
+                "formats": [
+                    {
+                        "name": "Vinyl",
+                        "qty": "3",
+                        "descriptions": [
+                            "12\"",
+                            "Compilation"
+                        ]
+                    }
+                ],
+                "artists": [
+                    {
+                        "name": "Laurent Garnier",
+                        "anv": "",
+                        "join": "",
+                        "role": "",
+                        "tracks": "",
+                        "id": 750,
+                        "resource_url": "https://api.discogs.com/artists/750"
+                    }
+                ],
+                "labels": [
+                    {
+                        "name": "!K7",
+                        "catno": "!K7027lp",
+                        "entity_type": "1",
+                        "entity_type_name": "Label",
+                        "id": 30192,
+                        "resource_url": "https://api.discogs.com/labels/30192"
+                    },
+                    {
+                        "name": "!K7",
+                        "catno": "k7027lp",
+                        "entity_type": "1",
+                        "entity_type_name": "Label",
+                        "id": 30192,
+                        "resource_url": "https://api.discogs.com/labels/30192"
+                    }
+                ],
+                "thumb": "",
+                "cover_image": "",
+                "genres": [
+                    "Electronic"
+                ],
+                "styles": [
+                    "Techno",
+                    "Deep House",
+                    "Hard Trance",
+                    "Acid"
+                ]
+            },
+            "rating": 0
+        },
+        {
+            "id": 57919,
+            "resource_url": "https://api.discogs.com/users/systemfehler/wants/57919",
+            "date_added": "2013-04-11T14:51:33-07:00",
+            "basic_information": {
+                "id": 57919,
+                "master_id": 45436,
+                "master_url": "https://api.discogs.com/masters/45436",
+                "resource_url": "https://api.discogs.com/releases/57919",
+                "title": "Techno! (The New Dance Sound Of Detroit)",
+                "year": 1988,
+                "formats": [
+                    {
+                        "name": "Vinyl",
+                        "qty": "2",
+                        "descriptions": [
+                            "LP",
+                            "Compilation"
+                        ]
+                    }
+                ],
+                "artists": [
+                    {
+                        "name": "Various",
+                        "anv": "",
+                        "join": "",
+                        "role": "",
+                        "tracks": "",
+                        "id": 194,
+                        "resource_url": "https://api.discogs.com/artists/194"
+                    }
+                ],
+                "labels": [
+                    {
+                        "name": "10 Records",
+                        "catno": "DIXG 75",
+                        "entity_type": "1",
+                        "entity_type_name": "Label",
+                        "id": 902,
+                        "resource_url": "https://api.discogs.com/labels/902"
+                    }
+                ],
+                "thumb": "",
+                "cover_image": "",
+                "genres": [
+                    "Electronic"
+                ],
+                "styles": [
+                    "Techno",
+                    "House"
+                ]
+            },
+            "rating": 0
+        },
+        {
+            "id": 202943,
+            "resource_url": "https://api.discogs.com/users/systemfehler/wants/202943",
+            "date_added": "2013-09-10T09:13:42-07:00",
+            "basic_information": {
+                "id": 202943,
+                "master_id": 0,
+                "master_url": null,
+                "resource_url": "https://api.discogs.com/releases/202943",
+                "title": "Intra Auriculär",
+                "year": 0,
+                "formats": [
+                    {
+                        "name": "Vinyl",
+                        "qty": "1",
+                        "descriptions": [
+                            "LP"
+                        ]
+                    },
+                    {
+                        "name": "Vinyl",
+                        "qty": "1",
+                        "descriptions": [
+                            "7\""
+                        ]
+                    },
+                    {
+                        "name": "Box Set",
+                        "qty": "1",
+                        "descriptions": [
+                            "Limited Edition",
+                            "Numbered"
+                        ]
+                    }
+                ],
+                "artists": [
+                    {
+                        "name": "ZzzNRrr",
+                        "anv": "",
+                        "join": "",
+                        "role": "",
+                        "tracks": "",
+                        "id": 142387,
+                        "resource_url": "https://api.discogs.com/artists/142387"
+                    }
+                ],
+                "labels": [
+                    {
+                        "name": "220N",
+                        "catno": "220N 9 / 220N 10",
+                        "entity_type": "1",
+                        "entity_type_name": "Label",
+                        "id": 3624,
+                        "resource_url": "https://api.discogs.com/labels/3624"
+                    }
+                ],
+                "thumb": "",
+                "cover_image": "",
+                "genres": [
+                    "Electronic"
+                ],
+                "styles": [
+                    "Rhythmic Noise"
+                ]
+            },
+            "rating": 0
+        },
+        {
+            "id": 12314211,
+            "resource_url": "https://api.discogs.com/users/systemfehler/wants/12314211",
+            "date_added": "2018-09-23T04:29:05-07:00",
+            "basic_information": {
+                "id": 12314211,
+                "master_id": 1399229,
+                "master_url": "https://api.discogs.com/masters/1399229",
+                "resource_url": "https://api.discogs.com/releases/12314211",
+                "title": "Aft Pressure",
+                "year": 2018,
+                "formats": [
+                    {
+                        "name": "Vinyl",
+                        "qty": "2",
+                        "descriptions": [
+                            "LP",
+                            "Album"
+                        ]
+                    }
+                ],
+                "artists": [
+                    {
+                        "name": "Bulkhead (3)",
+                        "anv": "",
+                        "join": "",
+                        "role": "",
+                        "tracks": "",
+                        "id": 2089504,
+                        "resource_url": "https://api.discogs.com/artists/2089504"
+                    }
+                ],
+                "labels": [
+                    {
+                        "name": "2MR",
+                        "catno": "2MR-034",
+                        "entity_type": "1",
+                        "entity_type_name": "Label",
+                        "id": 835796,
+                        "resource_url": "https://api.discogs.com/labels/835796"
+                    }
+                ],
+                "thumb": "",
+                "cover_image": "",
+                "genres": [
+                    "Electronic"
+                ],
+                "styles": [
+                    "Techno",
+                    "Ambient",
+                    "Dark Ambient",
+                    "Experimental"
+                ]
+            },
+            "rating": 0
+        },
+        {
+            "id": 445993,
+            "resource_url": "https://api.discogs.com/users/systemfehler/wants/445993",
+            "date_added": "2012-08-28T17:02:18-07:00",
+            "basic_information": {
+                "id": 445993,
+                "master_id": 1352308,
+                "master_url": "https://api.discogs.com/masters/1352308",
+                "resource_url": "https://api.discogs.com/releases/445993",
+                "title": "BS 1",
+                "year": 1996,
+                "formats": [
+                    {
+                        "name": "Vinyl",
+                        "qty": "1",
+                        "descriptions": [
+                            "12\""
+                        ]
+                    }
+                ],
+                "artists": [
+                    {
+                        "name": "BS 1",
+                        "anv": "",
+                        "join": "",
+                        "role": "",
+                        "tracks": "",
+                        "id": 66016,
+                        "resource_url": "https://api.discogs.com/artists/66016"
+                    }
+                ],
+                "labels": [
+                    {
+                        "name": "3Nity",
+                        "catno": "TRIN 002",
+                        "entity_type": "1",
+                        "entity_type_name": "Label",
+                        "id": 41281,
+                        "resource_url": "https://api.discogs.com/labels/41281"
+                    }
+                ],
+                "thumb": "",
+                "cover_image": "",
+                "genres": [
+                    "Electronic"
+                ],
+                "styles": [
+                    "Techno"
+                ]
+            },
+            "rating": 0
+        },
+        {
+            "id": 345410,
+            "resource_url": "https://api.discogs.com/users/systemfehler/wants/345410",
+            "date_added": "2013-03-04T15:25:57-08:00",
+            "basic_information": {
+                "id": 345410,
+                "master_id": 1640777,
+                "master_url": "https://api.discogs.com/masters/1640777",
+                "resource_url": "https://api.discogs.com/releases/345410",
+                "title": "Sabotage",
+                "year": 1985,
+                "formats": [
+                    {
+                        "name": "Vinyl",
+                        "qty": "1",
+                        "descriptions": [
+                            "LP"
+                        ]
+                    }
+                ],
+                "artists": [
+                    {
+                        "name": "Klinik",
+                        "anv": "The Klinik",
+                        "join": "",
+                        "role": "",
+                        "tracks": "",
+                        "id": 21249,
+                        "resource_url": "https://api.discogs.com/artists/21249"
+                    }
+                ],
+                "labels": [
+                    {
+                        "name": "3Rio Records",
+                        "catno": "001",
+                        "entity_type": "1",
+                        "entity_type_name": "Label",
+                        "id": 30972,
+                        "resource_url": "https://api.discogs.com/labels/30972"
+                    }
+                ],
+                "thumb": "",
+                "cover_image": "",
+                "genres": [
+                    "Electronic"
+                ],
+                "styles": [
+                    "Electro",
+                    "Industrial"
+                ]
+            },
+            "rating": 0
+        },
+        {
+            "id": 379701,
+            "resource_url": "https://api.discogs.com/users/systemfehler/wants/379701",
+            "date_added": "2015-04-02T14:48:09-07:00",
+            "basic_information": {
+                "id": 379701,
+                "master_id": 2439,
+                "master_url": "https://api.discogs.com/masters/2439",
+                "resource_url": "https://api.discogs.com/releases/379701",
+                "title": "In The Flat Field",
+                "year": 1980,
+                "formats": [
+                    {
+                        "name": "Vinyl",
+                        "qty": "1",
+                        "descriptions": [
+                            "LP",
+                            "Album",
+                            "Stereo"
+                        ],
+                        "text": "Ʊtopia"
+                    }
+                ],
+                "artists": [
+                    {
+                        "name": "Bauhaus",
+                        "anv": "",
+                        "join": "",
+                        "role": "",
+                        "tracks": "",
+                        "id": 85897,
+                        "resource_url": "https://api.discogs.com/artists/85897"
+                    }
+                ],
+                "labels": [
+                    {
+                        "name": "4AD",
+                        "catno": "CAD 13",
+                        "entity_type": "1",
+                        "entity_type_name": "Label",
+                        "id": 634,
+                        "resource_url": "https://api.discogs.com/labels/634"
+                    }
+                ],
+                "thumb": "",
+                "cover_image": "",
+                "genres": [
+                    "Rock"
+                ],
+                "styles": [
+                    "New Wave",
+                    "Goth Rock",
+                    "Post-Punk"
+                ]
+            },
+            "rating": 0
+        },
+        {
+            "id": 429694,
+            "resource_url": "https://api.discogs.com/users/systemfehler/wants/429694",
+            "date_added": "2013-06-27T09:22:30-07:00",
+            "basic_information": {
+                "id": 429694,
+                "master_id": 0,
+                "master_url": null,
+                "resource_url": "https://api.discogs.com/releases/429694",
+                "title": "For Various Reasons",
+                "year": 2005,
+                "formats": [
+                    {
+                        "name": "Vinyl",
+                        "qty": "2",
+                        "descriptions": [
+                            "12\"",
+                            "33 ⅓ RPM"
+                        ]
+                    }
+                ],
+                "artists": [
+                    {
+                        "name": "Elektrabel",
+                        "anv": "",
+                        "join": "",
+                        "role": "",
+                        "tracks": "",
+                        "id": 104815,
+                        "resource_url": "https://api.discogs.com/artists/104815"
+                    }
+                ],
+                "labels": [
+                    {
+                        "name": "6277",
+                        "catno": "MISSION 04",
+                        "entity_type": "1",
+                        "entity_type_name": "Label",
+                        "id": 15681,
+                        "resource_url": "https://api.discogs.com/labels/15681"
+                    }
+                ],
+                "thumb": "",
+                "cover_image": "",
+                "genres": [
+                    "Electronic"
+                ],
+                "styles": [
+                    "Techno"
+                ]
+            },
+            "rating": 0
+        },
+        {
+            "id": 3200964,
+            "resource_url": "https://api.discogs.com/users/systemfehler/wants/3200964",
+            "date_added": "2015-05-01T16:56:39-07:00",
+            "basic_information": {
+                "id": 3200964,
+                "master_id": 0,
+                "master_url": null,
+                "resource_url": "https://api.discogs.com/releases/3200964",
+                "title": "Downtown Dirt 1",
+                "year": 2011,
+                "formats": [
+                    {
+                        "name": "Vinyl",
+                        "qty": "1",
+                        "descriptions": [
+                            "12\"",
+                            "33 ⅓ RPM",
+                            "Limited Edition",
+                            "Numbered"
+                        ]
+                    }
+                ],
+                "artists": [
+                    {
+                        "name": "Various",
+                        "anv": "",
+                        "join": "",
+                        "role": "",
+                        "tracks": "",
+                        "id": 194,
+                        "resource_url": "https://api.discogs.com/artists/194"
+                    }
+                ],
+                "labels": [
+                    {
+                        "name": "Abstract Acid",
+                        "catno": "AACID003",
+                        "entity_type": "1",
+                        "entity_type_name": "Label",
+                        "id": 224657,
+                        "resource_url": "https://api.discogs.com/labels/224657"
+                    }
+                ],
+                "thumb": "",
+                "cover_image": "",
+                "genres": [
+                    "Electronic"
+                ],
+                "styles": [
+                    "Acid House"
+                ]
+            },
+            "rating": 0
+        },
+        {
+            "id": 4080082,
+            "resource_url": "https://api.discogs.com/users/systemfehler/wants/4080082",
+            "date_added": "2015-05-01T16:58:09-07:00",
+            "basic_information": {
+                "id": 4080082,
+                "master_id": 0,
+                "master_url": null,
+                "resource_url": "https://api.discogs.com/releases/4080082",
+                "title": "Downtown Dirt 2",
+                "year": 2012,
+                "formats": [
+                    {
+                        "name": "Vinyl",
+                        "qty": "1",
+                        "descriptions": [
+                            "12\"",
+                            "33 ⅓ RPM",
+                            "Limited Edition",
+                            "Numbered"
+                        ]
+                    }
+                ],
+                "artists": [
+                    {
+                        "name": "Various",
+                        "anv": "",
+                        "join": "",
+                        "role": "",
+                        "tracks": "",
+                        "id": 194,
+                        "resource_url": "https://api.discogs.com/artists/194"
+                    }
+                ],
+                "labels": [
+                    {
+                        "name": "Abstract Acid",
+                        "catno": "AACID004",
+                        "entity_type": "1",
+                        "entity_type_name": "Label",
+                        "id": 224657,
+                        "resource_url": "https://api.discogs.com/labels/224657"
+                    }
+                ],
+                "thumb": "",
+                "cover_image": "",
+                "genres": [
+                    "Electronic"
+                ],
+                "styles": [
+                    "Acid",
+                    "Acid House",
+                    "Techno"
+                ]
+            },
+            "rating": 0
+        },
+        {
+            "id": 3902786,
+            "resource_url": "https://api.discogs.com/users/systemfehler/wants/3902786",
+            "date_added": "2018-08-04T09:40:42-07:00",
+            "basic_information": {
+                "id": 3902786,
+                "master_id": 0,
+                "master_url": null,
+                "resource_url": "https://api.discogs.com/releases/3902786",
+                "title": "Combined EP V3.0",
+                "year": 2012,
+                "formats": [
+                    {
+                        "name": "Vinyl",
+                        "qty": "1",
+                        "descriptions": [
+                            "12\"",
+                            "EP",
+                            "33 ⅓ RPM",
+                            "Limited Edition"
+                        ]
+                    }
+                ],
+                "artists": [
+                    {
+                        "name": "The Exaltics",
+                        "anv": "",
+                        "join": "/",
+                        "role": "",
+                        "tracks": "",
+                        "id": 1029388,
+                        "resource_url": "https://api.discogs.com/artists/1029388"
+                    },
+                    {
+                        "name": "Koova",
+                        "anv": "",
+                        "join": "",
+                        "role": "",
+                        "tracks": "",
+                        "id": 1606194,
+                        "resource_url": "https://api.discogs.com/artists/1606194"
+                    }
+                ],
+                "labels": [
+                    {
+                        "name": "Abstract Forms",
+                        "catno": "AFS_0.12",
+                        "entity_type": "1",
+                        "entity_type_name": "Label",
+                        "id": 101965,
+                        "resource_url": "https://api.discogs.com/labels/101965"
+                    }
+                ],
+                "thumb": "",
+                "cover_image": "",
+                "genres": [
+                    "Electronic"
+                ],
+                "styles": [
+                    "Electro",
+                    "Acid",
+                    "Experimental"
+                ]
+            },
+            "rating": 0
+        },
+        {
+            "id": 3746843,
+            "resource_url": "https://api.discogs.com/users/systemfehler/wants/3746843",
+            "date_added": "2023-11-27T04:27:33-08:00",
+            "basic_information": {
+                "id": 3746843,
+                "master_id": 0,
+                "master_url": null,
+                "resource_url": "https://api.discogs.com/releases/3746843",
+                "title": "Heisenstrasse - Es Bleibt Ungerecht Aber Nicht Ungerächt ....",
+                "year": 1996,
+                "formats": [
+                    {
+                        "name": "Vinyl",
+                        "qty": "1",
+                        "descriptions": [
+                            "LP",
+                            "Compilation"
+                        ]
+                    }
+                ],
+                "artists": [
+                    {
+                        "name": "Various",
+                        "anv": "",
+                        "join": "",
+                        "role": "",
+                        "tracks": "",
+                        "id": 194,
+                        "resource_url": "https://api.discogs.com/artists/194"
+                    }
+                ],
+                "labels": [
+                    {
+                        "name": "AC-Records",
+                        "catno": "AC 005",
+                        "entity_type": "1",
+                        "entity_type_name": "Label",
+                        "id": 89813,
+                        "resource_url": "https://api.discogs.com/labels/89813"
+                    }
+                ],
+                "thumb": "",
+                "cover_image": "",
+                "genres": [
+                    "Rock"
+                ],
+                "styles": [
+                    "Punk"
+                ]
+            },
+            "rating": 0
+        },
+        {
+            "id": 2338122,
+            "resource_url": "https://api.discogs.com/users/systemfehler/wants/2338122",
+            "date_added": "2013-12-17T09:02:34-08:00",
+            "basic_information": {
+                "id": 2338122,
+                "master_id": 93684,
+                "master_url": "https://api.discogs.com/masters/93684",
+                "resource_url": "https://api.discogs.com/releases/2338122",
+                "title": "Vicious Love",
+                "year": 1990,
+                "formats": [
+                    {
+                        "name": "Vinyl",
+                        "qty": "1",
+                        "descriptions": [
+                            "12\"",
+                            "33 ⅓ RPM"
+                        ],
+                        "text": "Red Label"
+                    }
+                ],
+                "artists": [
+                    {
+                        "name": "Lon Alonzo",
+                        "anv": "Lon Angelo",
+                        "join": "",
+                        "role": "",
+                        "tracks": "",
+                        "id": 222591,
+                        "resource_url": "https://api.discogs.com/artists/222591"
+                    }
+                ],
+                "labels": [
+                    {
+                        "name": "Ace Records (36)",
+                        "catno": "ACE-002",
+                        "entity_type": "1",
+                        "entity_type_name": "Label",
+                        "id": 1779983,
+                        "resource_url": "https://api.discogs.com/labels/1779983"
+                    }
+                ],
+                "thumb": "",
+                "cover_image": "",
+                "genres": [
+                    "Electronic",
+                    "Hip Hop"
+                ],
+                "styles": [
+                    "Bass Music",
+                    "Electro",
+                    "Deep House",
+                    "Garage House"
+                ]
+            },
+            "rating": 0
+        },
+        {
+            "id": 74970,
+            "resource_url": "https://api.discogs.com/users/systemfehler/wants/74970",
+            "date_added": "2013-12-17T09:02:41-08:00",
+            "basic_information": {
+                "id": 74970,
+                "master_id": 93684,
+                "master_url": "https://api.discogs.com/masters/93684",
+                "resource_url": "https://api.discogs.com/releases/74970",
+                "title": "Vicious Love",
+                "year": 1990,
+                "formats": [
+                    {
+                        "name": "Vinyl",
+                        "qty": "1",
+                        "descriptions": [
+                            "12\"",
+                            "33 ⅓ RPM"
+                        ]
+                    }
+                ],
+                "artists": [
+                    {
+                        "name": "Lon Alonzo",
+                        "anv": "Lon Angelo",
+                        "join": "",
+                        "role": "",
+                        "tracks": "",
+                        "id": 222591,
+                        "resource_url": "https://api.discogs.com/artists/222591"
+                    }
+                ],
+                "labels": [
+                    {
+                        "name": "Ace Records (36)",
+                        "catno": "ACE-002",
+                        "entity_type": "1",
+                        "entity_type_name": "Label",
+                        "id": 1779983,
+                        "resource_url": "https://api.discogs.com/labels/1779983"
+                    }
+                ],
+                "thumb": "",
+                "cover_image": "",
+                "genres": [
+                    "Electronic",
+                    "Hip Hop"
+                ],
+                "styles": [
+                    "Bass Music",
+                    "Electro",
+                    "Deep House",
+                    "Garage House"
+                ]
+            },
+            "rating": 0
+        },
+        {
+            "id": 2884960,
+            "resource_url": "https://api.discogs.com/users/systemfehler/wants/2884960",
+            "date_added": "2013-10-21T09:02:18-07:00",
+            "basic_information": {
+                "id": 2884960,
+                "master_id": 733155,
+                "master_url": "https://api.discogs.com/masters/733155",
+                "resource_url": "https://api.discogs.com/releases/2884960",
+                "title": "The Achromorphe",
+                "year": 2011,
+                "formats": [
+                    {
+                        "name": "Vinyl",
+                        "qty": "1",
+                        "descriptions": [
+                            "12\""
+                        ],
+                        "text": "Limited Edition"
+                    }
+                ],
+                "artists": [
+                    {
+                        "name": "Various",
+                        "anv": "",
+                        "join": "",
+                        "role": "",
+                        "tracks": "",
+                        "id": 194,
+                        "resource_url": "https://api.discogs.com/artists/194"
+                    }
+                ],
+                "labels": [
+                    {
+                        "name": "Aconito Records",
+                        "catno": "AC006LTD",
+                        "entity_type": "1",
+                        "entity_type_name": "Label",
+                        "id": 133502,
+                        "resource_url": "https://api.discogs.com/labels/133502"
+                    }
+                ],
+                "thumb": "",
+                "cover_image": "",
+                "genres": [
+                    "Electronic"
+                ],
+                "styles": [
+                    "Techno",
+                    "Minimal",
+                    "Experimental",
+                    "Ambient"
+                ]
+            },
+            "rating": 0
+        },
+        {
+            "id": 15626923,
+            "resource_url": "https://api.discogs.com/users/systemfehler/wants/15626923",
+            "date_added": "2020-10-24T05:09:09-07:00",
+            "basic_information": {
+                "id": 15626923,
+                "master_id": 0,
+                "master_url": null,
+                "resource_url": "https://api.discogs.com/releases/15626923",
+                "title": "Ligeia",
+                "year": 2020,
+                "formats": [
+                    {
+                        "name": "Vinyl",
+                        "qty": "1",
+                        "descriptions": [
+                            "12\"",
+                            "EP",
+                            "Limited Edition"
+                        ]
+                    }
+                ],
+                "artists": [
+                    {
+                        "name": "Kareem",
+                        "anv": "",
+                        "join": "",
+                        "role": "",
+                        "tracks": "",
+                        "id": 26687,
+                        "resource_url": "https://api.discogs.com/artists/26687"
+                    }
+                ],
+                "labels": [
+                    {
+                        "name": "Aesthetical",
+                        "catno": "AES002",
+                        "entity_type": "1",
+                        "entity_type_name": "Label",
+                        "id": 1644035,
+                        "resource_url": "https://api.discogs.com/labels/1644035"
+                    }
+                ],
+                "thumb": "",
+                "cover_image": "",
+                "genres": [
+                    "Electronic"
+                ],
+                "styles": [
+                    "Techno",
+                    "Industrial",
+                    "Experimental"
+                ]
+            },
+            "rating": 0
+        },
+        {
+            "id": 1076506,
+            "resource_url": "https://api.discogs.com/users/systemfehler/wants/1076506",
+            "date_added": "2021-07-20T13:18:44-07:00",
+            "basic_information": {
+                "id": 1076506,
+                "master_id": 31478,
+                "master_url": "https://api.discogs.com/masters/31478",
+                "resource_url": "https://api.discogs.com/releases/1076506",
+                "title": "The Final Resistance",
+                "year": 2005,
+                "formats": [
+                    {
+                        "name": "Vinyl",
+                        "qty": "1",
+                        "descriptions": [
+                            "LP",
+                            "Mini-Album",
+                            "Limited Edition",
+                            "Numbered"
+                        ],
+                        "text": "Clear"
+                    }
+                ],
+                "artists": [
+                    {
+                        "name": "Stahlwerk 9",
+                        "anv": "",
+                        "join": "/",
+                        "role": "",
+                        "tracks": "",
+                        "id": 163253,
+                        "resource_url": "https://api.discogs.com/artists/163253"
+                    },
+                    {
+                        "name": "Rasthof Dachau",
+                        "anv": "",
+                        "join": "",
+                        "role": "",
+                        "tracks": "",
+                        "id": 167723,
+                        "resource_url": "https://api.discogs.com/artists/167723"
+                    }
+                ],
+                "labels": [
+                    {
+                        "name": "AgitProp",
+                        "catno": "AP005",
+                        "entity_type": "1",
+                        "entity_type_name": "Label",
+                        "id": 26660,
+                        "resource_url": "https://api.discogs.com/labels/26660"
+                    }
+                ],
+                "thumb": "",
+                "cover_image": "",
+                "genres": [
+                    "Electronic"
+                ],
+                "styles": [
+                    "Industrial",
+                    "Power Electronics"
+                ]
+            },
+            "rating": 0
+        },
+        {
+            "id": 534239,
+            "resource_url": "https://api.discogs.com/users/systemfehler/wants/534239",
+            "date_added": "2021-07-20T13:18:31-07:00",
+            "basic_information": {
+                "id": 534239,
+                "master_id": 31478,
+                "master_url": "https://api.discogs.com/masters/31478",
+                "resource_url": "https://api.discogs.com/releases/534239",
+                "title": "The Final Resistance",
+                "year": 2005,
+                "formats": [
+                    {
+                        "name": "Vinyl",
+                        "qty": "1",
+                        "descriptions": [
+                            "LP",
+                            "Mini-Album",
+                            "Limited Edition",
+                            "Numbered"
+                        ]
+                    }
+                ],
+                "artists": [
+                    {
+                        "name": "Stahlwerk 9",
+                        "anv": "",
+                        "join": "/",
+                        "role": "",
+                        "tracks": "",
+                        "id": 163253,
+                        "resource_url": "https://api.discogs.com/artists/163253"
+                    },
+                    {
+                        "name": "Rasthof Dachau",
+                        "anv": "",
+                        "join": "",
+                        "role": "",
+                        "tracks": "",
+                        "id": 167723,
+                        "resource_url": "https://api.discogs.com/artists/167723"
+                    }
+                ],
+                "labels": [
+                    {
+                        "name": "AgitProp",
+                        "catno": "AP005",
+                        "entity_type": "1",
+                        "entity_type_name": "Label",
+                        "id": 26660,
+                        "resource_url": "https://api.discogs.com/labels/26660"
+                    }
+                ],
+                "thumb": "",
+                "cover_image": "",
+                "genres": [
+                    "Electronic"
+                ],
+                "styles": [
+                    "Industrial",
+                    "Power Electronics"
+                ]
+            },
+            "rating": 0
+        },
+        {
+            "id": 105615,
+            "resource_url": "https://api.discogs.com/users/systemfehler/wants/105615",
+            "date_added": "2021-05-30T14:14:39-07:00",
+            "basic_information": {
+                "id": 105615,
+                "master_id": 0,
+                "master_url": null,
+                "resource_url": "https://api.discogs.com/releases/105615",
+                "title": "∞ - 0",
+                "year": 1995,
+                "formats": [
+                    {
+                        "name": "Vinyl",
+                        "qty": "1",
+                        "descriptions": [
+                            "12\""
+                        ]
+                    }
+                ],
+                "artists": [
+                    {
+                        "name": "Airlock (2)",
+                        "anv": "",
+                        "join": "",
+                        "role": "",
+                        "tracks": "",
+                        "id": 163003,
+                        "resource_url": "https://api.discogs.com/artists/163003"
+                    }
+                ],
+                "labels": [
+                    {
+                        "name": "Airlock",
+                        "catno": "DRIVE-IN 01",
+                        "entity_type": "1",
+                        "entity_type_name": "Label",
+                        "id": 4989,
+                        "resource_url": "https://api.discogs.com/labels/4989"
+                    }
+                ],
+                "thumb": "",
+                "cover_image": "",
+                "genres": [
+                    "Electronic"
+                ],
+                "styles": [
+                    "Illbient",
+                    "Abstract",
+                    "Ambient"
+                ]
+            },
+            "rating": 0
+        },
+        {
+            "id": 101978,
+            "resource_url": "https://api.discogs.com/users/systemfehler/wants/101978",
+            "date_added": "2021-05-30T14:14:45-07:00",
+            "basic_information": {
+                "id": 101978,
+                "master_id": 0,
+                "master_url": null,
+                "resource_url": "https://api.discogs.com/releases/101978",
+                "title": "The Pounding",
+                "year": 1995,
+                "formats": [
+                    {
+                        "name": "Vinyl",
+                        "qty": "1",
+                        "descriptions": [
+                            "12\"",
+                            "33 ⅓ RPM",
+                            "Limited Edition"
+                        ]
+                    }
+                ],
+                "artists": [
+                    {
+                        "name": "Airlock (2)",
+                        "anv": "",
+                        "join": "",
+                        "role": "",
+                        "tracks": "",
+                        "id": 163003,
+                        "resource_url": "https://api.discogs.com/artists/163003"
+                    }
+                ],
+                "labels": [
+                    {
+                        "name": "Airlock",
+                        "catno": "DRIVE-IN 02",
+                        "entity_type": "1",
+                        "entity_type_name": "Label",
+                        "id": 4989,
+                        "resource_url": "https://api.discogs.com/labels/4989"
+                    }
+                ],
+                "thumb": "",
+                "cover_image": "",
+                "genres": [
+                    "Electronic"
+                ],
+                "styles": [
+                    "Illbient",
+                    "Abstract",
+                    "Experimental"
+                ]
+            },
+            "rating": 0
+        },
+        {
+            "id": 2588674,
+            "resource_url": "https://api.discogs.com/users/systemfehler/wants/2588674",
+            "date_added": "2021-05-30T14:15:27-07:00",
+            "basic_information": {
+                "id": 2588674,
+                "master_id": 0,
+                "master_url": null,
+                "resource_url": "https://api.discogs.com/releases/2588674",
+                "title": "Asbestos Canteen",
+                "year": 1996,
+                "formats": [
+                    {
+                        "name": "Vinyl",
+                        "qty": "1",
+                        "descriptions": [
+                            "12\"",
+                            "33 ⅓ RPM",
+                            "White Label"
+                        ]
+                    }
+                ],
+                "artists": [
+                    {
+                        "name": "∞ - 0",
+                        "anv": "",
+                        "join": "",
+                        "role": "",
+                        "tracks": "",
+                        "id": 2043666,
+                        "resource_url": "https://api.discogs.com/artists/2043666"
+                    }
+                ],
+                "labels": [
+                    {
+                        "name": "Airlock",
+                        "catno": "DRIVE-IN 08",
+                        "entity_type": "1",
+                        "entity_type_name": "Label",
+                        "id": 4989,
+                        "resource_url": "https://api.discogs.com/labels/4989"
+                    }
+                ],
+                "thumb": "",
+                "cover_image": "",
+                "genres": [
+                    "Electronic"
+                ],
+                "styles": [
+                    "Illbient",
+                    "Abstract",
+                    "Industrial",
+                    "Ambient"
+                ]
+            },
+            "rating": 0
+        },
+        {
+            "id": 2562024,
+            "resource_url": "https://api.discogs.com/users/systemfehler/wants/2562024",
+            "date_added": "2013-07-08T18:01:44-07:00",
+            "basic_information": {
+                "id": 2562024,
+                "master_id": 460321,
+                "master_url": "https://api.discogs.com/masters/460321",
+                "resource_url": "https://api.discogs.com/releases/2562024",
+                "title": "Live On Your Yard",
+                "year": 2010,
+                "formats": [
+                    {
+                        "name": "Vinyl",
+                        "qty": "1",
+                        "descriptions": [
+                            "12\""
+                        ]
+                    }
+                ],
+                "artists": [
+                    {
+                        "name": "Design A Wave",
+                        "anv": "",
+                        "join": "",
+                        "role": "",
+                        "tracks": "",
+                        "id": 1348977,
+                        "resource_url": "https://api.discogs.com/artists/1348977"
+                    }
+                ],
+                "labels": [
+                    {
+                        "name": "Alter",
+                        "catno": "ALT03",
+                        "entity_type": "1",
+                        "entity_type_name": "Label",
+                        "id": 145634,
+                        "resource_url": "https://api.discogs.com/labels/145634"
+                    }
+                ],
+                "thumb": "",
+                "cover_image": "",
+                "genres": [
+                    "Electronic"
+                ],
+                "styles": [
+                    "Synth-pop"
+                ]
+            },
+            "rating": 0
+        },
+        {
+            "id": 1640925,
+            "resource_url": "https://api.discogs.com/users/systemfehler/wants/1640925",
+            "date_added": "2020-10-13T13:02:39-07:00",
+            "basic_information": {
+                "id": 1640925,
+                "master_id": 109624,
+                "master_url": "https://api.discogs.com/masters/109624",
+                "resource_url": "https://api.discogs.com/releases/1640925",
+                "title": "The Shit Split",
+                "year": 2008,
+                "formats": [
+                    {
+                        "name": "Vinyl",
+                        "qty": "1",
+                        "descriptions": [
+                            "LP",
+                            "Album",
+                            "Reissue"
+                        ]
+                    }
+                ],
+                "artists": [
+                    {
+                        "name": "Blatz",
+                        "anv": "",
+                        "join": "/",
+                        "role": "",
+                        "tracks": "",
+                        "id": 783287,
+                        "resource_url": "https://api.discogs.com/artists/783287"
+                    },
+                    {
+                        "name": "Filth (2)",
+                        "anv": "",
+                        "join": "",
+                        "role": "",
+                        "tracks": "",
+                        "id": 168853,
+                        "resource_url": "https://api.discogs.com/artists/168853"
+                    }
+                ],
+                "labels": [
+                    {
+                        "name": "Alternative Tentacles",
+                        "catno": "Virus 385",
+                        "entity_type": "1",
+                        "entity_type_name": "Label",
+                        "id": 10389,
+                        "resource_url": "https://api.discogs.com/labels/10389"
+                    }
+                ],
+                "thumb": "",
+                "cover_image": "",
+                "genres": [
+                    "Rock"
+                ],
+                "styles": [
+                    "Punk"
+                ]
+            },
+            "rating": 0
+        },
+        {
+            "id": 212200,
+            "resource_url": "https://api.discogs.com/users/systemfehler/wants/212200",
+            "date_added": "2017-10-01T13:23:48-07:00",
+            "basic_information": {
+                "id": 212200,
+                "master_id": 16385,
+                "master_url": "https://api.discogs.com/masters/16385",
+                "resource_url": "https://api.discogs.com/releases/212200",
+                "title": "Geography",
+                "year": 1987,
+                "formats": [
+                    {
+                        "name": "Vinyl",
+                        "qty": "1",
+                        "descriptions": [
+                            "LP",
+                            "Album",
+                            "Reissue"
+                        ]
+                    }
+                ],
+                "artists": [
+                    {
+                        "name": "Front 242",
+                        "anv": "",
+                        "join": "",
+                        "role": "",
+                        "tracks": "",
+                        "id": 4655,
+                        "resource_url": "https://api.discogs.com/artists/4655"
+                    }
+                ],
+                "labels": [
+                    {
+                        "name": "Animalized",
+                        "catno": "A 0012",
+                        "entity_type": "1",
+                        "entity_type_name": "Label",
+                        "id": 6850,
+                        "resource_url": "https://api.discogs.com/labels/6850"
+                    },
+                    {
+                        "name": "Animalized",
+                        "catno": "SPV 08-1369",
+                        "entity_type": "1",
+                        "entity_type_name": "Label",
+                        "id": 6850,
+                        "resource_url": "https://api.discogs.com/labels/6850"
+                    }
+                ],
+                "thumb": "",
+                "cover_image": "",
+                "genres": [
+                    "Electronic"
+                ],
+                "styles": [
+                    "EBM"
+                ]
+            },
+            "rating": 0
+        },
+        {
+            "id": 208410,
+            "resource_url": "https://api.discogs.com/users/systemfehler/wants/208410",
+            "date_added": "2018-11-29T08:57:17-08:00",
+            "basic_information": {
+                "id": 208410,
+                "master_id": 16375,
+                "master_url": "https://api.discogs.com/masters/16375",
+                "resource_url": "https://api.discogs.com/releases/208410",
+                "title": "No Comment",
+                "year": 1985,
+                "formats": [
+                    {
+                        "name": "Vinyl",
+                        "qty": "1",
+                        "descriptions": [
+                            "LP",
+                            "Album"
+                        ]
+                    }
+                ],
+                "artists": [
+                    {
+                        "name": "Front 242",
+                        "anv": "",
+                        "join": "",
+                        "role": "",
+                        "tracks": "",
+                        "id": 4655,
+                        "resource_url": "https://api.discogs.com/artists/4655"
+                    }
+                ],
+                "labels": [
+                    {
+                        "name": "Animalized",
+                        "catno": "A 001",
+                        "entity_type": "1",
+                        "entity_type_name": "Label",
+                        "id": 6850,
+                        "resource_url": "https://api.discogs.com/labels/6850"
+                    },
+                    {
+                        "name": "Animalized",
+                        "catno": "spv 08-1361",
+                        "entity_type": "1",
+                        "entity_type_name": "Label",
+                        "id": 6850,
+                        "resource_url": "https://api.discogs.com/labels/6850"
+                    },
+                    {
+                        "name": "Animalized",
+                        "catno": "spv ☉ 08-1361",
+                        "entity_type": "1",
+                        "entity_type_name": "Label",
+                        "id": 6850,
+                        "resource_url": "https://api.discogs.com/labels/6850"
+                    }
+                ],
+                "thumb": "",
+                "cover_image": "",
+                "genres": [
+                    "Electronic"
+                ],
+                "styles": [
+                    "EBM"
+                ]
+            },
+            "rating": 0
+        },
+        {
+            "id": 105625,
+            "resource_url": "https://api.discogs.com/users/systemfehler/wants/105625",
+            "date_added": "2014-01-30T03:02:20-08:00",
+            "basic_information": {
+                "id": 105625,
+                "master_id": 224765,
+                "master_url": "https://api.discogs.com/masters/224765",
+                "resource_url": "https://api.discogs.com/releases/105625",
+                "title": "Los Amigos En Electro",
+                "year": 1997,
+                "formats": [
+                    {
+                        "name": "Vinyl",
+                        "qty": "2",
+                        "descriptions": [
+                            "LP"
+                        ]
+                    }
+                ],
+                "artists": [
+                    {
+                        "name": "Freddy Fresh",
+                        "anv": "",
+                        "join": "/",
+                        "role": "",
+                        "tracks": "",
+                        "id": 7213,
+                        "resource_url": "https://api.discogs.com/artists/7213"
+                    },
+                    {
+                        "name": "Biochip C.",
+                        "anv": "",
+                        "join": "",
+                        "role": "",
+                        "tracks": "",
+                        "id": 1284,
+                        "resource_url": "https://api.discogs.com/artists/1284"
+                    }
+                ],
+                "labels": [
+                    {
+                        "name": "Anodyne (2)",
+                        "catno": "ano 12",
+                        "entity_type": "1",
+                        "entity_type_name": "Label",
+                        "id": 11974,
+                        "resource_url": "https://api.discogs.com/labels/11974"
+                    }
+                ],
+                "thumb": "",
+                "cover_image": "",
+                "genres": [
+                    "Electronic"
+                ],
+                "styles": [
+                    "Breakbeat",
+                    "Hardcore",
+                    "Electro",
+                    "Acid"
+                ]
+            },
+            "rating": 0
+        },
+        {
+            "id": 313718,
+            "resource_url": "https://api.discogs.com/users/systemfehler/wants/313718",
+            "date_added": "2011-05-30T06:35:03-07:00",
+            "basic_information": {
+                "id": 313718,
+                "master_id": 16375,
+                "master_url": "https://api.discogs.com/masters/16375",
+                "resource_url": "https://api.discogs.com/releases/313718",
+                "title": "No Comment",
+                "year": 1984,
+                "formats": [
+                    {
+                        "name": "Vinyl",
+                        "qty": "2",
+                        "descriptions": [
+                            "12\"",
+                            "45 RPM",
+                            "Album"
+                        ],
+                        "text": "Gatefold"
+                    }
+                ],
+                "artists": [
+                    {
+                        "name": "Front 242",
+                        "anv": "",
+                        "join": "",
+                        "role": "",
+                        "tracks": "",
+                        "id": 4655,
+                        "resource_url": "https://api.discogs.com/artists/4655"
+                    }
+                ],
+                "labels": [
+                    {
+                        "name": "Another Side",
+                        "catno": "SIDE 8419",
+                        "entity_type": "1",
+                        "entity_type_name": "Label",
+                        "id": 11143,
+                        "resource_url": "https://api.discogs.com/labels/11143"
+                    }
+                ],
+                "thumb": "",
+                "cover_image": "",
+                "genres": [
+                    "Electronic"
+                ],
+                "styles": [
+                    "EBM",
+                    "Industrial"
+                ]
+            },
+            "rating": 0
+        },
+        {
+            "id": 122755,
+            "resource_url": "https://api.discogs.com/users/systemfehler/wants/122755",
+            "date_added": "2021-01-15T11:10:41-08:00",
+            "basic_information": {
+                "id": 122755,
+                "master_id": 35453,
+                "master_url": "https://api.discogs.com/masters/35453",
+                "resource_url": "https://api.discogs.com/releases/122755",
+                "title": "Distorted DJ",
+                "year": 2003,
+                "formats": [
+                    {
+                        "name": "Vinyl",
+                        "qty": "2",
+                        "descriptions": [
+                            "LP"
+                        ]
+                    }
+                ],
+                "artists": [
+                    {
+                        "name": "Asche",
+                        "anv": "",
+                        "join": "",
+                        "role": "",
+                        "tracks": "",
+                        "id": 6811,
+                        "resource_url": "https://api.discogs.com/artists/6811"
+                    }
+                ],
+                "labels": [
+                    {
+                        "name": "Ant-Zen",
+                        "catno": "act 145.4",
+                        "entity_type": "1",
+                        "entity_type_name": "Label",
+                        "id": 1096,
+                        "resource_url": "https://api.discogs.com/labels/1096"
+                    }
+                ],
+                "thumb": "",
+                "cover_image": "",
+                "genres": [
+                    "Electronic"
+                ],
+                "styles": [
+                    "Rhythmic Noise"
+                ]
+            },
+            "rating": 0
+        },
+        {
+            "id": 214700,
+            "resource_url": "https://api.discogs.com/users/systemfehler/wants/214700",
+            "date_added": "2009-08-20T00:00:00-07:00",
+            "basic_information": {
+                "id": 214700,
+                "master_id": 58469,
+                "master_url": "https://api.discogs.com/masters/58469",
+                "resource_url": "https://api.discogs.com/releases/214700",
+                "title": "Malleus Maleficarum",
+                "year": 2003,
+                "formats": [
+                    {
+                        "name": "Vinyl",
+                        "qty": "1",
+                        "descriptions": [
+                            "LP",
+                            "Album"
+                        ]
+                    }
+                ],
+                "artists": [
+                    {
+                        "name": "Roger Rotor",
+                        "anv": "",
+                        "join": "",
+                        "role": "",
+                        "tracks": "",
+                        "id": 24003,
+                        "resource_url": "https://api.discogs.com/artists/24003"
+                    }
+                ],
+                "labels": [
+                    {
+                        "name": "Ant-Zen",
+                        "catno": "act 154.4",
+                        "entity_type": "1",
+                        "entity_type_name": "Label",
+                        "id": 1096,
+                        "resource_url": "https://api.discogs.com/labels/1096"
+                    }
+                ],
+                "thumb": "",
+                "cover_image": "",
+                "genres": [
+                    "Electronic"
+                ],
+                "styles": [
+                    "Techno",
+                    "Industrial"
+                ]
+            },
+            "rating": 0
+        },
+        {
+            "id": 3800630,
+            "resource_url": "https://api.discogs.com/users/systemfehler/wants/3800630",
+            "date_added": "2012-10-13T06:33:33-07:00",
+            "basic_information": {
+                "id": 3800630,
+                "master_id": 479728,
+                "master_url": "https://api.discogs.com/masters/479728",
+                "resource_url": "https://api.discogs.com/releases/3800630",
+                "title": "Sightseeing Bizarre",
+                "year": 2012,
+                "formats": [
+                    {
+                        "name": "Vinyl",
+                        "qty": "1",
+                        "descriptions": [
+                            "LP",
+                            "Album",
+                            "Limited Edition"
+                        ],
+                        "text": "180g"
+                    }
+                ],
+                "artists": [
+                    {
+                        "name": "Roger Rotor",
+                        "anv": "",
+                        "join": "",
+                        "role": "",
+                        "tracks": "",
+                        "id": 24003,
+                        "resource_url": "https://api.discogs.com/artists/24003"
+                    }
+                ],
+                "labels": [
+                    {
+                        "name": "Ant-Zen",
+                        "catno": "act 284.4",
+                        "entity_type": "1",
+                        "entity_type_name": "Label",
+                        "id": 1096,
+                        "resource_url": "https://api.discogs.com/labels/1096"
+                    }
+                ],
+                "thumb": "",
+                "cover_image": "",
+                "genres": [
+                    "Electronic"
+                ],
+                "styles": [
+                    "Techno",
+                    "Industrial"
+                ]
+            },
+            "rating": 0
+        },
+        {
+            "id": 163953,
+            "resource_url": "https://api.discogs.com/users/systemfehler/wants/163953",
+            "date_added": "2013-09-10T09:20:33-07:00",
+            "basic_information": {
+                "id": 163953,
+                "master_id": 0,
+                "master_url": null,
+                "resource_url": "https://api.discogs.com/releases/163953",
+                "title": "Split",
+                "year": 1996,
+                "formats": [
+                    {
+                        "name": "Vinyl",
+                        "qty": "1",
+                        "descriptions": [
+                            "LP",
+                            "Limited Edition",
+                            "Numbered"
+                        ]
+                    }
+                ],
+                "artists": [
+                    {
+                        "name": "Asche",
+                        "anv": "",
+                        "join": "/",
+                        "role": "",
+                        "tracks": "",
+                        "id": 6811,
+                        "resource_url": "https://api.discogs.com/artists/6811"
+                    },
+                    {
+                        "name": "Morgenstern",
+                        "anv": "",
+                        "join": "",
+                        "role": "",
+                        "tracks": "",
+                        "id": 6797,
+                        "resource_url": "https://api.discogs.com/artists/6797"
+                    }
+                ],
+                "labels": [
+                    {
+                        "name": "Ant-Zen",
+                        "catno": "act 40",
+                        "entity_type": "1",
+                        "entity_type_name": "Label",
+                        "id": 1096,
+                        "resource_url": "https://api.discogs.com/labels/1096"
+                    }
+                ],
+                "thumb": "",
+                "cover_image": "",
+                "genres": [
+                    "Electronic"
+                ],
+                "styles": [
+                    "Dark Ambient",
+                    "Experimental",
+                    "Industrial",
+                    "Noise"
+                ]
+            },
+            "rating": 0
+        },
+        {
+            "id": 33722,
+            "resource_url": "https://api.discogs.com/users/systemfehler/wants/33722",
+            "date_added": "2013-04-03T20:01:19-07:00",
+            "basic_information": {
+                "id": 33722,
+                "master_id": 0,
+                "master_url": null,
+                "resource_url": "https://api.discogs.com/releases/33722",
+                "title": "Remix Item",
+                "year": 1998,
+                "formats": [
+                    {
+                        "name": "Vinyl",
+                        "qty": "1",
+                        "descriptions": [
+                            "10\"",
+                            "33 ⅓ RPM",
+                            "Limited Edition",
+                            "Picture Disc"
+                        ]
+                    }
+                ],
+                "artists": [
+                    {
+                        "name": "Imminent Starvation",
+                        "anv": "",
+                        "join": "/",
+                        "role": "",
+                        "tracks": "",
+                        "id": 6604,
+                        "resource_url": "https://api.discogs.com/artists/6604"
+                    },
+                    {
+                        "name": "Synapscape",
+                        "anv": "",
+                        "join": "",
+                        "role": "",
+                        "tracks": "",
+                        "id": 6605,
+                        "resource_url": "https://api.discogs.com/artists/6605"
+                    }
+                ],
+                "labels": [
+                    {
+                        "name": "Ant-Zen",
+                        "catno": "act 78",
+                        "entity_type": "1",
+                        "entity_type_name": "Label",
+                        "id": 1096,
+                        "resource_url": "https://api.discogs.com/labels/1096"
+                    }
+                ],
+                "thumb": "",
+                "cover_image": "",
+                "genres": [
+                    "Electronic"
+                ],
+                "styles": [
+                    "Rhythmic Noise",
+                    "Illbient",
+                    "Industrial"
+                ]
+            },
+            "rating": 0
+        },
+        {
+            "id": 117513,
+            "resource_url": "https://api.discogs.com/users/systemfehler/wants/117513",
+            "date_added": "2012-07-31T17:06:55-07:00",
+            "basic_information": {
+                "id": 117513,
+                "master_id": 0,
+                "master_url": null,
+                "resource_url": "https://api.discogs.com/releases/117513",
+                "title": "Fetch",
+                "year": 1998,
+                "formats": [
+                    {
+                        "name": "Vinyl",
+                        "qty": "1",
+                        "descriptions": [
+                            "LP",
+                            "Album",
+                            "Picture Disc",
+                            "Limited Edition"
+                        ]
+                    }
+                ],
+                "artists": [
+                    {
+                        "name": "Mother Destruction",
+                        "anv": "",
+                        "join": "",
+                        "role": "",
+                        "tracks": "",
+                        "id": 6617,
+                        "resource_url": "https://api.discogs.com/artists/6617"
+                    }
+                ],
+                "labels": [
+                    {
+                        "name": "Ant-Zen",
+                        "catno": "act 85",
+                        "entity_type": "1",
+                        "entity_type_name": "Label",
+                        "id": 1096,
+                        "resource_url": "https://api.discogs.com/labels/1096"
+                    }
+                ],
+                "thumb": "",
+                "cover_image": "",
+                "genres": [
+                    "Electronic"
+                ],
+                "styles": [
+                    "Breaks",
+                    "Industrial",
+                    "Drum n Bass",
+                    "Experimental"
+                ]
+            },
+            "rating": 0
+        },
+        {
+            "id": 470398,
+            "resource_url": "https://api.discogs.com/users/systemfehler/wants/470398",
+            "date_added": "2016-04-09T14:55:34-07:00",
+            "basic_information": {
+                "id": 470398,
+                "master_id": 0,
+                "master_url": null,
+                "resource_url": "https://api.discogs.com/releases/470398",
+                "title": "Nand",
+                "year": 1999,
+                "formats": [
+                    {
+                        "name": "Vinyl",
+                        "qty": "1",
+                        "descriptions": [
+                            "7\""
+                        ]
+                    }
+                ],
+                "artists": [
+                    {
+                        "name": "Imminent Starvation",
+                        "anv": "",
+                        "join": "",
+                        "role": "",
+                        "tracks": "",
+                        "id": 6604,
+                        "resource_url": "https://api.discogs.com/artists/6604"
+                    }
+                ],
+                "labels": [
+                    {
+                        "name": "Ant-Zen",
+                        "catno": "act 89.8",
+                        "entity_type": "1",
+                        "entity_type_name": "Label",
+                        "id": 1096,
+                        "resource_url": "https://api.discogs.com/labels/1096"
+                    }
+                ],
+                "thumb": "",
+                "cover_image": "",
+                "genres": [
+                    "Electronic"
+                ],
+                "styles": [
+                    "Abstract",
+                    "Industrial",
+                    "Noise"
+                ]
+            },
+            "rating": 0
+        },
+        {
+            "id": 102819,
+            "resource_url": "https://api.discogs.com/users/systemfehler/wants/102819",
+            "date_added": "2021-01-16T12:40:57-08:00",
+            "basic_information": {
+                "id": 102819,
+                "master_id": 49383,
+                "master_url": "https://api.discogs.com/masters/49383",
+                "resource_url": "https://api.discogs.com/releases/102819",
+                "title": "Nord",
+                "year": 1999,
+                "formats": [
+                    {
+                        "name": "CD",
+                        "qty": "1",
+                        "descriptions": [
+                            "Album"
+                        ]
+                    },
+                    {
+                        "name": "Vinyl",
+                        "qty": "1",
+                        "descriptions": [
+                            "7\"",
+                            "33 ⅓ RPM",
+                            "Special Cut"
+                        ]
+                    },
+                    {
+                        "name": "Box Set",
+                        "qty": "1",
+                        "descriptions": [
+                            "Limited Edition"
+                        ]
+                    }
+                ],
+                "artists": [
+                    {
+                        "name": "Imminent Starvation",
+                        "anv": "",
+                        "join": "",
+                        "role": "",
+                        "tracks": "",
+                        "id": 6604,
+                        "resource_url": "https://api.discogs.com/artists/6604"
+                    }
+                ],
+                "labels": [
+                    {
+                        "name": "Ant-Zen",
+                        "catno": "act 89.8",
+                        "entity_type": "1",
+                        "entity_type_name": "Label",
+                        "id": 1096,
+                        "resource_url": "https://api.discogs.com/labels/1096"
+                    }
+                ],
+                "thumb": "",
+                "cover_image": "",
+                "genres": [
+                    "Electronic"
+                ],
+                "styles": [
+                    "Illbient",
+                    "Industrial",
+                    "Experimental",
+                    "Rhythmic Noise"
+                ]
+            },
+            "rating": 0
+        },
+        {
+            "id": 132908,
+            "resource_url": "https://api.discogs.com/users/systemfehler/wants/132908",
+            "date_added": "2020-12-17T20:17:13-08:00",
+            "basic_information": {
+                "id": 132908,
+                "master_id": 1889049,
+                "master_url": "https://api.discogs.com/masters/1889049",
+                "resource_url": "https://api.discogs.com/releases/132908",
+                "title": "The House Of The Lordh",
+                "year": 2000,
+                "formats": [
+                    {
+                        "name": "Vinyl",
+                        "qty": "1",
+                        "descriptions": [
+                            "LP",
+                            "Album",
+                            "Limited Edition"
+                        ]
+                    }
+                ],
+                "artists": [
+                    {
+                        "name": "Ah Cama-Sotz",
+                        "anv": "",
+                        "join": "",
+                        "role": "",
+                        "tracks": "",
+                        "id": 6799,
+                        "resource_url": "https://api.discogs.com/artists/6799"
+                    }
+                ],
+                "labels": [
+                    {
+                        "name": "Ant-Zen",
+                        "catno": "act104",
+                        "entity_type": "1",
+                        "entity_type_name": "Label",
+                        "id": 1096,
+                        "resource_url": "https://api.discogs.com/labels/1096"
+                    }
+                ],
+                "thumb": "",
+                "cover_image": "",
+                "genres": [
+                    "Electronic"
+                ],
+                "styles": [
+                    "Dark Ambient",
+                    "Industrial"
+                ]
+            },
+            "rating": 0
+        },
+        {
+            "id": 202843,
+            "resource_url": "https://api.discogs.com/users/systemfehler/wants/202843",
+            "date_added": "2021-01-12T08:19:57-08:00",
+            "basic_information": {
+                "id": 202843,
+                "master_id": 251842,
+                "master_url": "https://api.discogs.com/masters/251842",
+                "resource_url": "https://api.discogs.com/releases/202843",
+                "title": "Expansion Pack 1.10",
+                "year": 2003,
+                "formats": [
+                    {
+                        "name": "Vinyl",
+                        "qty": "2",
+                        "descriptions": [
+                            "10\"",
+                            "33 ⅓ RPM",
+                            "Album"
+                        ]
+                    }
+                ],
+                "artists": [
+                    {
+                        "name": "Converter",
+                        "anv": "",
+                        "join": "",
+                        "role": "",
+                        "tracks": "",
+                        "id": 6574,
+                        "resource_url": "https://api.discogs.com/artists/6574"
+                    }
+                ],
+                "labels": [
+                    {
+                        "name": "Ant-Zen",
+                        "catno": "act143.10",
+                        "entity_type": "1",
+                        "entity_type_name": "Label",
+                        "id": 1096,
+                        "resource_url": "https://api.discogs.com/labels/1096"
+                    }
+                ],
+                "thumb": "",
+                "cover_image": "",
+                "genres": [
+                    "Electronic"
+                ],
+                "styles": [
+                    "Rhythmic Noise",
+                    "IDM",
+                    "Experimental"
+                ]
+            },
+            "rating": 0
+        },
+        {
+            "id": 167727,
+            "resource_url": "https://api.discogs.com/users/systemfehler/wants/167727",
+            "date_added": "2013-02-19T06:26:10-08:00",
+            "basic_information": {
+                "id": 167727,
+                "master_id": 26989,
+                "master_url": "https://api.discogs.com/masters/26989",
+                "resource_url": "https://api.discogs.com/releases/167727",
+                "title": "Sonar",
+                "year": 1996,
+                "formats": [
+                    {
+                        "name": "Vinyl",
+                        "qty": "1",
+                        "descriptions": [
+                            "LP",
+                            "Album",
+                            "Limited Edition",
+                            "Numbered",
+                            "Picture Disc"
+                        ]
+                    }
+                ],
+                "artists": [
+                    {
+                        "name": "Sonar",
+                        "anv": "",
+                        "join": "",
+                        "role": "",
+                        "tracks": "",
+                        "id": 13258,
+                        "resource_url": "https://api.discogs.com/artists/13258"
+                    }
+                ],
+                "labels": [
+                    {
+                        "name": "Ant-Zen",
+                        "catno": "ACT46",
+                        "entity_type": "1",
+                        "entity_type_name": "Label",
+                        "id": 1096,
+                        "resource_url": "https://api.discogs.com/labels/1096"
+                    }
+                ],
+                "thumb": "",
+                "cover_image": "",
+                "genres": [
+                    "Electronic"
+                ],
+                "styles": [
+                    "Industrial"
+                ]
+            },
+            "rating": 0
+        },
+        {
+            "id": 167734,
+            "resource_url": "https://api.discogs.com/users/systemfehler/wants/167734",
+            "date_added": "2011-04-13T11:52:16-07:00",
+            "basic_information": {
+                "id": 167734,
+                "master_id": 0,
+                "master_url": null,
+                "resource_url": "https://api.discogs.com/releases/167734",
+                "title": "Dislocated",
+                "year": 1997,
+                "formats": [
+                    {
+                        "name": "Vinyl",
+                        "qty": "1",
+                        "descriptions": [
+                            "10\"",
+                            "45 RPM",
+                            "Limited Edition",
+                            "Numbered"
+                        ]
+                    }
+                ],
+                "artists": [
+                    {
+                        "name": "Sonar",
+                        "anv": "",
+                        "join": "",
+                        "role": "",
+                        "tracks": "",
+                        "id": 13258,
+                        "resource_url": "https://api.discogs.com/artists/13258"
+                    }
+                ],
+                "labels": [
+                    {
+                        "name": "Ant-Zen",
+                        "catno": "ACT65",
+                        "entity_type": "1",
+                        "entity_type_name": "Label",
+                        "id": 1096,
+                        "resource_url": "https://api.discogs.com/labels/1096"
+                    }
+                ],
+                "thumb": "",
+                "cover_image": "",
+                "genres": [
+                    "Electronic"
+                ],
+                "styles": [
+                    "Industrial",
+                    "Noise"
+                ]
+            },
+            "rating": 0
+        },
+        {
+            "id": 12848450,
+            "resource_url": "https://api.discogs.com/users/systemfehler/wants/12848450",
+            "date_added": "2020-10-14T10:38:19-07:00",
+            "basic_information": {
+                "id": 12848450,
+                "master_id": 0,
+                "master_url": null,
+                "resource_url": "https://api.discogs.com/releases/12848450",
+                "title": "Unclean",
+                "year": 2018,
+                "formats": [
+                    {
+                        "name": "Vinyl",
+                        "qty": "1",
+                        "descriptions": [
+                            "12\"",
+                            "33 ⅓ RPM",
+                            "EP",
+                            "Limited Edition"
+                        ],
+                        "text": "180gr"
+                    }
+                ],
+                "artists": [
+                    {
+                        "name": "Unclean (5)",
+                        "anv": "",
+                        "join": "",
+                        "role": "",
+                        "tracks": "",
+                        "id": 7272948,
+                        "resource_url": "https://api.discogs.com/artists/7272948"
+                    }
+                ],
+                "labels": [
+                    {
+                        "name": "Ante-Rasa",
+                        "catno": "RASA06",
+                        "entity_type": "1",
+                        "entity_type_name": "Label",
+                        "id": 91986,
+                        "resource_url": "https://api.discogs.com/labels/91986"
+                    }
+                ],
+                "thumb": "",
+                "cover_image": "",
+                "genres": [
+                    "Electronic"
+                ],
+                "styles": [
+                    "Experimental",
+                    "Techno"
+                ]
+            },
+            "rating": 0
+        },
+        {
+            "id": 13473917,
+            "resource_url": "https://api.discogs.com/users/systemfehler/wants/13473917",
+            "date_added": "2020-10-14T10:40:19-07:00",
+            "basic_information": {
+                "id": 13473917,
+                "master_id": 0,
+                "master_url": null,
+                "resource_url": "https://api.discogs.com/releases/13473917",
+                "title": "Procrastination",
+                "year": 2019,
+                "formats": [
+                    {
+                        "name": "Vinyl",
+                        "qty": "1",
+                        "descriptions": [
+                            "12\"",
+                            "33 ⅓ RPM",
+                            "EP",
+                            "Limited Edition"
+                        ]
+                    }
+                ],
+                "artists": [
+                    {
+                        "name": "Ambareesh",
+                        "anv": "",
+                        "join": "",
+                        "role": "",
+                        "tracks": "",
+                        "id": 3518559,
+                        "resource_url": "https://api.discogs.com/artists/3518559"
+                    }
+                ],
+                "labels": [
+                    {
+                        "name": "Ante-Rasa",
+                        "catno": "RASA07",
+                        "entity_type": "1",
+                        "entity_type_name": "Label",
+                        "id": 91986,
+                        "resource_url": "https://api.discogs.com/labels/91986"
+                    }
+                ],
+                "thumb": "",
+                "cover_image": "",
+                "genres": [
+                    "Electronic"
+                ],
+                "styles": [
+                    "Techno",
+                    "Experimental"
+                ]
+            },
+            "rating": 0
+        },
+        {
+            "id": 131987,
+            "resource_url": "https://api.discogs.com/users/systemfehler/wants/131987",
+            "date_added": "2013-03-04T15:26:45-08:00",
+            "basic_information": {
+                "id": 131987,
+                "master_id": 0,
+                "master_url": null,
+                "resource_url": "https://api.discogs.com/releases/131987",
+                "title": "Pain And Pleasure",
+                "year": 1986,
+                "formats": [
+                    {
+                        "name": "Vinyl",
+                        "qty": "1",
+                        "descriptions": [
+                            "12\"",
+                            "45 RPM",
+                            "Stereo"
+                        ]
+                    }
+                ],
+                "artists": [
+                    {
+                        "name": "Klinik",
+                        "anv": "The Klinik",
+                        "join": "",
+                        "role": "",
+                        "tracks": "",
+                        "id": 21249,
+                        "resource_url": "https://api.discogs.com/artists/21249"
+                    }
+                ],
+                "labels": [
+                    {
+                        "name": "Antler Records",
+                        "catno": "ANTLER 050",
+                        "entity_type": "1",
+                        "entity_type_name": "Label",
+                        "id": 14951,
+                        "resource_url": "https://api.discogs.com/labels/14951"
+                    }
+                ],
+                "thumb": "",
+                "cover_image": "",
+                "genres": [
+                    "Electronic"
+                ],
+                "styles": [
+                    "EBM"
+                ]
+            },
+            "rating": 0
+        },
+        {
+            "id": 95614,
+            "resource_url": "https://api.discogs.com/users/systemfehler/wants/95614",
+            "date_added": "2013-03-04T15:26:53-08:00",
+            "basic_information": {
+                "id": 95614,
+                "master_id": 0,
+                "master_url": null,
+                "resource_url": "https://api.discogs.com/releases/95614",
+                "title": "Fear",
+                "year": 1987,
+                "formats": [
+                    {
+                        "name": "Vinyl",
+                        "qty": "1",
+                        "descriptions": [
+                            "12\"",
+                            "45 RPM",
+                            "Maxi-Single",
+                            "Stereo"
+                        ]
+                    }
+                ],
+                "artists": [
+                    {
+                        "name": "Klinik",
+                        "anv": "The Klinik",
+                        "join": "",
+                        "role": "",
+                        "tracks": "",
+                        "id": 21249,
+                        "resource_url": "https://api.discogs.com/artists/21249"
+                    }
+                ],
+                "labels": [
+                    {
+                        "name": "Antler Records",
+                        "catno": "ANTLER 058",
+                        "entity_type": "1",
+                        "entity_type_name": "Label",
+                        "id": 14951,
+                        "resource_url": "https://api.discogs.com/labels/14951"
+                    }
+                ],
+                "thumb": "",
+                "cover_image": "",
+                "genres": [
+                    "Electronic"
+                ],
+                "styles": [
+                    "Industrial",
+                    "Electro"
+                ]
+            },
+            "rating": 0
+        },
+        {
+            "id": 131968,
+            "resource_url": "https://api.discogs.com/users/systemfehler/wants/131968",
+            "date_added": "2013-03-04T15:27:34-08:00",
+            "basic_information": {
+                "id": 131968,
+                "master_id": 465061,
+                "master_url": "https://api.discogs.com/masters/465061",
+                "resource_url": "https://api.discogs.com/releases/131968",
+                "title": "Fever",
+                "year": 1988,
+                "formats": [
+                    {
+                        "name": "Vinyl",
+                        "qty": "1",
+                        "descriptions": [
+                            "12\"",
+                            "45 RPM",
+                            "Maxi-Single"
+                        ]
+                    }
+                ],
+                "artists": [
+                    {
+                        "name": "Klinik",
+                        "anv": "The Klinik",
+                        "join": "",
+                        "role": "",
+                        "tracks": "",
+                        "id": 21249,
+                        "resource_url": "https://api.discogs.com/artists/21249"
+                    }
+                ],
+                "labels": [
+                    {
+                        "name": "Antler Records",
+                        "catno": "ANTLER 091",
+                        "entity_type": "1",
+                        "entity_type_name": "Label",
+                        "id": 14951,
+                        "resource_url": "https://api.discogs.com/labels/14951"
+                    }
+                ],
+                "thumb": "",
+                "cover_image": "",
+                "genres": [
+                    "Electronic"
+                ],
+                "styles": [
+                    "EBM",
+                    "Industrial"
+                ]
+            },
+            "rating": 0
+        },
+        {
+            "id": 9390412,
+            "resource_url": "https://api.discogs.com/users/systemfehler/wants/9390412",
+            "date_added": "2017-07-16T05:15:15-07:00",
+            "basic_information": {
+                "id": 9390412,
+                "master_id": 35508,
+                "master_url": "https://api.discogs.com/masters/35508",
+                "resource_url": "https://api.discogs.com/releases/9390412",
+                "title": "Melting Close + Sabotage",
+                "year": 1987,
+                "formats": [
+                    {
+                        "name": "Vinyl",
+                        "qty": "1",
+                        "descriptions": [
+                            "LP",
+                            "Album",
+                            "Reissue"
+                        ]
+                    },
+                    {
+                        "name": "Vinyl",
+                        "qty": "1",
+                        "descriptions": [
+                            "LP",
+                            "Single Sided",
+                            "Reissue"
+                        ]
+                    },
+                    {
+                        "name": "All Media",
+                        "qty": "1",
+                        "descriptions": [
+                            "Album",
+                            "Compilation"
+                        ]
+                    }
+                ],
+                "artists": [
+                    {
+                        "name": "Klinik",
+                        "anv": "The Klinik",
+                        "join": "",
+                        "role": "",
+                        "tracks": "",
+                        "id": 21249,
+                        "resource_url": "https://api.discogs.com/artists/21249"
+                    }
+                ],
+                "labels": [
+                    {
+                        "name": "Antler Records",
+                        "catno": "ANTLER 056",
+                        "entity_type": "1",
+                        "entity_type_name": "Label",
+                        "id": 14951,
+                        "resource_url": "https://api.discogs.com/labels/14951"
+                    },
+                    {
+                        "name": "Antler Records",
+                        "catno": "Antler 056",
+                        "entity_type": "1",
+                        "entity_type_name": "Label",
+                        "id": 14951,
+                        "resource_url": "https://api.discogs.com/labels/14951"
+                    }
+                ],
+                "thumb": "",
+                "cover_image": "",
+                "genres": [
+                    "Electronic"
+                ],
+                "styles": [
+                    "EBM",
+                    "Industrial",
+                    "Minimal"
+                ]
+            },
+            "rating": 0
+        },
+        {
+            "id": 115436,
+            "resource_url": "https://api.discogs.com/users/systemfehler/wants/115436",
+            "date_added": "2013-01-23T05:16:20-08:00",
+            "basic_information": {
+                "id": 115436,
+                "master_id": 342191,
+                "master_url": "https://api.discogs.com/masters/342191",
+                "resource_url": "https://api.discogs.com/releases/115436",
+                "title": "Plague",
+                "year": 1987,
+                "formats": [
+                    {
+                        "name": "Vinyl",
+                        "qty": "1",
+                        "descriptions": [
+                            "LP",
+                            "Album",
+                            "Stereo"
+                        ]
+                    }
+                ],
+                "artists": [
+                    {
+                        "name": "Klinik",
+                        "anv": "The Klinik",
+                        "join": "",
+                        "role": "",
+                        "tracks": "",
+                        "id": 21249,
+                        "resource_url": "https://api.discogs.com/artists/21249"
+                    }
+                ],
+                "labels": [
+                    {
+                        "name": "Antler Records",
+                        "catno": "ANTLER 065",
+                        "entity_type": "1",
+                        "entity_type_name": "Label",
+                        "id": 14951,
+                        "resource_url": "https://api.discogs.com/labels/14951"
+                    },
+                    {
+                        "name": "Antler Records",
+                        "catno": "Antler 065",
+                        "entity_type": "1",
+                        "entity_type_name": "Label",
+                        "id": 14951,
+                        "resource_url": "https://api.discogs.com/labels/14951"
+                    }
+                ],
+                "thumb": "",
+                "cover_image": "",
+                "genres": [
+                    "Electronic"
+                ],
+                "styles": [
+                    "EBM",
+                    "Industrial"
+                ]
+            },
+            "rating": 0
+        },
+        {
+            "id": 131997,
+            "resource_url": "https://api.discogs.com/users/systemfehler/wants/131997",
+            "date_added": "2013-03-04T15:25:47-08:00",
+            "basic_information": {
+                "id": 131997,
+                "master_id": 653995,
+                "master_url": "https://api.discogs.com/masters/653995",
+                "resource_url": "https://api.discogs.com/releases/131997",
+                "title": "Face To Face",
+                "year": 1988,
+                "formats": [
+                    {
+                        "name": "Vinyl",
+                        "qty": "1",
+                        "descriptions": [
+                            "LP",
+                            "Album"
+                        ]
+                    }
+                ],
+                "artists": [
+                    {
+                        "name": "Klinik",
+                        "anv": "The Klinik",
+                        "join": "",
+                        "role": "",
+                        "tracks": "",
+                        "id": 21249,
+                        "resource_url": "https://api.discogs.com/artists/21249"
+                    }
+                ],
+                "labels": [
+                    {
+                        "name": "Antler Records",
+                        "catno": "ANTLER 096",
+                        "entity_type": "1",
+                        "entity_type_name": "Label",
+                        "id": 14951,
+                        "resource_url": "https://api.discogs.com/labels/14951"
+                    },
+                    {
+                        "name": "Antler Records",
+                        "catno": "Antler 096",
+                        "entity_type": "1",
+                        "entity_type_name": "Label",
+                        "id": 14951,
+                        "resource_url": "https://api.discogs.com/labels/14951"
+                    }
+                ],
+                "thumb": "",
+                "cover_image": "",
+                "genres": [
+                    "Electronic"
+                ],
+                "styles": [
+                    "EBM",
+                    "Industrial"
+                ]
+            },
+            "rating": 0
+        },
+        {
+            "id": 115427,
+            "resource_url": "https://api.discogs.com/users/systemfehler/wants/115427",
+            "date_added": "2013-03-04T15:26:12-08:00",
+            "basic_information": {
+                "id": 115427,
+                "master_id": 2413,
+                "master_url": "https://api.discogs.com/masters/2413",
+                "resource_url": "https://api.discogs.com/releases/115427",
+                "title": "Box",
+                "year": 1990,
+                "formats": [
+                    {
+                        "name": "Vinyl",
+                        "qty": "3",
+                        "descriptions": [
+                            "LP",
+                            "Album"
+                        ]
+                    },
+                    {
+                        "name": "Box Set",
+                        "qty": "1",
+                        "descriptions": [
+                            "Limited Edition"
+                        ]
+                    }
+                ],
+                "artists": [
+                    {
+                        "name": "Klinik",
+                        "anv": "",
+                        "join": "",
+                        "role": "",
+                        "tracks": "",
+                        "id": 21249,
+                        "resource_url": "https://api.discogs.com/artists/21249"
+                    }
+                ],
+                "labels": [
+                    {
+                        "name": "Antler-Subway",
+                        "catno": "AS 5009",
+                        "entity_type": "1",
+                        "entity_type_name": "Label",
+                        "id": 2526,
+                        "resource_url": "https://api.discogs.com/labels/2526"
+                    }
+                ],
+                "thumb": "",
+                "cover_image": "",
+                "genres": [
+                    "Electronic"
+                ],
+                "styles": [
+                    "EBM",
+                    "Industrial"
+                ]
+            },
+            "rating": 0
+        },
+        {
+            "id": 138589,
+            "resource_url": "https://api.discogs.com/users/systemfehler/wants/138589",
+            "date_added": "2013-03-04T15:26:35-08:00",
+            "basic_information": {
+                "id": 138589,
+                "master_id": 409821,
+                "master_url": "https://api.discogs.com/masters/409821",
+                "resource_url": "https://api.discogs.com/releases/138589",
+                "title": "Black Leather",
+                "year": 1990,
+                "formats": [
+                    {
+                        "name": "Vinyl",
+                        "qty": "1",
+                        "descriptions": [
+                            "12\"",
+                            "45 RPM",
+                            "Maxi-Single"
+                        ]
+                    }
+                ],
+                "artists": [
+                    {
+                        "name": "Klinik",
+                        "anv": "",
+                        "join": "",
+                        "role": "",
+                        "tracks": "",
+                        "id": 21249,
+                        "resource_url": "https://api.discogs.com/artists/21249"
+                    }
+                ],
+                "labels": [
+                    {
+                        "name": "Antler-Subway",
+                        "catno": "AS 5018",
+                        "entity_type": "1",
+                        "entity_type_name": "Label",
+                        "id": 2526,
+                        "resource_url": "https://api.discogs.com/labels/2526"
+                    }
+                ],
+                "thumb": "",
+                "cover_image": "",
+                "genres": [
+                    "Electronic"
+                ],
+                "styles": [
+                    "EBM",
+                    "Industrial"
+                ]
+            },
+            "rating": 0
+        }
+    ]
+}
