@@ -32,4 +32,11 @@ defmodule Nullables.Result do
   @spec map_error(result :: result(t, e), f :: (e -> u)) :: result(t, u) when t: var, e: var, u: var
   def map_error({:ok, _value} = success, _f), do: success
   def map_error({:error, error}, f), do: {:error, f.(error)}
+
+  @doc """
+  Returns whether a result is the success variant
+  """
+  @spec ok?(result()) :: boolean()
+  def ok?({:ok, _}), do: true
+  def ok?({:error, _}), do: false
 end

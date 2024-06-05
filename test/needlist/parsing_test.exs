@@ -1,6 +1,8 @@
 defmodule Needlist.ParsingTest do
-  use ExUnit.Case
+  use Needlist.DataCase
 
+  alias Nullables.Result
+  alias Needlist.Repo
   alias Needlist.Repo.Pagination
   alias Needlist.Repo.Want
 
@@ -84,6 +86,23 @@ defmodule Needlist.ParsingTest do
         |> then(&Pagination.parse(&1, :wants, Want))
 
       assert {:ok, _parsed_data} = parse_result
+    end
+
+    test "and insert all items into the DB" do
+      parse_result =
+        @paginated_wants_response
+        |> File.read!()
+        |> Jason.decode!()
+        |> then(&Pagination.parse(&1, :wants, Want))
+
+      assert {:ok, %Pagination{items: [_ | _] = items}} = parse_result
+
+      all_ok =
+        items
+        |> Stream.map(&Repo.insert/1)
+        |> Enum.all?(&Result.ok?/1)
+
+      assert all_ok
     end
   end
 end

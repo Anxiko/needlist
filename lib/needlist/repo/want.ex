@@ -11,7 +11,7 @@ defmodule Needlist.Repo.Want do
   @fields @required_fields ++ @optional_fields
 
   @primary_key false
-  schema "wantlist" do
+  schema "wants" do
     field :id, :id, primary_key: true
     embeds_one :basic_information, BasicInformation, on_replace: :update
   end
