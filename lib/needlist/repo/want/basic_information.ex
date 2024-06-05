@@ -1,7 +1,7 @@
 defmodule Needlist.Repo.Want.BasicInformation do
   use Ecto.Schema
 
-  @required_fields [:id, :master_id, :title]
+  @required_fields [:master_id, :title]
   @optional_fields [:year]
   @embedded_fields [:artists, :labels, :formats]
   @fields @required_fields ++ @optional_fields
@@ -14,7 +14,6 @@ defmodule Needlist.Repo.Want.BasicInformation do
 
   @primary_key false
   embedded_schema do
-    field :id, :id, primary_key: true
     field :master_id, :id
     field :title, :string
     field :year, :integer
@@ -25,7 +24,6 @@ defmodule Needlist.Repo.Want.BasicInformation do
   end
 
   @type t() :: %__MODULE__{
-          id: integer() | nil,
           master_id: integer() | nil,
           title: String.t() | nil,
           year: non_neg_integer() | nil,
