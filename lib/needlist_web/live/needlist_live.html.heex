@@ -22,22 +22,22 @@
           </tr>
         </thead>
         <tbody>
-          <%= for item <- elem(@current_page, 1).data do %>
+          <%= for item <- elem(@current_page, 1).items do %>
             <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
               <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                <.want_artists artists={item.artists} />
+                <.want_artists artists={item.basic_information.artists} />
               </th>
               <td class="px-6 py-4">
-                <%= item.title %>
+                <%= item.basic_information.title %>
               </td>
               <td class="px-6 py-4">
-                <.want_labels labels={item.labels} />
+                <.want_labels labels={item.basic_information.labels} />
               </td>
               <td class="px-6 py-4">
-                <.want_formats formats={item.formats} />
+                <.want_formats formats={item.basic_information.formats} />
               </td>
               <td class="px-6 py-4">
-                <.want_year year={item.year} />
+                <.want_year year={item.basic_information.year} />
               </td>
             </tr>
           <% end %>

@@ -5,8 +5,8 @@ defmodule NeedlistWeb.NeedlistLive do
   use NeedlistWeb, :live_view
 
   alias Needlist.Discogs.Api
-  alias Needlist.Discogs.Pagination
-  alias Needlist.Discogs.Model.Want
+  alias Needlist.Repo.Pagination
+  alias Needlist.Repo.Want
   alias NeedlistWeb.NeedlistLive.State
 
   alias Nullables.Fallible
@@ -177,12 +177,12 @@ defmodule NeedlistWeb.NeedlistLive do
   defp fetch_page(username, needlist_options) do
     case Cachex.get!(@cache, {username, needlist_options}) do
       nil ->
-        case Api.get_user_needlist(username, needlist_options) do
+        case Api.get_user_needlist_repo(username, needlist_options) do
           {:ok, %Pagination{} = paginated_items} ->
             Cachex.put!(@cache, {username, needlist_options}, paginated_items)
             {:ok, paginated_items}
 
-          :error ->
+          {:error, _changeset} ->
             {:error, "Discogs API error"}
         end
 

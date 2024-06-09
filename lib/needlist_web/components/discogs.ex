@@ -5,17 +5,9 @@ defmodule NeedlistWeb.Components.Discogs do
 
   use Phoenix.Component
 
-  alias Needlist.Discogs.Model, as: DiscogsModels
+  alias Needlist.Repo.Want
 
-  def want(assigns) do
-    ~H"""
-    <div>
-      <%= @item.title %> - <%= @item.title %>
-    </div>
-    """
-  end
-
-  attr :artist, DiscogsModels.Artist, required: true
+  attr :artist, Want.Artist, required: true
 
   def want_artist(assigns) do
     ~H"""
@@ -29,7 +21,7 @@ defmodule NeedlistWeb.Components.Discogs do
     """
   end
 
-  attr :label, DiscogsModels.Label, required: true
+  attr :label, Want.Label, required: true
 
   def want_label(assigns) do
     ~H"""
@@ -42,7 +34,7 @@ defmodule NeedlistWeb.Components.Discogs do
     """
   end
 
-  attr :format, DiscogsModels.Format, required: true
+  attr :format, Want.Format, required: true
   attr :rest, :global
 
   def want_format(assigns) do

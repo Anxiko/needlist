@@ -34,6 +34,16 @@ defmodule Nullables.Result do
   def map_error({:error, error}, f), do: {:error, f.(error)}
 
   @doc """
+  Map a result's success value if present, using a function that produces another result
+  """
+  @spec flat_map(result(t, e), (t -> result(u, e))) :: result(u, e) when t: var, u: var, e: var
+  def flat_map({:error, _} = error, _f), do: error
+
+  def flat_map({:ok, value}, f) do
+    f.(value)
+  end
+
+  @doc """
   Returns whether a result is the success variant
   """
   @spec ok?(result()) :: boolean()

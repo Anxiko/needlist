@@ -10,6 +10,7 @@ defmodule Needlist.Discogs.Api do
   alias Needlist.Discogs.Model.Want
   alias Needlist.Discogs.Pagination
   alias Needlist.Repo.Pagination, as: RepoPagination
+  alias Needlist.Repo.Want, as: RepoWant
 
   @spec base_api_url() :: String.t()
   def base_api_url(), do: "https://api.discogs.com"
@@ -36,7 +37,7 @@ defmodule Needlist.Discogs.Api do
     |> Req.request()
     |> case do
       {:ok, %Req.Response{status: 200, body: body}} ->
-        body
+        {:ok, body}
 
       _ ->
         :error
@@ -51,13 +52,18 @@ defmodule Needlist.Discogs.Api do
     |> Fallible.map(fn body -> Pagination.parse_page(body, "wants", &Want.parse/1) end)
   end
 
+  @spec get_user_needlist_repo(String.t(), needlist_options()) ::
+          Result.result(RepoPagination.t(Want.t()), Ecto.Changeset.t(RepoPagination.t(Want.t())))
   @spec get_user_needlist_repo(String.t()) ::
           Result.result(RepoPagination.t(Want.t()), Ecto.Changeset.t(RepoPagination.t(Want.t())))
   def get_user_needlist_repo(user, opts \\ []) do
     user
+    |> IO.inspect(label: "User")
     |> get_user_needlist_raw(opts)
+    |> IO.inspect(label: "Raw result")
     |> Nullables.fallible_to_result(:request)
-    |> Result.map(&RepoPagination.parse(&1, :wants, Want))
+    |> Result.flat_map(&RepoPagination.parse(&1, :wants, RepoWant))
+    |> IO.inspect(label: "get_user_needlist_repo")
   end
 
   @spec opts_to_params(needlist_options()) :: Keyword.t()
