@@ -2,6 +2,7 @@ defmodule Needlist.Repo.User do
   use Ecto.Schema
 
   alias Ecto.Changeset
+  alias Needlist.Repo.Want
 
   @required_fields [:id, :username]
   @optional_fields []
@@ -11,6 +12,7 @@ defmodule Needlist.Repo.User do
   schema "users" do
     field :id, :id, primary_key: true
     field :username, :string
+    many_to_many :wants, Want, join_through: "user_wantlist"
   end
 
   @type t() :: %__MODULE__{}
