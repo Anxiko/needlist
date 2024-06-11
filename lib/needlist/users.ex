@@ -4,7 +4,7 @@ defmodule Needlist.Users do
   alias Needlist.Repo
 
   @spec get_by_username(String.t(), keyword()) :: Result.result(User.t())
-  @spec get_by_username(String.t()) :: Ecto.Query.t()
+  @spec get_by_username(String.t()) :: Result.result(User.t())
   def get_by_username(username, opts \\ []) do
     preload_wantlist? = Keyword.get(opts, :preload_wantlist, true)
 
