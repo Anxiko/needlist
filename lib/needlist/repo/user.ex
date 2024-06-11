@@ -1,6 +1,8 @@
 defmodule Needlist.Repo.User do
   use Ecto.Schema
 
+  import Ecto.Query
+
   alias Ecto.Changeset
   alias Needlist.Repo.Want
 
@@ -24,4 +26,21 @@ defmodule Needlist.Repo.User do
     |> Changeset.cast(params, @fields)
     |> Changeset.validate_required(@required_fields)
   end
+
+  @spec by_username(Ecto.Query.t() | __MODULE__, String.t()) :: Ecto.Query.t()
+  @spec by_username(String.t()) :: Ecto.Query.t()
+  def by_username(query \\ __MODULE__, username) do
+    where(query, username: ^username)
+  end
+
+  @spec with_wantlist(Ecto.Query.t() | __MODULE__) :: Ecto.Query.t()
+  @spec with_wantlist() :: Ecto.Query.t()
+  def with_wantlist(query \\ __MODULE__) do
+    preload(query, :wants)
+  end
+
+  @spec maybe_with_wantlist(Ecto.Query.t() | __MODULE__, boolean()) :: Ecto.Query.t()
+  def maybe_with_wantlist(query \\ __MODULE__, preload_wantlist? \\ true)
+  def maybe_with_wantlist(query, true), do: with_wantlist(query)
+  def maybe_with_wantlist(query, false), do: query
 end
