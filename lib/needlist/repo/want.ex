@@ -1,9 +1,12 @@
 defmodule Needlist.Repo.Want do
   use Ecto.Schema
 
+  import Ecto.Query
+
   alias Ecto.Changeset
   alias EctoExtra
   alias Needlist.Repo.Want.BasicInformation
+  alias Needlist.Repo.User
 
   @required_fields [:id]
   @optional_fields []
@@ -14,6 +17,7 @@ defmodule Needlist.Repo.Want do
   schema "wants" do
     field :id, :id, primary_key: true
     embeds_one :basic_information, BasicInformation, on_replace: :update
+    many_to_many :users, User, join_through: "user_wantlist"
   end
 
   use EctoExtra.SchemaType, schema: __MODULE__
@@ -35,5 +39,14 @@ defmodule Needlist.Repo.Want do
   @spec new() :: t()
   def new() do
     %__MODULE__{}
+  end
+
+  @spec in_user_needlist(Ecto.Query.t() | __MODULE__, integer()) :: Ecto.Query.t()
+  @spec in_user_needlist(integer()) :: Ecto.Query.t()
+  def in_user_needlist(query \\ __MODULE__, user_id) do
+    query
+    |> join(:inner, [w], u in assoc(w, :users))
+    |> where([_w, u], u.id == ^user_id)
+    |> select([w, _u], w)
   end
 end
