@@ -31,4 +31,20 @@ defmodule Needlist.Repo.Want.Artist do
     |> Changeset.cast(params, @fields)
     |> Changeset.validate_required(@required_fields)
   end
+
+  @spec display_name(t()) :: String.t()
+  def display_name(%__MODULE__{anv: anv}) when anv != nil, do: anv
+  def display_name(%__MODULE__{name: name}), do: name
+
+  @spec display_artists([t()]) :: String.t()
+  def display_artists(artists) do
+    artists
+    |> Enum.map(fn artist ->
+      display_name(artist) <> joiner(artist)
+    end)
+    |> Enum.join()
+  end
+
+  defp joiner(%__MODULE__{join: nil}), do: ""
+  defp joiner(%__MODULE__{join: join}), do: " #{join} "
 end
