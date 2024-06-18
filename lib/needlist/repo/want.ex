@@ -7,6 +7,8 @@ defmodule Needlist.Repo.Want do
   alias EctoExtra
   alias Needlist.Repo.Want.BasicInformation
   alias Needlist.Repo.User
+  alias Needlist.Repo.Want.Artist
+  alias Needlist.Repo.Want.Label
 
   @required_fields [:id]
   @optional_fields []
@@ -17,6 +19,7 @@ defmodule Needlist.Repo.Want do
   schema "wants" do
     field :id, :id, primary_key: true
     field :display_artists, :string
+    field :display_labels, :string
     embeds_one :basic_information, BasicInformation, on_replace: :update
     many_to_many :users, User, join_through: "user_wantlist"
   end
@@ -26,8 +29,11 @@ defmodule Needlist.Repo.Want do
   @type t() :: %__MODULE__{
           id: integer() | nil,
           display_artists: String.t() | nil,
+          display_labels: String.t() | nil,
           basic_information: BasicInformation.t() | nil
         }
+
+  @type order() :: :asc | :desc
 
   @spec changeset(t() | Changeset.t(t()), map()) :: Changeset.t(t())
   @spec changeset(map()) :: Changeset.t(t())
@@ -36,7 +42,7 @@ defmodule Needlist.Repo.Want do
     |> Changeset.cast(params, @fields)
     |> Changeset.validate_required(@required_fields)
     |> EctoExtra.cast_many_embeds(@embedded_fields)
-    |> compute_display_artists()
+    |> compute_sorting_fields()
   end
 
   @spec new() :: t()
@@ -53,13 +59,35 @@ defmodule Needlist.Repo.Want do
     |> select([w, _u], w)
   end
 
-  defp compute_display_artists(%Ecto.Changeset{valid?: true} = changeset) do
+  @spec sort_by_artists(Ecto.Query.t() | __MODULE__, order()) :: Ecto.Query.t()
+  @spec sort_by_artists(order()) :: Ecto.Query.t()
+  def sort_by_artists(query \\ __MODULE__, order) do
+    query
+    |> Ecto.Query.order_by([{^order, :display_artists}])
+  end
+
+  @spec sort_by_title(Ecto.Query.t() | __MODULE__, order()) :: Ecto.Query.t()
+  @spec sort_by_title(order()) :: Ecto.Query.t()
+  def sort_by_title(query \\ __MODULE__, order) do
+    query
+    |> Ecto.Query.order_by([w], [{^order, fragment("?->>?", w.basic_information, "title")}])
+  end
+
+  @spec sort_by_labels(Ecto.Query.t() | __MODULE__, order()) :: Ecto.Query.t()
+  @spec sort_by_labels(order()) :: Ecto.Query.t()
+  def sort_by_labels(query \\ __MODULE__, order) do
+    query
+    |> Ecto.Query.order_by([{^order, :display_labels}])
+  end
+
+  defp compute_sorting_fields(%Ecto.Changeset{valid?: true} = changeset) do
     changeset
     |> Changeset.fetch_field(:basic_information)
     |> case do
-      {_source, %BasicInformation{artists: artists}} when is_list(artists) ->
+      {_source, %BasicInformation{artists: artists, labels: labels}} ->
         changeset
-        |> Changeset.put_change(:display_artists, Needlist.Repo.Want.Artist.display_artists(artists))
+        |> Changeset.put_change(:display_artists, Artist.display_artists(artists))
+        |> Changeset.put_change(:display_labels, Label.display_labels(labels))
 
       _ ->
         changeset

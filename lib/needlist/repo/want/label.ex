@@ -29,4 +29,16 @@ defmodule Needlist.Repo.Want.Label do
     |> Changeset.cast(params, @fields)
     |> Changeset.validate_required(@required_fields)
   end
+
+  @spec display_name(t()) :: String.t()
+  def display_name(%__MODULE__{name: name, catno: catno}) do
+    "#{name} – #{catno}"
+  end
+
+  @spec display_labels([t()]) :: String.t()
+  def display_labels(labels) do
+    labels
+    |> Enum.map(&display_name/1)
+    |> Enum.join(", ")
+  end
 end
