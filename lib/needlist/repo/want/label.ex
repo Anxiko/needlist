@@ -39,6 +39,7 @@ defmodule Needlist.Repo.Want.Label do
   def display_labels(labels) do
     labels
     |> Enum.map(&display_name/1)
+    |> Enum.map(&String.downcase/1)
     |> Enum.join(", ")
   end
 end
