@@ -10,7 +10,7 @@ defmodule Needlist.Repo.Want do
   alias Needlist.Repo.Want.Artist
   alias Needlist.Repo.Want.Label
 
-  @required_fields [:id]
+  @required_fields [:id, :date_added]
   @optional_fields []
   @embedded_fields [:basic_information]
   @fields @required_fields ++ @optional_fields
@@ -20,6 +20,7 @@ defmodule Needlist.Repo.Want do
     field :id, :id, primary_key: true
     field :display_artists, :string
     field :display_labels, :string
+    field :date_added, :utc_datetime
     embeds_one :basic_information, BasicInformation, on_replace: :update
     many_to_many :users, User, join_through: "user_wantlist"
   end
@@ -30,6 +31,7 @@ defmodule Needlist.Repo.Want do
           id: integer() | nil,
           display_artists: String.t() | nil,
           display_labels: String.t() | nil,
+          date_added: DateTime.t() | nil,
           basic_information: BasicInformation.t() | nil
         }
 
