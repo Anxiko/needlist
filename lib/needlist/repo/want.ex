@@ -82,6 +82,13 @@ defmodule Needlist.Repo.Want do
     |> Ecto.Query.order_by([{^order, :display_labels}])
   end
 
+  @spec sort_by_date_added(Ecto.Query.t() | __MODULE__, order()) :: Ecto.Query.t()
+  @spec sort_by_date_added(order()) :: Ecto.Query.t()
+  def sort_by_date_added(query \\ __MODULE__, order) do
+    query
+    |> Ecto.Query.order_by([{^order, :date_added}])
+  end
+
   defp compute_sorting_fields(%Ecto.Changeset{valid?: true} = changeset) do
     changeset
     |> Changeset.fetch_field(:basic_information)
