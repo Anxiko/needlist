@@ -23,6 +23,11 @@ defmodule Needlist.Repo.User do
 
   @type t() :: %__MODULE__{}
 
+  use EctoExtra.SchemaType, schema: __MODULE__
+
+  @spec new() :: t()
+  def new(), do: %__MODULE__{}
+
   @spec changeset(t() | Changeset.t(t()), map()) :: Changeset.t(t())
   @spec changeset(t() | Changeset.t(t())) :: Changeset.t(t())
   def changeset(struct, params \\ %{}) do
