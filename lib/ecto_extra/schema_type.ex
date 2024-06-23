@@ -12,7 +12,7 @@ defmodule EctoExtra.SchemaType do
         |> Ecto.Changeset.apply_action(:cast)
         |> case do
           {:ok, valid_data} -> {:ok, valid_data}
-          {:error, %Ecto.Changeset{errors: errors}} -> {:error, errors} |> IO.inspect(label: "Errors")
+          {:error, %Ecto.Changeset{errors: errors}} -> {:error, errors}
         end
       end
 

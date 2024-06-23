@@ -39,10 +39,9 @@ defmodule Needlist.Repo.Want.Artist do
   @spec display_artists([t()]) :: String.t()
   def display_artists(artists) do
     artists
-    |> Enum.map(fn artist ->
+    |> Enum.map_join(fn artist ->
       display_name(artist) <> joiner(artist)
     end)
-    |> Enum.join()
   end
 
   defp joiner(%__MODULE__{join: nil}), do: ""

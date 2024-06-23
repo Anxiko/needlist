@@ -58,12 +58,9 @@ defmodule Needlist.Discogs.Api do
           Result.result(RepoPagination.t(Want.t()), Ecto.Changeset.t(RepoPagination.t(Want.t())))
   def get_user_needlist_repo(user, opts \\ []) do
     user
-    |> IO.inspect(label: "User")
     |> get_user_needlist_raw(opts)
-    |> IO.inspect(label: "Raw result")
     |> Nullables.fallible_to_result(:request)
     |> Result.flat_map(&RepoPagination.parse(&1, :wants, RepoWant))
-    |> IO.inspect(label: "get_user_needlist_repo")
   end
 
   @spec opts_to_params(needlist_options()) :: Keyword.t()

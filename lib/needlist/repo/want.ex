@@ -122,9 +122,12 @@ defmodule Needlist.Repo.Want do
   end
 
   @spec paginated(Ecto.Query.t() | __MODULE__, pos_integer(), pos_integer()) :: Ecto.Query.t()
+  @spec paginated(pos_integer(), pos_integer()) :: Ecto.Query.t()
   def paginated(query \\ __MODULE__, page, per_page) do
+    offset = per_page * (page - 1)
+
     query
-    |> limit(per_page)
-    |> offset(per_page * (page - 1))
+    |> limit(^per_page)
+    |> offset(^offset)
   end
 end

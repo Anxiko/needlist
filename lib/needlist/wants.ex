@@ -15,10 +15,10 @@ defmodule Needlist.Wants do
   @spec get_needlist_page(String.t(), needlist_page_options()) :: [Want.t()]
   @spec get_needlist_page(String.t()) :: [Want.t()]
   def get_needlist_page(username, options \\ []) do
-    page = Keyword.get(:page, 1)
-    per_page = Keyword.get(:per_page, 50)
-    sort_key = Keyword.get(:sort, :label)
-    sort_order = Keyword.get(:sort_order, :asc)
+    page = Keyword.get(options, :page, 1)
+    per_page = Keyword.get(options, :per_page, 50)
+    sort_key = Keyword.get(options, :sort, :label)
+    sort_order = Keyword.get(options, :sort_order, :asc)
 
     Want
     |> Want.in_user_needlist_by_username(username)
