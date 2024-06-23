@@ -49,7 +49,8 @@ defmodule Needlist.Repo.User do
   end
 
   @spec maybe_with_wantlist(Ecto.Query.t() | __MODULE__, boolean()) :: Ecto.Query.t()
-  def maybe_with_wantlist(query \\ __MODULE__, preload_wantlist? \\ true)
+  @spec maybe_with_wantlist(boolean()) :: Ecto.Query.t()
+  def maybe_with_wantlist(query \\ __MODULE__, preload_wantlist?)
   def maybe_with_wantlist(query, true), do: with_wantlist(query)
   def maybe_with_wantlist(query, false), do: query
 end
