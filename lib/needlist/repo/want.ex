@@ -1,4 +1,8 @@
 defmodule Needlist.Repo.Want do
+  @moduledoc """
+  Entry in a user's wantlist.
+  """
+
   use Ecto.Schema
 
   import Ecto.Query

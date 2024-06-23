@@ -1,4 +1,8 @@
 defmodule Needlist.Wants do
+  @moduledoc """
+  Wantlist context.
+  """
+
   alias Needlist.Repo
   alias Needlist.Repo.Want
 

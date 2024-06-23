@@ -66,11 +66,13 @@ defmodule NeedlistWeb.NeedlistLive do
   end
 
   def handle_event("per-page", params, socket) do
-    with {:ok, new_state} <- State.update(socket.assigns.state, params) do
-      {:noreply, update_params(socket, new_state)}
-    else
-      _ -> {:noreply, socket}
-    end
+    socket =
+      case State.update(socket.assigns.state, params) do
+        {:ok, new_state} -> update_params(socket, new_state)
+        _ -> socket
+      end
+
+    {:noreply, socket}
   end
 
   @impl true

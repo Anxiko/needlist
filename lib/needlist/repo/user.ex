@@ -1,4 +1,8 @@
 defmodule Needlist.Repo.User do
+  @moduledoc """
+  Discogs' user.
+  """
+
   use Ecto.Schema
 
   import Ecto.Query

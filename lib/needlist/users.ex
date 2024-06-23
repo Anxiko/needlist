@@ -1,4 +1,8 @@
 defmodule Needlist.Users do
+  @moduledoc """
+  Users context.
+  """
+
   alias Nullables.Result
   alias Needlist.Repo.User
   alias Needlist.Repo

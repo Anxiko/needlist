@@ -1,4 +1,8 @@
 defmodule Needlist.Parser do
+  @moduledoc """
+  Helper parser and validation module.
+  """
+
   import Needlist.Guards, only: [is_pos_integer: 1]
 
   @spec parse_int(binary()) :: {:ok, integer()} | :error

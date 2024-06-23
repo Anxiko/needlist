@@ -1,4 +1,8 @@
 defmodule Needlist.Repo.Want.Label do
+  @moduledoc """
+  Label attributed to a release.
+  """
+
   use Ecto.Schema
 
   alias Ecto.Changeset

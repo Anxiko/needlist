@@ -1,4 +1,8 @@
 defmodule Needlist.Repo.Pagination.Page.Schema do
+  @moduledoc """
+  Creates dynamic Ecto schemas to parse and validate paginated API queries.
+  """
+
   alias Needlist.Repo.Pagination.PageInfo
 
   @type items_type() :: module()

@@ -1,4 +1,7 @@
 defmodule EctoExtra.SchemaType do
+  @moduledoc """
+  Macro for converting an embedded schema into an Ecto type.
+  """
   defmacro __using__(schema: schema) do
     quote bind_quoted: [schema: schema] do
       use Ecto.Type

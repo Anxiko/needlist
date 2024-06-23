@@ -1,4 +1,8 @@
 defmodule Needlist.Repo.Pagination.PageInfo do
+  @moduledoc """
+  Info about the pagination of a query result.
+  """
+
   use Ecto.Schema
 
   alias Ecto.Changeset

@@ -1,4 +1,8 @@
 defmodule Needlist.Repo.Pagination.Urls do
+  @moduledoc """
+  URLSs that point to relevant pages for a paginated query result.
+  """
+
   use Ecto.Schema
 
   alias Ecto.Changeset

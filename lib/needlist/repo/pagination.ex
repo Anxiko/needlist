@@ -1,4 +1,8 @@
 defmodule Needlist.Repo.Pagination do
+  @moduledoc """
+  Parses and holds paginated API responses into a normalized schema.
+  """
+
   alias Needlist.Repo.Pagination.Page
   alias Needlist.Repo.Pagination.Page.Schema, as: PageSchema
 

@@ -1,4 +1,8 @@
 defmodule Needlist.Repo.Want.Artist do
+  @moduledoc """
+  Artist attributed to a release.
+  """
+
   use Ecto.Schema
 
   alias Ecto.Changeset
