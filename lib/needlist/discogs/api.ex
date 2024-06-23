@@ -3,12 +3,10 @@ defmodule Needlist.Discogs.Api do
   Discogs API client
   """
 
-  alias Nullables.Fallible
   alias Nullables.Result
   alias Needlist.Discogs.Api.Types.SortOrder
   alias Needlist.Discogs.Api.Types.SortKey
   alias Needlist.Discogs.Model.Want
-  alias Needlist.Discogs.Pagination
   alias Needlist.Repo.Pagination, as: RepoPagination
   alias Needlist.Repo.Want, as: RepoWant
 
@@ -42,14 +40,6 @@ defmodule Needlist.Discogs.Api do
       _ ->
         :error
     end
-  end
-
-  @spec get_user_needlist(String.t()) :: {:ok, Pagination.t(Want.t())} | :error
-  @spec get_user_needlist(String.t(), needlist_options()) :: {:ok, Pagination.t(Want.t())} | :error
-  def get_user_needlist(user, opts \\ []) do
-    user
-    |> get_user_needlist_raw(opts)
-    |> Fallible.map(fn body -> Pagination.parse_page(body, "wants", &Want.parse/1) end)
   end
 
   @spec get_user_needlist_repo(String.t(), needlist_options()) ::
