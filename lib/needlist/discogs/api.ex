@@ -10,9 +10,6 @@ defmodule Needlist.Discogs.Api do
   alias Needlist.Repo.Want
   alias Needlist.Repo.User
 
-  @spec base_api_url() :: String.t()
-  def base_api_url(), do: "https://api.discogs.com"
-
   @type sort_key() :: SortKey.t()
   @type sort_order() :: SortOrder.t()
 
@@ -45,6 +42,9 @@ defmodule Needlist.Discogs.Api do
     |> Result.flat_map(&body_from_ok/1)
     |> Result.flat_map(&User.cast/1)
   end
+
+  @spec base_api_url() :: String.t()
+  defp base_api_url(), do: "https://api.discogs.com"
 
   @spec get_user_needlist_raw(String.t(), needlist_options()) :: {:ok, map()} | :error
   defp get_user_needlist_raw(user, opts) do
