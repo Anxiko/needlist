@@ -40,4 +40,7 @@ defmodule Needlist.Repo.Pagination do
       items: Map.fetch!(data, items_key)
     }
   end
+
+  @spec items(t(item_type)) :: [item_type] when item_type: var
+  def items(%__MODULE__{items: items}), do: items
 end

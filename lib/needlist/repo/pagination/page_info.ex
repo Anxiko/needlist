@@ -57,4 +57,7 @@ defmodule Needlist.Repo.Pagination.PageInfo do
       urls: Urls.new()
     }
   end
+
+  @spec last_page?(t()) :: boolean()
+  def last_page?(%__MODULE__{page: page, pages: pages}), do: page >= pages
 end

@@ -125,6 +125,8 @@ defmodule Needlist.Repo.Want do
     end
   end
 
+  defp compute_sorting_fields(changeset), do: changeset
+
   @spec paginated(Ecto.Query.t() | __MODULE__, pos_integer(), pos_integer()) :: Ecto.Query.t()
   @spec paginated(pos_integer(), pos_integer()) :: Ecto.Query.t()
   def paginated(query \\ __MODULE__, page, per_page) do

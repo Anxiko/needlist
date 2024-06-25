@@ -13,7 +13,7 @@ defmodule Needlist.Repo.Want.Artist do
 
   @primary_key false
   embedded_schema do
-    field :id, :id, primary_key: true
+    field :id, :id, primary_key: false
     field :name, :string
     field :anv, :string
     field :resource_url, :string
