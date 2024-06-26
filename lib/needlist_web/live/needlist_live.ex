@@ -293,4 +293,28 @@ defmodule NeedlistWeb.NeedlistLive do
     </.form>
     """
   end
+
+  defp table_header(%{column_key: column_key} = assigns) do
+    phx_attrs =
+      if column_key != nil do
+        %{"phx-click": "sort-by", "phx-value-key": column_key}
+      else
+        %{}
+      end
+
+    assigns =
+      assigns
+      |> assign(:phx_attrs, phx_attrs)
+
+    ~H"""
+    <th scope="col" class="px-6 py-3" {@phx_attrs}>
+      <span class={"inline-flex items-center #{@column_key != nil && "cursor-pointer"}"}>
+        <%= @column_name %>
+        <%= if @state.sort_key == @column_key and @state.sort_order != nil do %>
+          <.header_sorting sort_order={@state.sort_order} />
+        <% end %>
+      </span>
+    </th>
+    """
+  end
 end
