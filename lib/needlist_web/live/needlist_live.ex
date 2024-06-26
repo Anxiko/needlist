@@ -170,8 +170,9 @@ defmodule NeedlistWeb.NeedlistLive do
     |> assign(:loading_page, requested_needlist_options)
     |> start_async(:table_data, fn ->
       case fetch_page(socket.assigns.username, requested_needlist_options) do
-        {:ok, paginated_items} -> {requested_needlist_options, paginated_items}
-        {:error, error} -> exit(error)
+        {:ok, paginated_items} ->
+          {requested_needlist_options, paginated_items}
+          # {:error, error} -> exit(error)
       end
     end)
   end

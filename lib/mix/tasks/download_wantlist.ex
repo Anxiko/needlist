@@ -1,4 +1,10 @@
 defmodule Mix.Tasks.DownloadWantlist do
+  @moduledoc """
+  Download a user's entire needlist, and insert the user and their needlist into the DB.
+  TODO: fix error when any of the user's wants already exists in the DB.
+  TODO: instead of inserting to DB, export to file, and move inserting into DB into a new, separate task.
+  """
+
   alias Needlist.Repo.Want
   alias Needlist.Discogs.Api
   alias Needlist.Repo
@@ -18,11 +24,6 @@ defmodule Mix.Tasks.DownloadWantlist do
 
     {:ok, user} = Api.get_user(username)
     {:ok, needlist} = get_needlist(username)
-
-    needlist
-    |> Enum.group_by(fn %Want{id: id} -> id end)
-    |> Map.filter(fn {_id, wants} -> length(wants) > 1 end)
-    |> IO.inspect(label: "Repeated wants")
 
     user = %{user | wants: needlist}
 
