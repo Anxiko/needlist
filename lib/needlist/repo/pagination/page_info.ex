@@ -58,6 +58,13 @@ defmodule Needlist.Repo.Pagination.PageInfo do
     }
   end
 
+  @spec from_items(list(), pos_integer(), pos_integer(), non_neg_integer()) :: t()
+  def from_items(items, page, per_page, total) do
+    items = length(items)
+    pages = max(ceil(total / per_page), 1)
+    %__MODULE__{page: page, pages: pages, per_page: per_page, items: items, urls: Urls.new()}
+  end
+
   @spec last_page?(t()) :: boolean()
   def last_page?(%__MODULE__{page: page, pages: pages}), do: page >= pages
 end

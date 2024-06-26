@@ -30,4 +30,11 @@ defmodule Needlist.Wants do
     |> Want.paginated(page, per_page)
     |> Repo.all()
   end
+
+  @spec needlist_size(String.t()) :: non_neg_integer()
+  def needlist_size(username) do
+    Want
+    |> Want.in_user_needlist_by_username(username)
+    |> Repo.aggregate(:count)
+  end
 end

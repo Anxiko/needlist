@@ -2,6 +2,8 @@ defmodule NeedlistWeb.NeedlistLive do
   alias Needlist.Discogs.Pagination.PageInfo
   alias Needlist.Discogs.Api.Types.SortOrder
   alias Needlist.Discogs.Api.Types.SortKey
+  alias Needlist.Wants
+
   use NeedlistWeb, :live_view
 
   alias Needlist.Discogs.Api
@@ -177,21 +179,13 @@ defmodule NeedlistWeb.NeedlistLive do
 
   @spec fetch_page(String.t(), Api.needlist_options()) :: {:ok, paginated_wants()} | {:error, any()}
   defp fetch_page(username, needlist_options) do
-    case Cachex.get!(@cache, {username, needlist_options}) do
-      nil ->
-        case Api.get_user_needlist_repo(username, needlist_options) do
-          {:ok, %Pagination{} = paginated_items} ->
-            Cachex.put!(@cache, {username, needlist_options}, paginated_items)
-            {:ok, paginated_items}
+    needlist = Wants.get_needlist_page(username, needlist_options)
+    total = Wants.needlist_size(username)
 
-          {:error, _changeset} ->
-            {:error, "Discogs API error"}
-        end
+    page = Keyword.get(needlist_options, :page, 1)
+    per_page = Keyword.get(needlist_options, :per_page, 50)
 
-      %Pagination{} = paginated_items ->
-        Logger.debug("Using cached items for #{username} -> #{inspect(needlist_options)}")
-        {:ok, paginated_items}
-    end
+    {:ok, Pagination.from_page(needlist, page, per_page, total)}
   end
 
   defp want_artists(assigns) do
