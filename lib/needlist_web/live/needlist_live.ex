@@ -19,7 +19,6 @@ defmodule NeedlistWeb.NeedlistLive do
 
   require Logger
 
-  @cache :discogs_cache
   @initial_sorting_order :asc
 
   @typep paginated_wants() :: Pagination.t(Want.t())
