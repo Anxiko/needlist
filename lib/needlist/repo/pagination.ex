@@ -1,4 +1,8 @@
 defmodule Needlist.Repo.Pagination do
+  @moduledoc """
+  Parses and holds paginated API responses into a normalized schema.
+  """
+
   alias Needlist.Repo.Pagination.Page
   alias Needlist.Repo.Pagination.Page.Schema, as: PageSchema
 
@@ -35,5 +39,12 @@ defmodule Needlist.Repo.Pagination do
       page_info: page_info,
       items: Map.fetch!(data, items_key)
     }
+  end
+
+  @spec items(t(item_type)) :: [item_type] when item_type: var
+  def items(%__MODULE__{items: items}), do: items
+
+  def from_page(items, page, per_page, total) do
+    %__MODULE__{items: items, page_info: PageInfo.from_items(items, page, per_page, total)}
   end
 end

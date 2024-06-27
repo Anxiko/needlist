@@ -1,4 +1,8 @@
 defmodule Needlist.Repo.UserWantlist do
+  @moduledoc """
+  N:N relationship table between users and wantlist entries.
+  """
+
   use Ecto.Schema
 
   alias Needlist.Repo.Want

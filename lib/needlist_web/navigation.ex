@@ -1,4 +1,8 @@
 defmodule NeedlistWeb.Navigation do
+  @moduledoc """
+  Generates pagination entries based on the current and total pages.
+  """
+
   alias NeedlistWeb.Navigation.PageEntry
 
   import Needlist.Guards, only: [is_pos_integer: 1]

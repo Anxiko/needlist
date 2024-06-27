@@ -1,4 +1,7 @@
 defmodule AtomEnum do
+  @moduledoc """
+  Macro for implementing a type based on an enum of atoms.
+  """
   defmacro __using__(values: values) do
     quote bind_quoted: [values: values] do
       @type t :: unquote(Enum.reduce(values, fn e, acc -> {:|, [], [e, acc]} end))

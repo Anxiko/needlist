@@ -1,4 +1,8 @@
 defmodule NeedlistWeb.Navigation.Components do
+  @moduledoc """
+  LiveView pagination components.
+  """
+
   use NeedlistWeb, :live_component
 
   alias NeedlistWeb.Navigation

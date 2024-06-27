@@ -1,4 +1,8 @@
 defmodule Needlist.Repo.Want.Artist do
+  @moduledoc """
+  Artist attributed to a release.
+  """
+
   use Ecto.Schema
 
   alias Ecto.Changeset
@@ -9,7 +13,7 @@ defmodule Needlist.Repo.Want.Artist do
 
   @primary_key false
   embedded_schema do
-    field :id, :id, primary_key: true
+    field :id, :id, primary_key: false
     field :name, :string
     field :anv, :string
     field :resource_url, :string
@@ -31,4 +35,19 @@ defmodule Needlist.Repo.Want.Artist do
     |> Changeset.cast(params, @fields)
     |> Changeset.validate_required(@required_fields)
   end
+
+  @spec display_name(t()) :: String.t()
+  def display_name(%__MODULE__{anv: anv}) when anv != nil, do: anv
+  def display_name(%__MODULE__{name: name}), do: name
+
+  @spec display_artists([t()]) :: String.t()
+  def display_artists(artists) do
+    artists
+    |> Enum.map_join(fn artist ->
+      display_name(artist) <> joiner(artist)
+    end)
+  end
+
+  defp joiner(%__MODULE__{join: nil}), do: ""
+  defp joiner(%__MODULE__{join: join}), do: " #{join} "
 end

@@ -1,4 +1,8 @@
 defmodule NeedlistWeb.Navigation.PageEntry do
+  @moduledoc """
+  Entry in a pagination component, to perform relative (next, previous) or absolute jumps.
+  """
+
   import Needlist.Guards, only: [is_pos_integer: 1]
 
   @keys [:page, :state]

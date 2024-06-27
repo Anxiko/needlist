@@ -1,4 +1,7 @@
 defmodule EctoExtra.SchemaType do
+  @moduledoc """
+  Macro for converting an embedded schema into an Ecto type.
+  """
   defmacro __using__(schema: schema) do
     quote bind_quoted: [schema: schema] do
       use Ecto.Type
@@ -12,7 +15,7 @@ defmodule EctoExtra.SchemaType do
         |> Ecto.Changeset.apply_action(:cast)
         |> case do
           {:ok, valid_data} -> {:ok, valid_data}
-          {:error, %Ecto.Changeset{errors: errors}} -> {:error, errors} |> IO.inspect(label: "Errors")
+          {:error, %Ecto.Changeset{errors: errors}} -> {:error, errors}
         end
       end
 

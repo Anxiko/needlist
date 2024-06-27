@@ -1,4 +1,8 @@
 defmodule Needlist.Repo.User do
+  @moduledoc """
+  Discogs' user.
+  """
+
   use Ecto.Schema
 
   import Ecto.Query
@@ -18,6 +22,11 @@ defmodule Needlist.Repo.User do
   end
 
   @type t() :: %__MODULE__{}
+
+  use EctoExtra.SchemaType, schema: __MODULE__
+
+  @spec new() :: t()
+  def new(), do: %__MODULE__{}
 
   @spec changeset(t() | Changeset.t(t()), map()) :: Changeset.t(t())
   @spec changeset(t() | Changeset.t(t())) :: Changeset.t(t())
@@ -40,7 +49,8 @@ defmodule Needlist.Repo.User do
   end
 
   @spec maybe_with_wantlist(Ecto.Query.t() | __MODULE__, boolean()) :: Ecto.Query.t()
-  def maybe_with_wantlist(query \\ __MODULE__, preload_wantlist? \\ true)
+  @spec maybe_with_wantlist(boolean()) :: Ecto.Query.t()
+  def maybe_with_wantlist(query \\ __MODULE__, preload_wantlist?)
   def maybe_with_wantlist(query, true), do: with_wantlist(query)
   def maybe_with_wantlist(query, false), do: query
 end

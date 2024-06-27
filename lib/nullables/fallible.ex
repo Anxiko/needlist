@@ -22,9 +22,9 @@ defmodule Nullables.Fallible do
   @doc """
   Returns whether a fallible is OK
   """
-  @spec is_ok?(fallible()) :: boolean()
-  def is_ok?({:ok, _}), do: true
-  def is_ok?(:error), do: false
+  @spec ok?(fallible()) :: boolean()
+  def ok?({:ok, _}), do: true
+  def ok?(:error), do: false
 
   @doc """
   Extract the value from a fallible.

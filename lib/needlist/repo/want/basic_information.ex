@@ -1,4 +1,8 @@
 defmodule Needlist.Repo.Want.BasicInformation do
+  @moduledoc """
+  Information about a wantlist entry that is specific to the release.
+  """
+
   use Ecto.Schema
 
   @required_fields [:master_id, :title]

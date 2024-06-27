@@ -1,4 +1,8 @@
 defmodule Needlist.Discogs.Api.Types.SortOrder do
+  @moduledoc """
+  Order directions on a sorted query.
+  """
+
   @values [:asc, :desc]
 
   use AtomEnum, values: @values

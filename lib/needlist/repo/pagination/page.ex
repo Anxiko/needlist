@@ -1,4 +1,8 @@
 defmodule Needlist.Repo.Pagination.Page do
+  @moduledoc """
+  Parse paginated API responses.
+  """
+
   alias Needlist.Repo.Pagination.Page.Schema
 
   @enforce_keys [:schema]

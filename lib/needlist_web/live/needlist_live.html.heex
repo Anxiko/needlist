@@ -9,24 +9,17 @@
         <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
           <tr>
             <%= for {column_key, column_name} <- 
-            [artist: "Artist", title: "Title", label: "Label", format: "Formats", year: "Year"] do %>
-              <th phx-click="sort-by" phx-value-key={column_key} scope="col" class="px-6 py-3">
-                <span class="inline-flex items-center cursor-pointer">
-                  <%= column_name %>
-                  <%= if @state.sort_key == column_key and @state.sort_order != nil do %>
-                    <.header_sorting sort_order={@state.sort_order} />
-                  <% end %>
-                </span>
-              </th>
+            [artist: "Artist", title: "Title", label: "Label", nil: "Formats", nil: "Year"] do %>
+              <.table_header state={@state} column_key={column_key} column_name={column_name} />
             <% end %>
           </tr>
         </thead>
         <tbody>
           <%= for item <- elem(@current_page, 1).items do %>
             <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-              <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+              <td scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                 <.want_artists artists={item.basic_information.artists} />
-              </th>
+              </td>
               <td class="px-6 py-4">
                 <%= item.basic_information.title %>
               </td>
@@ -50,7 +43,7 @@
         <.table_pagination username={@username} current_page={elem(@current_page, 1)} state={@state} />
       </div>
       <div>
-      <.per_page_selector per_page_options={[10, 20, 50]} selected_per_page={@state.per_page} />
+        <.per_page_selector per_page_options={[10, 20, 50]} selected_per_page={@state.per_page} />
       </div>
     </div>
   <% end %>

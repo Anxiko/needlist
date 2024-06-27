@@ -2,6 +2,8 @@ defmodule NeedlistWeb.NeedlistLive do
   alias Needlist.Discogs.Pagination.PageInfo
   alias Needlist.Discogs.Api.Types.SortOrder
   alias Needlist.Discogs.Api.Types.SortKey
+  alias Needlist.Wants
+
   use NeedlistWeb, :live_view
 
   alias Needlist.Discogs.Api
@@ -17,7 +19,6 @@ defmodule NeedlistWeb.NeedlistLive do
 
   require Logger
 
-  @cache :discogs_cache
   @initial_sorting_order :asc
 
   @typep paginated_wants() :: Pagination.t(Want.t())
@@ -66,11 +67,13 @@ defmodule NeedlistWeb.NeedlistLive do
   end
 
   def handle_event("per-page", params, socket) do
-    with {:ok, new_state} <- State.update(socket.assigns.state, params) do
-      {:noreply, update_params(socket, new_state)}
-    else
-      _ -> {:noreply, socket}
-    end
+    socket =
+      case State.update(socket.assigns.state, params) do
+        {:ok, new_state} -> update_params(socket, new_state)
+        _ -> socket
+      end
+
+    {:noreply, socket}
   end
 
   @impl true
@@ -167,29 +170,22 @@ defmodule NeedlistWeb.NeedlistLive do
     |> assign(:loading_page, requested_needlist_options)
     |> start_async(:table_data, fn ->
       case fetch_page(socket.assigns.username, requested_needlist_options) do
-        {:ok, paginated_items} -> {requested_needlist_options, paginated_items}
-        {:error, error} -> exit(error)
+        {:ok, paginated_items} ->
+          {requested_needlist_options, paginated_items}
+          # {:error, error} -> exit(error)
       end
     end)
   end
 
   @spec fetch_page(String.t(), Api.needlist_options()) :: {:ok, paginated_wants()} | {:error, any()}
   defp fetch_page(username, needlist_options) do
-    case Cachex.get!(@cache, {username, needlist_options}) do
-      nil ->
-        case Api.get_user_needlist_repo(username, needlist_options) do
-          {:ok, %Pagination{} = paginated_items} ->
-            Cachex.put!(@cache, {username, needlist_options}, paginated_items)
-            {:ok, paginated_items}
+    needlist = Wants.get_needlist_page(username, needlist_options)
+    total = Wants.needlist_size(username)
 
-          {:error, _changeset} ->
-            {:error, "Discogs API error"}
-        end
+    page = Keyword.get(needlist_options, :page, 1)
+    per_page = Keyword.get(needlist_options, :per_page, 50)
 
-      %Pagination{} = paginated_items ->
-        Logger.debug("Using cached items for #{username} -> #{inspect(needlist_options)}")
-        {:ok, paginated_items}
-    end
+    {:ok, Pagination.from_page(needlist, page, per_page, total)}
   end
 
   defp want_artists(assigns) do
@@ -295,6 +291,30 @@ defmodule NeedlistWeb.NeedlistLive do
       >
       </.input>
     </.form>
+    """
+  end
+
+  defp table_header(%{column_key: column_key} = assigns) do
+    phx_attrs =
+      if column_key != nil do
+        %{"phx-click": "sort-by", "phx-value-key": column_key}
+      else
+        %{}
+      end
+
+    assigns =
+      assigns
+      |> assign(:phx_attrs, phx_attrs)
+
+    ~H"""
+    <th scope="col" class="px-6 py-3" {@phx_attrs}>
+      <span class={"inline-flex items-center #{@column_key != nil && "cursor-pointer"}"}>
+        <%= @column_name %>
+        <%= if @state.sort_key == @column_key and @state.sort_order != nil do %>
+          <.header_sorting sort_order={@state.sort_order} />
+        <% end %>
+      </span>
+    </th>
     """
   end
 end

@@ -1,4 +1,7 @@
 defmodule Needlist.Repo.Want.Format do
+  @moduledoc """
+  Format in which a release is a available.
+  """
   use Ecto.Schema
 
   alias Ecto.Changeset
