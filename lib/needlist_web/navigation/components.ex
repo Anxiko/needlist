@@ -107,18 +107,18 @@ defmodule NeedlistWeb.Navigation.Components do
       |> assign(:entries, entries)
 
     ~H"""
-      <nav aria-label="Page navigation">
-        <ul class="flex items-center h-10 -space-x-px text-base">
-          <%= for entry <- @entries do %>
-            <%= case entry do %>
-              <% :ellipsis -> %>
-                <.nav_ellipsis />
-              <% _ -> %>
-                <.nav_to_page_entry page_entry={entry} url={@url} params={@params} />
-            <% end %>
+    <nav aria-label="Page navigation">
+      <ul class="flex items-center h-10 -space-x-px text-base">
+        <%= for entry <- @entries do %>
+          <%= case entry do %>
+            <% :ellipsis -> %>
+              <.nav_ellipsis />
+            <% _ -> %>
+              <.nav_to_page_entry page_entry={entry} url={@url} params={@params} />
           <% end %>
-        </ul>
-      </nav>
+        <% end %>
+      </ul>
+    </nav>
     """
   end
 end

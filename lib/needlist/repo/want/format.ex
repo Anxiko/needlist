@@ -18,17 +18,17 @@ defmodule Needlist.Repo.Want.Format do
   end
 
   @type t() :: %__MODULE__{
-    name: String.t(),
-    qty: non_neg_integer(),
-    descriptions: [String.t()]
-  }
+          name: String.t(),
+          qty: non_neg_integer(),
+          descriptions: [String.t()]
+        }
 
   @spec changeset(t(), map()) :: Changeset.t(t())
   @spec changeset(t()) :: Ecto.Changeset.t(t())
   def changeset(struct, params \\ %{}) do
     struct
-    |>Changeset.cast(params, @fields)
-    |>Changeset.validate_required(@required_fields)
-    |>Changeset.validate_number(:qty, greater_than_or_equal_to: 0)
+    |> Changeset.cast(params, @fields)
+    |> Changeset.validate_required(@required_fields)
+    |> Changeset.validate_number(:qty, greater_than_or_equal_to: 0)
   end
 end

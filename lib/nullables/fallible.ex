@@ -38,6 +38,14 @@ defmodule Nullables.Fallible do
   end
 
   @doc """
+  Get the value from the fallible if present, otherwise get a default value.
+  """
+  @spec unwrap(fallible(t), d) :: t | d when t: var, d: var
+  def unwrap(fallible, default \\ nil)
+  def unwrap({:ok, value}, _default), do: value
+  def unwrap(:error, default), do: default
+
+  @doc """
   If the fallible contains a value, call the function with accumulator and the value as arguments.
   Otherwise, return the accumulator as-is.
   """

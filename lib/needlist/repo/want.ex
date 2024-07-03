@@ -7,6 +7,7 @@ defmodule Needlist.Repo.Want do
 
   import Ecto.Query
 
+  alias Needlist.Repo.Listing
   alias Ecto.Changeset
   alias EctoExtra
   alias Needlist.Repo.Want.BasicInformation
@@ -27,6 +28,7 @@ defmodule Needlist.Repo.Want do
     field :date_added, :utc_datetime
     embeds_one :basic_information, BasicInformation, on_replace: :update
     many_to_many :users, User, join_through: "user_wantlist"
+    has_many :listings, Listing, references: :id
   end
 
   use EctoExtra.SchemaType, schema: __MODULE__
@@ -135,5 +137,10 @@ defmodule Needlist.Repo.Want do
     query
     |> limit(^per_page)
     |> offset(^offset)
+  end
+
+  @spec with_listings(Ecto.Query.t() | __MODULE__) :: Ecto.Query.t()
+  def with_listings(query \\ __MODULE__) do
+    preload(query, :listings)
   end
 end

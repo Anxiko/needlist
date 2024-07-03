@@ -2,10 +2,12 @@
     "cSpell.words": [
         "Cachex",
         "catno",
+        "cloudscraper",
         "datastructure",
         "describedby",
         "Discogs",
         "enctype",
+        "Floki",
         "Heroicon",
         "heroicons",
         "keydown",
@@ -14,13 +16,17 @@
         "linejoin",
         "maxlength",
         "minlength",
+        "mplabel",
         "Needlist",
         "noreply",
         "novalidate",
         "nowrap",
+        "pricevalue",
         "tabindex",
         "tbody",
         "thead",
+        "venv",
         "wantlist"
-    ]
+    ],
+    "python.analysis.typeCheckingMode": "basic"
 }

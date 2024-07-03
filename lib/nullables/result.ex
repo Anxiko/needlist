@@ -49,4 +49,41 @@ defmodule Nullables.Result do
   @spec ok?(result()) :: boolean()
   def ok?({:ok, _}), do: true
   def ok?({:error, _}), do: false
+
+  @doc """
+  Extract the value from a result.
+  If the result is in error, it will raise an `ArgumentError`.
+  """
+  @spec unwrap!(result(t)) :: t when t: var
+  def unwrap!({:ok, value}), do: value
+
+  def unwrap!(:error) do
+    raise ArgumentError, "Attempted to unwrap a result in error"
+  end
+
+  @doc """
+  Get the value from the result if present, otherwise get a default value.
+  """
+  @spec unwrap(result(t), d) :: t | d when t: var, d: var
+  def unwrap(fallible, default \\ nil)
+  def unwrap({:ok, value}, _default), do: value
+  def unwrap({:error, _}, default), do: default
+
+  @doc """
+  Collapse an enumerable of results, into a result of an enumerable.
+  If any of the elements are in error, that error becomes the result.
+  Otherwise, the success result is the list of unwrapped values.
+  """
+  @spec try_reduce(Enumerable.t(result(t, e))) :: result([t], e) when t: var, e: var
+  def try_reduce(results) do
+    results
+    |> Enum.reduce_while({:ok, []}, fn
+      {:ok, value}, {:ok, values} ->
+        {:cont, {:ok, [value | values]}}
+
+      {:error, error}, _acc ->
+        {:halt, {:error, error}}
+    end)
+    |> map(&Enum.reverse/1)
+  end
 end

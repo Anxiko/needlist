@@ -7,4 +7,3 @@ defmodule Needlist.Repo.Migrations.CreateWant do
     end
   end
 end
-
