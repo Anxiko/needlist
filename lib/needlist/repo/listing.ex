@@ -37,6 +37,7 @@ defmodule Needlist.Repo.Listing do
   @type t() :: %__MODULE__{}
 
   @spec changeset(t() | Changeset.t(t()), map()) :: Changeset.t(t())
+  @spec changeset(t() | Changeset.t(t())) :: Changeset.t(t())
   def changeset(listing, params \\ %{}) do
     listing
     |> Changeset.cast(params, @fields)
