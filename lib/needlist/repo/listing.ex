@@ -4,6 +4,7 @@ defmodule Needlist.Repo.Listing do
   """
 
   use Ecto.Schema
+  import Ecto.Query
 
   alias Needlist.Repo.Want
   alias Needlist.Discogs.Scraper
@@ -71,5 +72,22 @@ defmodule Needlist.Repo.Listing do
     }
 
     changeset(%__MODULE__{}, params)
+  end
+
+  @spec by_total_price_currency(Ecto.Query.t() | __MODULE__, String.t() | atom()) :: Ecto.Query.t()
+  @spec by_total_price_currency(String.t() | atom()) :: Ecto.Query.t()
+  def by_total_price_currency(query \\ __MODULE__, currency) do
+    query
+    |> where([l], fragment("(?).currency", l.total_price) == ^currency)
+  end
+
+  def ranked_pricing_per_want(query \\ __MODULE__) do
+    query
+    |> windows([l], price_per_want_asc: [partition_by: l.want_id, order_by: fragment("(?).currency", l.total_price)])
+    |> select([l], %{
+      want_id: l.want_id,
+      total_price: l.total_price,
+      row_number: over(row_number(), :price_per_want_asc)
+    })
   end
 end

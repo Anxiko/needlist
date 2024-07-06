@@ -20,6 +20,8 @@ defmodule Needlist.Repo.Want do
   @embedded_fields [:basic_information]
   @fields @required_fields ++ @optional_fields
 
+  @default_currency Application.compile_env!(:money, :default_currency) |> Atom.to_string()
+
   @primary_key false
   schema "wants" do
     field :id, :id, primary_key: true
@@ -140,7 +142,19 @@ defmodule Needlist.Repo.Want do
   end
 
   @spec with_listings(Ecto.Query.t() | __MODULE__) :: Ecto.Query.t()
+  @spec with_listings() :: Ecto.Query.t()
   def with_listings(query \\ __MODULE__) do
     preload(query, :listings)
+  end
+
+  def with_min_total_price(query \\ __MODULE__, currency \\ @default_currency) do
+    pricing_subquery =
+      Listing
+      |> Listing.by_total_price_currency(currency)
+      |> Listing.ranked_pricing_per_want()
+
+    query
+    |> join(:left, [w, l], subquery(pricing_subquery), on: w.id == l.want_id and l.row_number == ^1)
+    |> select([w, l], %{w: w, min_price: l.total_price})
   end
 end
