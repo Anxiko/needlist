@@ -9,7 +9,7 @@
         <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
           <tr>
             <%= for {column_key, column_name} <- 
-            [artist: "Artist", title: "Title", label: "Label", nil: "Formats", nil: "Year"] do %>
+            [artist: "Artist", title: "Title", label: "Label", nil: "Formats", nil: "Year", nil: "Price"] do %>
               <.table_header state={@state} column_key={column_key} column_name={column_name} />
             <% end %>
           </tr>
@@ -31,6 +31,9 @@
               </td>
               <td class="px-6 py-4">
                 <.want_year year={item.basic_information.year} />
+              </td>
+              <td class="px-6 py-4">
+                <.want_price price={item.min_price} />
               </td>
             </tr>
           <% end %>

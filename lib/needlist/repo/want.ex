@@ -76,7 +76,7 @@ defmodule Needlist.Repo.Want do
     query
     |> join(:inner, [wants: w], u in assoc(w, :users), as: :users)
     |> where([users: u], u.id == ^user_id)
-    |> select([wants: w], w)
+    |> select_merge([wants: w], w)
   end
 
   @spec in_user_needlist_by_username(Ecto.Query.t() | __MODULE__, String.t()) :: Ecto.Query.t()

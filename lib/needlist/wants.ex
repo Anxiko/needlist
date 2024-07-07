@@ -35,7 +35,7 @@ defmodule Needlist.Wants do
 
   @spec needlist_size(String.t()) :: non_neg_integer()
   def needlist_size(username) do
-    Want
+    Want.named_binding()
     |> Want.in_user_needlist_by_username(username)
     |> Repo.aggregate(:count)
   end

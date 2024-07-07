@@ -229,6 +229,12 @@ defmodule NeedlistWeb.NeedlistLive do
     """
   end
 
+  defp want_price(assigns) do
+    ~H"""
+    <%= @price %>
+    """
+  end
+
   defp table_pagination(assigns) do
     url = ~p"/needlist/#{assigns.username}"
 
