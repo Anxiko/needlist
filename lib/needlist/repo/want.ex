@@ -48,7 +48,7 @@ defmodule Needlist.Repo.Want do
         }
 
   @type sort_order() :: :asc | :desc
-  @type sort_key() :: :artist | :title | :label | :added
+  @type sort_key() :: :artist | :title | :label | :added | :price
 
   @spec changeset(t() | Changeset.t(t()), map()) :: Changeset.t(t())
   @spec changeset(map()) :: Changeset.t(t())
@@ -116,6 +116,13 @@ defmodule Needlist.Repo.Want do
     |> Ecto.Query.order_by([{^order, :date_added}])
   end
 
+  @spec sort_by_price(Ecto.Query.t() | __MODULE__, sort_order()) :: Ecto.Query.t()
+  @spec sort_by_price(sort_order()) :: Ecto.Query.t()
+  def sort_by_price(query \\ __MODULE__, order) do
+    query
+    |> order_by([listings: l], [{^order, l.total_price}])
+  end
+
   @spec sort_by(Ecto.Query.t() | __MODULE__, sort_key(), sort_order()) :: Ecto.Query.t()
   @spec sort_by(sort_key(), sort_order()) :: Ecto.Query.t()
   def sort_by(query \\ __MODULE__, sort_key, sort_order)
@@ -123,6 +130,7 @@ defmodule Needlist.Repo.Want do
   def sort_by(query, :title, sort_order), do: sort_by_title(query, sort_order)
   def sort_by(query, :label, sort_order), do: sort_by_labels(query, sort_order)
   def sort_by(query, :added, sort_order), do: sort_by_date_added(query, sort_order)
+  def sort_by(query, :price, sort_order), do: sort_by_price(query, sort_order)
 
   defp compute_sorting_fields(%Ecto.Changeset{valid?: true} = changeset) do
     changeset

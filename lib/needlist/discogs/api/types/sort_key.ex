@@ -3,7 +3,7 @@ defmodule Needlist.Discogs.Api.Types.SortKey do
   Keys to order by on an needlist query.
   """
 
-  @values [:label, :artist, :title, :catno, :format, :rating, :added, :year]
+  @values [:label, :artist, :title, :catno, :format, :rating, :added, :year, :price]
 
   use AtomEnum, values: @values
 end
