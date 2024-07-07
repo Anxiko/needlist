@@ -24,10 +24,12 @@ defmodule Needlist.Wants do
     sort_key = Keyword.get(options, :sort, :label)
     sort_order = Keyword.get(options, :sort_order, :asc)
 
-    Want
+    Want.named_binding()
     |> Want.in_user_needlist_by_username(username)
+    |> Want.with_min_total_price()
     |> Want.sort_by(sort_key, sort_order)
     |> Want.paginated(page, per_page)
+    |> IO.inspect(label: "Query")
     |> Repo.all()
   end
 

@@ -7,6 +7,7 @@ defmodule Needlist.Repo.Want do
 
   import Ecto.Query
 
+  alias Needlist.Repo.Want
   alias Needlist.Repo.Listing
   alias Ecto.Changeset
   alias EctoExtra
@@ -64,22 +65,27 @@ defmodule Needlist.Repo.Want do
     %__MODULE__{}
   end
 
+  @spec named_binding() :: Ecto.Query.t()
+  def named_binding() do
+    from(Want, as: :wants)
+  end
+
   @spec in_user_needlist(Ecto.Query.t() | __MODULE__, integer()) :: Ecto.Query.t()
   @spec in_user_needlist(integer()) :: Ecto.Query.t()
   def in_user_needlist(query \\ __MODULE__, user_id) do
     query
-    |> join(:inner, [w], u in assoc(w, :users))
-    |> where([_w, u], u.id == ^user_id)
-    |> select([w, _u], w)
+    |> join(:inner, [wants: w], u in assoc(w, :users), as: :users)
+    |> where([users: u], u.id == ^user_id)
+    |> select([wants: w], w)
   end
 
   @spec in_user_needlist_by_username(Ecto.Query.t() | __MODULE__, String.t()) :: Ecto.Query.t()
   @spec in_user_needlist_by_username(String.t()) :: Ecto.Query.t()
   def in_user_needlist_by_username(query \\ __MODULE__, username) do
     query
-    |> join(:inner, [w], u in assoc(w, :users))
-    |> where([_w, u], u.username == ^username)
-    |> select([w, _u], w)
+    |> join(:inner, [wants: w], u in assoc(w, :users), as: :users)
+    |> where([users: u], u.username == ^username)
+    |> select_merge([wants: w], w)
   end
 
   @spec sort_by_artists(Ecto.Query.t() | __MODULE__, sort_order()) :: Ecto.Query.t()
@@ -154,13 +160,18 @@ defmodule Needlist.Repo.Want do
   @spec with_min_total_price(Ecto.Query.t() | __MODULE__) :: Ecto.Query.t()
   @spec with_min_total_price() :: Ecto.Query.t()
   def with_min_total_price(query \\ __MODULE__, currency \\ @default_currency) do
-    pricing_subquery =
-      Listing
-      |> Listing.by_total_price_currency(currency)
-      |> Listing.ranked_pricing_per_want()
-
     query
-    |> join(:left, [w, l], subquery(pricing_subquery), on: w.id == l.want_id and l.row_number == ^1)
-    |> select([w, l], %{w | min_price: l.total_price})
+    |> join(:left, [wants: w], l in subquery(pricing_subquery(currency)),
+      on: w.id == l.want_id and l.row_number == 1,
+      as: :listings
+    )
+    |> select_merge([wants: w, listings: l], %{w | min_price: l.total_price})
+  end
+
+  @spec pricing_subquery(String.t()) :: Ecto.Query.t()
+  defp pricing_subquery(currency) do
+    Listing
+    |> Listing.by_total_price_currency(currency)
+    |> Listing.ranked_pricing_per_want()
   end
 end
