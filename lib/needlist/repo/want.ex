@@ -150,6 +150,9 @@ defmodule Needlist.Repo.Want do
     preload(query, :listings)
   end
 
+  @spec with_min_total_price(Ecto.Query.t() | __MODULE__, String.t()) :: Ecto.Query.t()
+  @spec with_min_total_price(Ecto.Query.t() | __MODULE__) :: Ecto.Query.t()
+  @spec with_min_total_price() :: Ecto.Query.t()
   def with_min_total_price(query \\ __MODULE__, currency \\ @default_currency) do
     pricing_subquery =
       Listing

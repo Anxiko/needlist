@@ -1,3 +1,4 @@
+# credo:disable-for-this-file Credo.Check.Readability.Specs
 defmodule Needlist.DataCase do
   @moduledoc """
   This module defines the setup for tests requiring

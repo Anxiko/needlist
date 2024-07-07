@@ -1,4 +1,8 @@
 defmodule Mix.Tasks.ScrapeListings do
+  @moduledoc """
+  Download the listings for a given release, and store them to a file.
+  """
+
   use Mix.Task
 
   import Needlist.Python, only: [scrape_listings: 1]

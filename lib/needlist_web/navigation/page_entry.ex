@@ -42,6 +42,7 @@ defmodule NeedlistWeb.Navigation.PageEntry do
     %__MODULE__{page: {relation, current}, state: state}
   end
 
+  @spec page(t()) :: pos_integer()
   def page(%__MODULE__{page: page}) do
     case page do
       {:prev, page} -> page - 1

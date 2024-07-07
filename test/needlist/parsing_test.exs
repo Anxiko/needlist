@@ -16,14 +16,19 @@ defmodule Needlist.ParsingTest do
       field :inner, :string
     end
 
+    @type t() :: %__MODULE__{}
+
     use EctoExtra.SchemaType, schema: __MODULE__
 
+    @spec changeset(t(), map()) :: Ecto.Changeset.t()
+    @spec changeset(t()) :: Ecto.Changeset.t()
     def changeset(struct, params \\ %{}) do
       struct
       |> Ecto.Changeset.cast(params, [:inner])
       |> Ecto.Changeset.validate_required([:inner])
     end
 
+    @spec new() :: t()
     def new() do
       %__MODULE__{}
     end

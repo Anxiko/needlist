@@ -6,9 +6,11 @@ defmodule NeedlistWeb.Components.Discogs do
   use Phoenix.Component
 
   alias Needlist.Repo.Want
+  alias Phoenix.LiveView.Rendered
 
   attr :artist, Want.Artist, required: true
 
+  @spec want_artist(map()) :: Rendered.t()
   def want_artist(assigns) do
     ~H"""
     <a class="font-medium text-blue-600 dark:text-blue-500 hover:underline" href={@artist.resource_url}>
@@ -23,6 +25,7 @@ defmodule NeedlistWeb.Components.Discogs do
 
   attr :label, Want.Label, required: true
 
+  @spec want_label(map()) :: Rendered.t()
   def want_label(assigns) do
     ~H"""
     <span>
@@ -37,6 +40,7 @@ defmodule NeedlistWeb.Components.Discogs do
   attr :format, Want.Format, required: true
   attr :rest, :global
 
+  @spec want_format(map()) :: Rendered.t()
   def want_format(assigns) do
     ~H"""
     <span {@rest}>

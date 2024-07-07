@@ -99,6 +99,7 @@ defmodule NeedlistWeb.Navigation.Components do
   attr :current, :integer, required: true
   attr :total, :integer, required: true
 
+  @spec pagination(map()) :: Rendered.t()
   def pagination(assigns) do
     entries = Navigation.entries(assigns[:current], assigns[:total])
 

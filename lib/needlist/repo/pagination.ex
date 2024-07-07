@@ -44,6 +44,7 @@ defmodule Needlist.Repo.Pagination do
   @spec items(t(item_type)) :: [item_type] when item_type: var
   def items(%__MODULE__{items: items}), do: items
 
+  @spec from_page([e], pos_integer(), pos_integer(), non_neg_integer()) :: t(e) when e: var
   def from_page(items, page, per_page, total) do
     %__MODULE__{items: items, page_info: PageInfo.from_items(items, page, per_page, total)}
   end

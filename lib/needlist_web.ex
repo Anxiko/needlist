@@ -1,3 +1,4 @@
+# credo:disable-for-this-file Credo.Check.Readability.Specs
 defmodule NeedlistWeb do
   @moduledoc """
   The entrypoint for defining your web interface, such
@@ -95,6 +96,9 @@ defmodule NeedlistWeb do
 
       # Routes generation with the ~p sigil
       unquote(verified_routes())
+
+      # For annotating function components
+      alias Phoenix.LiveView.Rendered
     end
   end
 

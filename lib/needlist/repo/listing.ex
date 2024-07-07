@@ -81,6 +81,8 @@ defmodule Needlist.Repo.Listing do
     |> where([l], fragment("(?).currency", l.total_price) == ^currency)
   end
 
+  @spec ranked_pricing_per_want(Ecto.Query.t() | __MODULE__) :: Ecto.Query.t()
+  @spec ranked_pricing_per_want() :: Ecto.Query.t()
   def ranked_pricing_per_want(query \\ __MODULE__) do
     query
     |> windows([l], price_per_want_asc: [partition_by: l.want_id, order_by: fragment("(?).currency", l.total_price)])

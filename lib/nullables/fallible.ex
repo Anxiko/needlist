@@ -31,7 +31,7 @@ defmodule Nullables.Fallible do
   If the fallible had no value, it will raise an `ArgumentError`.
   """
   @spec unwrap!(fallible(t)) :: t when t: var
-  def unwrap!(:ok, value), do: value
+  def unwrap!({:ok, value}), do: value
 
   def unwrap!(:error) do
     raise ArgumentError, "Attempted to unwrap a fallible in error"
