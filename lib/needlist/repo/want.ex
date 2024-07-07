@@ -120,7 +120,7 @@ defmodule Needlist.Repo.Want do
   @spec sort_by(sort_key(), sort_order()) :: Ecto.Query.t()
   def sort_by(query \\ __MODULE__, sort_key, sort_order)
   def sort_by(query, :artist, sort_order), do: sort_by_artists(query, sort_order)
-  def sort_by(query, :title, sort_order), do: sort_by_labels(query, sort_order)
+  def sort_by(query, :title, sort_order), do: sort_by_title(query, sort_order)
   def sort_by(query, :label, sort_order), do: sort_by_labels(query, sort_order)
   def sort_by(query, :added, sort_order), do: sort_by_date_added(query, sort_order)
 
