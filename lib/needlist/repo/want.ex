@@ -14,9 +14,10 @@ defmodule Needlist.Repo.Want do
   alias Needlist.Repo.User
   alias Needlist.Repo.Want.Artist
   alias Needlist.Repo.Want.Label
+  alias Money.Ecto.Composite.Type, as: MoneyEcto
 
   @required_fields [:id, :date_added]
-  @optional_fields []
+  @optional_fields [:min_price]
   @embedded_fields [:basic_information]
   @fields @required_fields ++ @optional_fields
 
@@ -28,6 +29,7 @@ defmodule Needlist.Repo.Want do
     field :display_artists, :string
     field :display_labels, :string
     field :date_added, :utc_datetime
+    field :min_price, MoneyEcto, virtual: true
     embeds_one :basic_information, BasicInformation, on_replace: :update
     many_to_many :users, User, join_through: "user_wantlist"
     has_many :listings, Listing, references: :id
@@ -40,6 +42,7 @@ defmodule Needlist.Repo.Want do
           display_artists: String.t() | nil,
           display_labels: String.t() | nil,
           date_added: DateTime.t() | nil,
+          min_price: Money.t() | nil,
           basic_information: BasicInformation.t() | nil
         }
 
@@ -155,6 +158,6 @@ defmodule Needlist.Repo.Want do
 
     query
     |> join(:left, [w, l], subquery(pricing_subquery), on: w.id == l.want_id and l.row_number == ^1)
-    |> select([w, l], %{w: w, min_price: l.total_price})
+    |> select([w, l], %{w | min_price: l.total_price})
   end
 end
