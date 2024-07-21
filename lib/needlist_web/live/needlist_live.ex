@@ -165,11 +165,13 @@ defmodule NeedlistWeb.NeedlistLive do
 
   # Requested page is not loaded nor loading
   defp load_page(socket, requested_needlist_options) do
+    username = socket.assigns.username
+
     socket
     |> cancel_async(:loading_page)
     |> assign(:loading_page, requested_needlist_options)
     |> start_async(:table_data, fn ->
-      case fetch_page(socket.assigns.username, requested_needlist_options) do
+      case fetch_page(username, requested_needlist_options) do
         {:ok, paginated_items} ->
           {requested_needlist_options, paginated_items}
           # {:error, error} -> exit(error)
@@ -294,8 +296,7 @@ defmodule NeedlistWeb.NeedlistLive do
         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
         options={for option <- @per_page_options, do: {option, option}}
         type="select"
-      >
-      </.input>
+      />
     </.form>
     """
   end
