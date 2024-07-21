@@ -192,14 +192,12 @@ defmodule NeedlistWeb.NeedlistLive do
 
   defp want_artists(assigns) do
     ~H"""
-    <span>
-      <%= for artist <- @artists do %>
-        <.want_artist artist={artist} />
-        <%= if artist.join do %>
-          <%= artist.join %>
-        <% end %>
+    <%= for artist <- @artists do %>
+      <.want_artist artist={artist} />
+      <%= if artist.join do %>
+        <%= artist.join %>
       <% end %>
-    </span>
+    <% end %>
     """
   end
 

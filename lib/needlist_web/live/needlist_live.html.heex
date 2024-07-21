@@ -17,7 +17,7 @@
         <tbody>
           <%= for item <- elem(@current_page, 1).items do %>
             <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-              <td scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+              <td scope="row" class="px-6 py-4 ">
                 <.want_artists artists={item.basic_information.artists} />
               </td>
               <td class="px-6 py-4">
