@@ -16,12 +16,9 @@ defmodule Needlist.Repo.Listing do
     :id,
     :media_condition,
     :want_id,
-    :sleeve_condition,
-    :base_price,
-    :shipping_price,
-    :total_price
+    :base_price
   ]
-  @optional_fields []
+  @optional_fields [:sleeve_condition, :total_price, :shipping_price, :active, :inserted_at, :updated_at]
   @fields @required_fields ++ @optional_fields
 
   @primary_key false
@@ -33,9 +30,14 @@ defmodule Needlist.Repo.Listing do
     field :base_price, MoneyEcto
     field :shipping_price, MoneyEcto
     field :total_price, MoneyEcto
+    field :active, :boolean, default: true
+    timestamps()
   end
 
   @type t() :: %__MODULE__{}
+
+  @spec new() :: t()
+  def new(), do: %__MODULE__{}
 
   @spec changeset(t() | Changeset.t(t()), map()) :: Changeset.t(t())
   @spec changeset(t() | Changeset.t(t())) :: Changeset.t(t())
@@ -46,8 +48,8 @@ defmodule Needlist.Repo.Listing do
     |> Changeset.validate_required(@required_fields)
   end
 
-  @spec changeset_from_scrapped(Scraper.t(), integer()) :: Ecto.Changeset.t(t())
-  def changeset_from_scrapped(%Scraper{} = scrapper, release_id) do
+  @spec params_from_scrapped(Scraper.t(), integer()) :: map()
+  def params_from_scrapped(%Scraper{} = scrapper, release_id) do
     %Scraper{
       price: %Scraper.Price{
         base: base_price,
@@ -61,7 +63,7 @@ defmodule Needlist.Repo.Listing do
       }
     } = scrapper
 
-    params = %{
+    %{
       id: id,
       want_id: release_id,
       media_condition: media_condition,
@@ -70,8 +72,19 @@ defmodule Needlist.Repo.Listing do
       shipping_price: shipping_price,
       total_price: total_price
     }
+  end
 
-    changeset(%__MODULE__{}, params)
+  @spec filter_by_active(Ecto.Query.t() | __MODULE__, boolean() | :any) :: Ecto.Query.t()
+  def filter_by_active(query \\ __MODULE__, active)
+
+  def filter_by_active(query, :any), do: query
+  def filter_by_active(query, active), do: where(query, active: ^active)
+
+  @spec by_want_id(Ecto.Query.t() | __MODULE__, integer()) :: Ecto.Query.t()
+  @spec by_want_id(integer()) :: Ecto.Query.t()
+  def by_want_id(query \\ __MODULE__, want_id) do
+    query
+    |> where(want_id: ^want_id)
   end
 
   @spec by_total_price_currency(Ecto.Query.t() | __MODULE__, String.t() | atom()) :: Ecto.Query.t()
@@ -85,7 +98,7 @@ defmodule Needlist.Repo.Listing do
   @spec ranked_pricing_per_want() :: Ecto.Query.t()
   def ranked_pricing_per_want(query \\ __MODULE__) do
     query
-    |> windows([l], price_per_want_asc: [partition_by: l.want_id, order_by: fragment("(?).currency", l.total_price)])
+    |> windows([l], price_per_want_asc: [partition_by: l.want_id, order_by: fragment("(?).amount", l.total_price)])
     |> select([l], %{
       want_id: l.want_id,
       total_price: l.total_price,

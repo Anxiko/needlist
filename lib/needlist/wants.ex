@@ -3,6 +3,8 @@ defmodule Needlist.Wants do
   Wantlist context.
   """
 
+  alias Ecto.Changeset
+  alias Needlist.Listings
   alias Needlist.Repo
   alias Needlist.Repo.Want
 
@@ -29,8 +31,15 @@ defmodule Needlist.Wants do
     |> Want.with_min_total_price()
     |> Want.sort_by(sort_key, sort_order)
     |> Want.paginated(page, per_page)
-    |> IO.inspect(label: "Query")
     |> Repo.all()
+  end
+
+  @spec get_by_id(integer()) :: {:ok, Want.t()} | {:error, :not_found}
+  def get_by_id(want_id) do
+    Want
+    |> Want.by_id(want_id)
+    |> Repo.one()
+    |> Nullables.nullable_to_result(:not_found)
   end
 
   @spec needlist_size(String.t()) :: non_neg_integer()
@@ -38,5 +47,33 @@ defmodule Needlist.Wants do
     Want.named_binding()
     |> Want.in_user_needlist_by_username(username)
     |> Repo.aggregate(:count)
+  end
+
+  @spec outdated_listings(Keyword.t()) :: [Want.t()]
+  @spec outdated_listings() :: [Want.t()]
+  def outdated_listings(args \\ []) do
+    expiration = Keyword.get(args, :expiration)
+    limit = Keyword.get(args, :limit)
+
+    Want
+    |> Want.filter_by_outdated_listings(expiration)
+    |> Want.maybe_limit(limit)
+    |> Repo.all()
+  end
+
+  @spec update_active_listings(Want.t(), [map()]) :: {:ok, Want.t()} | {:error, Changeset.t()}
+  def update_active_listings(%Want{id: want_id} = want, active_listings) do
+    timestamp = DateTime.utc_now()
+
+    Repo.transaction(fn ->
+      with {:ok, _listings} <- Listings.update_release_listings(want_id, active_listings, timestamp),
+           changeset = Want.changeset(want, %{listings_last_updated: timestamp}),
+           {:ok, want} <- Repo.update(changeset) do
+        want
+      else
+        {:error, error} ->
+          Repo.rollback(error)
+      end
+    end)
   end
 end

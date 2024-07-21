@@ -10,7 +10,7 @@ defmodule Needlist.Discogs.Scraper.Description do
   @type t() :: %__MODULE__{
           listing_id: integer(),
           media_condition: String.t(),
-          sleeve_condition: String.t()
+          sleeve_condition: String.t() | nil
         }
 
   import Needlist.Discogs.Scraper.Parsing, only: [node_outer_text: 1]
@@ -24,11 +24,12 @@ defmodule Needlist.Discogs.Scraper.Description do
       {:ok, %__MODULE__{media_condition: media, sleeve_condition: sleeve, listing_id: listing_id}}
     else
       {step, :error} -> {:error, step}
+      {step, {:error, details}} -> {:error, {step, details}}
       {step, details} -> {:error, {step, details}}
     end
   end
 
-  @spec parse_conditions(Floki.html_node()) :: {:ok, {String.t(), String.t()}} | :error
+  @spec parse_conditions(Floki.html_node()) :: {:ok, {String.t(), String.t() | nil}} | {:error, any()}
   defp parse_conditions(item_condition) do
     item_condition
     |> Floki.find("p > span")
@@ -36,7 +37,8 @@ defmodule Needlist.Discogs.Scraper.Description do
     |> Enum.map(&node_outer_text/1)
     |> case do
       [media, sleeve] -> {:ok, {media, sleeve}}
-      _ -> :error
+      [media] -> {:ok, {media, nil}}
+      _ -> {:error, {:conditions, item_condition}}
     end
   end
 

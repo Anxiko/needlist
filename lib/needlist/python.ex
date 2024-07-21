@@ -23,8 +23,8 @@ defmodule Needlist.Python do
     pid
     |> :python.call(:discogs_scrapper, :scrape_listings, [release_id])
     |> case do
-      {status_code, nil} -> {:error, {:status_code, status_code}}
-      {_, response} -> {:ok, to_string(response)}
+      {~c"error", status_code} -> {:error, {:status_code, status_code}}
+      {~c"ok", response} -> {:ok, to_string(response)}
     end
   rescue
     e in ErlangError ->

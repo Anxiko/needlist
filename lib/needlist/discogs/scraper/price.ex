@@ -3,10 +3,11 @@ defmodule Needlist.Discogs.Scraper.Price do
   Parse the price information of a listing obtained through the scrapper
   """
 
-  @raw_price_pattern ~r/\+?(?P<currency>[^\d]+)(?P<value>[\d\.]+)$/
+  @raw_price_pattern ~r/\+?(?P<currency>[^\d]+)(?P<value>[\d\.,]+)$/
   @free_shipping "+no extra shipping"
+  @unspecified_shipping "+"
 
-  import Needlist.Discogs.Scraper.Parsing, only: [node_outer_text: 1]
+  import Needlist.Discogs.Scraper.Parsing, only: [node_outer_text: 1, find_node_by_selector: 2]
 
   @keys [:base, :shipping, :total]
   @enforce_keys @keys
@@ -15,8 +16,8 @@ defmodule Needlist.Discogs.Scraper.Price do
 
   @type t() :: %__MODULE__{
           base: Money.t(),
-          shipping: Money.t(),
-          total: Money.t()
+          shipping: Money.t() | nil,
+          total: Money.t() | nil
         }
 
   @spec parse(Floki.html_node()) :: {:ok, t()} | {:error, any()}
@@ -33,6 +34,7 @@ defmodule Needlist.Discogs.Scraper.Price do
        }}
     else
       {step, :error} -> {:error, step}
+      {step, {:error, details}} -> {:error, {step, details}}
       {step, details} -> {:error, {step, details}}
     end
   end
@@ -49,40 +51,46 @@ defmodule Needlist.Discogs.Scraper.Price do
     end
   end
 
-  @spec parse_shipping_price(Floki.html_node()) :: {:ok, Money.t()} | :error
+  @spec parse_shipping_price(Floki.html_node()) :: {:ok, Money.t() | nil} | {:error, any()}
   defp parse_shipping_price(item_price) do
-    with [shipping_price_node] <- Floki.find(item_price, ".item_shipping"),
-         raw_shipping_price <- node_outer_text(shipping_price_node) do
-      parse_raw_price(raw_shipping_price)
-    else
-      _ -> :error
+    with {:ok, shipping_price_node} <- find_node_by_selector(item_price, ".item_shipping") do
+      shipping_price_node
+      |> node_outer_text()
+      |> parse_raw_price()
     end
   end
 
-  @spec parse_total_price(Floki.html_node()) :: {:ok, Money.t()} | :error
+  @spec parse_total_price(Floki.html_node()) :: {:ok, Money.t() | nil} | {:error, any()}
   defp parse_total_price(item_price) do
-    with [total_price_node] <- Floki.find(item_price, ".converted_price"),
-         raw_total_price <- node_outer_text(total_price_node),
-         {:ok, total_price} <- parse_raw_price(raw_total_price) do
-      {:ok, total_price}
+    with {:ok, total_price_node} <- find_node_by_selector(item_price, ".converted_price"),
+         raw_total_price = node_outer_text(total_price_node),
+         # Note that an unspecified shipping is not valid for a total price, so we ensure that we are getting %Money{} here
+         {:ok, %Money{} = money} <- parse_raw_price(raw_total_price) do
+      {:ok, money}
     else
-      _ -> :error
+      # When the listing doesn't ship to our location, we don't get a total price at all
+      {:error, {:not_found, _}} -> {:ok, nil}
+      error -> error
     end
   end
 
+  @spec parse_raw_price(String.t()) :: {:ok, Money.t()} | {:ok, nil} | {:error, any()}
   defp parse_raw_price(@free_shipping), do: {:ok, Money.new(0)}
+  # Shipping is sometimes deliberately present but left unspecified
+  defp parse_raw_price(@unspecified_shipping), do: {:ok, nil}
 
-  @spec parse_raw_price(String.t()) :: {:ok, Money.t()} | :error
   defp parse_raw_price(raw_shipping_price) do
     raw_shipping_price = String.trim(raw_shipping_price)
 
-    with %{"currency" => raw_currency, "value" => raw_value} <-
-           Regex.named_captures(@raw_price_pattern, raw_shipping_price),
-         currency when currency != nil <- currency_from_symbol(raw_currency),
-         {:ok, money} <- Money.parse(raw_value, currency) do
+    with {_, %{"currency" => raw_currency, "value" => raw_value}} <-
+           {:regex, Regex.named_captures(@raw_price_pattern, raw_shipping_price)},
+         {_, currency} when currency != nil <- {:currency, currency_from_symbol(raw_currency)},
+         {_, {:ok, money}} <- {:money, Money.parse(raw_value, currency)} do
       {:ok, money}
     else
-      _ -> :error
+      {:regex, nil} -> {:error, {:raw_price_pattern, raw_shipping_price}}
+      {:currency, nil} -> {:error, {:currency, raw_shipping_price}}
+      {:money, :error} -> {:error, {:money_parsing, raw_shipping_price}}
     end
   end
 
@@ -100,13 +108,5 @@ defmodule Needlist.Discogs.Scraper.Price do
   defp currency_from_symbol("NZ$"), do: :NZD
   defp currency_from_symbol("R"), do: :ZAR
   defp currency_from_symbol("DKK"), do: :DKK
-
-  defp currency_from_symbol(symbol) when is_binary(symbol) do
-    with {:ok, existing_atom} <- SafeAtom.maybe_string_to_existing_atom(symbol),
-         %{} <- Money.Currency.get(existing_atom) do
-      existing_atom
-    else
-      _ -> nil
-    end
-  end
+  defp currency_from_symbol(_), do: nil
 end
