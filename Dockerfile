@@ -20,6 +20,8 @@ ARG RUNNER_IMAGE="debian:${DEBIAN_VERSION}"
 
 FROM ${BUILDER_IMAGE} as builder
 
+ARG NODE_VERSION=v20.18.0
+
 # install build dependencies
 RUN apt-get update -y && apt-get install -y build-essential git curl \
     && apt-get clean && rm -f /var/lib/apt/lists/*_*
@@ -28,7 +30,7 @@ RUN apt-get update -y && apt-get install -y build-essential git curl \
 ENV NVM_DIR /usr/local/nvm
 RUN mkdir -p $NVM_DIR
 RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
-ENV NODE_VERSION v20.18.0
+ENV NODE_VERSION="${NODE_VERSION}"
 RUN /bin/bash -c "source $NVM_DIR/nvm.sh && nvm install $NODE_VERSION && nvm use --delete-prefix $NODE_VERSION"
 
 ENV NODE_PATH $NVM_DIR/versions/node/$NODE_VERSION/lib/node_modules
