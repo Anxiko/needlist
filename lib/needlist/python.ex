@@ -9,7 +9,7 @@ defmodule Needlist.Python do
 
   @spec scrape_listings(integer()) :: Result.result(String.t())
   def scrape_listings(release_id) do
-    case :python.start(python_path: String.to_charlist(@python_path), python: String.to_charlist(@python_binary)) do
+    case :python.start(python_path: String.to_charlist(@python_path)) do
       {:ok, pid} ->
         do_scrape_listings(pid, release_id)
 
