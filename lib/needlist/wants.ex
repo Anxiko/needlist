@@ -28,7 +28,7 @@ defmodule Needlist.Wants do
 
     Want.named_binding()
     |> Want.in_user_needlist_by_username(username)
-    |> Want.with_min_total_price()
+    |> Want.with_price_stats()
     |> Want.sort_by(sort_key, sort_order)
     |> Want.paginated(page, per_page)
     |> Repo.all()

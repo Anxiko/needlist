@@ -33,6 +33,8 @@ defmodule Needlist.Repo.Want do
     field :date_added, :utc_datetime
     field :listings_last_updated, :utc_datetime
     field :min_price, MoneyEcto, virtual: true
+    field :max_price, MoneyEcto, virtual: true
+    field :avg_price, MoneyEcto, virtual: true
     embeds_one :basic_information, BasicInformation, on_replace: :update
     many_to_many :users, User, join_through: "user_wantlist"
     has_many :listings, Listing, references: :id
@@ -180,16 +182,21 @@ defmodule Needlist.Repo.Want do
     preload(query, :listings)
   end
 
-  @spec with_min_total_price(Ecto.Query.t() | __MODULE__, String.t()) :: Ecto.Query.t()
-  @spec with_min_total_price(Ecto.Query.t() | __MODULE__) :: Ecto.Query.t()
-  @spec with_min_total_price() :: Ecto.Query.t()
-  def with_min_total_price(query \\ __MODULE__, currency \\ @default_currency) do
+  @spec with_price_stats(Ecto.Query.t() | __MODULE__, String.t()) :: Ecto.Query.t()
+  @spec with_price_stats(Ecto.Query.t() | __MODULE__) :: Ecto.Query.t()
+  @spec with_price_stats() :: Ecto.Query.t()
+  def with_price_stats(query \\ __MODULE__, currency \\ @default_currency) do
     query
     |> join(:left, [wants: w], l in subquery(pricing_subquery(currency)),
-      on: w.id == l.want_id and l.row_number == 1,
+      on: w.id == l.want_id,
       as: :listings
     )
-    |> select_merge([wants: w, listings: l], %{w | min_price: l.total_price})
+    |> select_merge([wants: w, listings: l], %{
+      w
+      | min_price: l.min_price,
+        max_price: l.max_price,
+        avg_price: l.avg_price
+    })
   end
 
   @spec filter_by_outdated_listings(Ecto.Query.t() | __MODULE__, DateTime.t() | Duration.t() | nil) :: Ecto.Query.t()
@@ -213,7 +220,7 @@ defmodule Needlist.Repo.Want do
   defp pricing_subquery(currency) do
     Listing
     |> Listing.by_total_price_currency(currency)
-    |> Listing.ranked_pricing_per_want()
+    |> Listing.pricing_stats()
   end
 
   defp maybe_filter_by_expiration(nil), do: false
