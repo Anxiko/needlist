@@ -9,7 +9,7 @@
         <thead class="bg-gray-50 dark:bg-gray-700 dark:text-gray-400 text-xs text-gray-700 uppercase">
           <tr>
             <%= for {column_key, column_name} <- 
-            [artist: "Artist", title: "Title", label: "Label", nil: "Formats", nil: "Year", price: "Price"] do %>
+            [artist: "Artist", title: "Title", label: "Label", nil: "Formats", year: "Year", price: "Price"] do %>
               <.table_header state={@state} column_key={column_key} column_name={column_name} />
             <% end %>
           </tr>
