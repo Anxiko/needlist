@@ -15,7 +15,7 @@ defmodule NeedlistWeb.NeedlistLive.State do
   embedded_schema do
     field :page, :integer, default: 1
     field :max_pages, :integer, default: nil
-    field :per_page, :integer, default: 50
+    field :per_page, :integer, default: 25
     field :sort_key, Ecto.Enum, values: Types.SortKey.values(), default: Types.SortKey.label()
     field :sort_order, Ecto.Enum, values: Types.SortOrder.values(), default: Types.SortOrder.asc()
   end

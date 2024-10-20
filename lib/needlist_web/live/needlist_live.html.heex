@@ -1,12 +1,12 @@
 <div>
-  <h1 class="pb-10 text-4xl dark:text-white">
+  <h1 class="dark:text-white pb-10 text-4xl">
     Needlist for <%= @username %>
   </h1>
 
   <%= if @current_page != nil do %>
     <div class="relative overflow-x-auto">
-      <table class="w-full text-sm text-left text-gray-500 rtl:text-right dark:text-gray-400">
-        <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+      <table class="rtl:text-right dark:text-gray-400 w-full text-sm text-left text-gray-500">
+        <thead class="bg-gray-50 dark:bg-gray-700 dark:text-gray-400 text-xs text-gray-700 uppercase">
           <tr>
             <%= for {column_key, column_name} <- 
             [artist: "Artist", title: "Title", label: "Label", nil: "Formats", nil: "Year", price: "Price"] do %>
@@ -16,8 +16,8 @@
         </thead>
         <tbody>
           <%= for item <- elem(@current_page, 1).items do %>
-            <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-              <td scope="row" class="px-6 py-4 ">
+            <tr class="dark:bg-gray-800 dark:border-gray-700 bg-white border-b">
+              <td scope="row" class=" px-6 py-4">
                 <.want_artists artists={item.basic_information.artists} />
               </td>
               <td class="px-6 py-4">
@@ -41,12 +41,12 @@
       </table>
     </div>
 
-    <div class="flex items-end mt-4 justify-evenly">
+    <div class="justify-evenly flex items-end mt-4">
       <div>
         <.table_pagination username={@username} current_page={elem(@current_page, 1)} state={@state} />
       </div>
       <div>
-        <.per_page_selector per_page_options={[10, 20, 50]} selected_per_page={@state.per_page} />
+        <.per_page_selector per_page_options={[25, 50, 100, 250]} selected_per_page={@state.per_page} />
       </div>
     </div>
   <% end %>
