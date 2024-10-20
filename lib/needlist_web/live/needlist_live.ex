@@ -1,19 +1,16 @@
 defmodule NeedlistWeb.NeedlistLive do
-  alias Needlist.Discogs.Pagination.PageInfo
-  alias Needlist.Discogs.Api.Types.SortOrder
-  alias Needlist.Discogs.Api.Types.SortKey
-  alias Needlist.Wants
-
-  use NeedlistWeb, :live_view
-
   alias Needlist.Discogs.Api
+  alias Needlist.Discogs.Api.Types.SortKey
+  alias Needlist.Discogs.Api.Types.SortOrder
+  alias Needlist.Discogs.Pagination.PageInfo
   alias Needlist.Repo.Pagination
   alias Needlist.Repo.Want
+  alias Needlist.Wants
   alias NeedlistWeb.NeedlistLive.State
-
   alias Nullables.Fallible
-
   alias Phoenix.LiveView.Socket
+
+  use NeedlistWeb, :live_view
 
   import NeedlistWeb.Navigation.Components, only: [pagination: 1]
 
@@ -285,7 +282,7 @@ defmodule NeedlistWeb.NeedlistLive do
 
     ~H"""
     <.form for={@form} class="max-w-sm mx-auto" phx-change="per-page" id="per-page-form">
-      <label for="per-page-input" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+      <label for="per-page-input" class="dark:text-white block mb-2 text-sm font-medium text-gray-900">
         Per page items
       </label>
       <.input
@@ -313,7 +310,7 @@ defmodule NeedlistWeb.NeedlistLive do
 
     ~H"""
     <th scope="col" class="px-6 py-3" {@phx_attrs}>
-      <span class={"inline-flex items-center #{@column_key != nil && "cursor-pointer"}"}>
+      <span class={"inline-flex items-center font-medium #{@column_key != nil && "cursor-pointer text-blue-600 dark:text-blue-300 hover:underline"}"}>
         <%= @column_name %>
         <%= if @state.sort_key == @column_key and @state.sort_order != nil do %>
           <.header_sorting sort_order={@state.sort_order} />
