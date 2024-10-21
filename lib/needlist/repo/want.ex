@@ -127,11 +127,25 @@ defmodule Needlist.Repo.Want do
     |> Ecto.Query.order_by([{^order, :date_added}])
   end
 
-  @spec sort_by_price(Ecto.Query.t() | __MODULE__, sort_order()) :: Ecto.Query.t()
-  @spec sort_by_price(sort_order()) :: Ecto.Query.t()
-  def sort_by_price(query \\ __MODULE__, order) do
+  @spec sort_by_min_price(Ecto.Query.t() | __MODULE__, sort_order()) :: Ecto.Query.t()
+  @spec sort_by_min_price(sort_order()) :: Ecto.Query.t()
+  def sort_by_min_price(query \\ __MODULE__, order) do
     query
-    |> order_by([listings: l], [{^order, l.total_price}])
+    |> order_by([listings: l], [{^order, l.min_price}])
+  end
+
+  @spec sort_by_avg_price(Ecto.Query.t() | __MODULE__, sort_order()) :: Ecto.Query.t()
+  @spec sort_by_avg_price(sort_order()) :: Ecto.Query.t()
+  def sort_by_avg_price(query \\ __MODULE__, order) do
+    query
+    |> order_by([listings: l], [{^order, l.avg_price}])
+  end
+
+  @spec sort_by_max_price(Ecto.Query.t() | __MODULE__, sort_order()) :: Ecto.Query.t()
+  @spec sort_by_max_price(sort_order()) :: Ecto.Query.t()
+  def sort_by_max_price(query \\ __MODULE__, order) do
+    query
+    |> order_by([listings: l], [{^order, l.max_price}])
   end
 
   @spec sort_by_year(Ecto.Query.t() | __MODULE__, sort_order()) :: Ecto.Query.t()
@@ -147,7 +161,9 @@ defmodule Needlist.Repo.Want do
   def sort_by(query, :title, sort_order), do: sort_by_title(query, sort_order)
   def sort_by(query, :label, sort_order), do: sort_by_labels(query, sort_order)
   def sort_by(query, :added, sort_order), do: sort_by_date_added(query, sort_order)
-  def sort_by(query, :price, sort_order), do: sort_by_price(query, sort_order)
+  def sort_by(query, :min_price, sort_order), do: sort_by_min_price(query, sort_order)
+  def sort_by(query, :avg_price, sort_order), do: sort_by_avg_price(query, sort_order)
+  def sort_by(query, :max_price, sort_order), do: sort_by_max_price(query, sort_order)
   def sort_by(query, :year, sort_order), do: sort_by_year(query, sort_order)
 
   defp compute_sorting_fields(%Ecto.Changeset{valid?: true} = changeset) do
