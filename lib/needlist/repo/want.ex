@@ -53,7 +53,7 @@ defmodule Needlist.Repo.Want do
         }
 
   @type sort_order() :: :asc | :desc
-  @type sort_key() :: :artist | :title | :label | :added | :price | :year
+  @type sort_key() :: :artist | :title | :label | :added | :min_price | :avg_price | :max_price | :year
 
   @spec changeset(t() | Changeset.t(t()), map()) :: Changeset.t(t())
   @spec changeset(map()) :: Changeset.t(t())
@@ -161,9 +161,9 @@ defmodule Needlist.Repo.Want do
   def sort_by(query, :title, sort_order), do: sort_by_title(query, sort_order)
   def sort_by(query, :label, sort_order), do: sort_by_labels(query, sort_order)
   def sort_by(query, :added, sort_order), do: sort_by_date_added(query, sort_order)
-  def sort_by(query, :min_price, sort_order), do: sort_by_min_price(query, sort_order)
-  def sort_by(query, :avg_price, sort_order), do: sort_by_avg_price(query, sort_order)
-  def sort_by(query, :max_price, sort_order), do: sort_by_max_price(query, sort_order)
+  def sort_by(query, :min_price, sort_order), do: sort_by_min_price(query, order_nulls_last(sort_order))
+  def sort_by(query, :avg_price, sort_order), do: sort_by_avg_price(query, order_nulls_last(sort_order))
+  def sort_by(query, :max_price, sort_order), do: sort_by_max_price(query, order_nulls_last(sort_order))
   def sort_by(query, :year, sort_order), do: sort_by_year(query, sort_order)
 
   defp compute_sorting_fields(%Ecto.Changeset{valid?: true} = changeset) do
@@ -277,4 +277,7 @@ defmodule Needlist.Repo.Want do
     |> DateTime.shift(Duration.negate(duration))
     |> maybe_filter_by_expiration()
   end
+
+  defp order_nulls_last(:asc), do: :asc_nulls_last
+  defp order_nulls_last(:desc), do: :desc_nulls_last
 end
