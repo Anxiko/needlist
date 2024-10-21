@@ -8,8 +8,16 @@
       <table class="rtl:text-right dark:text-gray-400 w-full text-sm text-left text-gray-500">
         <thead class="bg-gray-50 dark:bg-gray-700 dark:text-gray-400 text-xs text-gray-700 uppercase">
           <tr>
-            <%= for {column_key, column_name} <- 
-            [artist: "Artist", title: "Title", label: "Label", nil: "Formats", year: "Year", price: "Price"] do %>
+            <%= for {column_key, column_name} <- [
+              artist: "Artist",
+              title: "Title",
+              label: "Label",
+              nil: "Formats",
+              year: "Year",
+              min_price: "Min price",
+              avg_price: "Avg price",
+              max_price: "Max price"
+              ] do %>
               <.table_header state={@state} column_key={column_key} column_name={column_name} />
             <% end %>
           </tr>
@@ -34,6 +42,12 @@
               </td>
               <td class="px-6 py-4">
                 <.want_price price={item.min_price} />
+              </td>
+              <td class="px-6 py-4">
+                <.want_price price={item.avg_price} />
+              </td>
+              <td class="px-6 py-4">
+                <.want_price price={item.max_price} />
               </td>
             </tr>
           <% end %>

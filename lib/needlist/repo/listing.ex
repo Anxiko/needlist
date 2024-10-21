@@ -105,4 +105,19 @@ defmodule Needlist.Repo.Listing do
       row_number: over(row_number(), :price_per_want_asc)
     })
   end
+
+  @spec pricing_stats(Ecto.Query.t() | __MODULE__) :: Ecto.Query.t()
+  def pricing_stats(query \\ __MODULE__) do
+    query
+    |> group_by(:want_id)
+    |> select(
+      [l],
+      %{
+        want_id: l.want_id,
+        min_price: min(fragment("(?).amount", l.total_price)),
+        max_price: max(fragment("(?).amount", l.total_price)),
+        avg_price: type(avg(fragment("(?).amount", l.total_price)), :integer)
+      }
+    )
+  end
 end
