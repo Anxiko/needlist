@@ -193,9 +193,36 @@ defmodule Needlist.Repo.Want do
     )
     |> select_merge([wants: w, listings: l], %{
       w
-      | min_price: l.min_price,
-        max_price: l.max_price,
-        avg_price: l.avg_price
+      | min_price:
+          type(
+            fragment(
+              "CASE WHEN ? IS NOT NULL THEN (?, ?)::money_with_currency ELSE NULL END",
+              l.min_price,
+              l.min_price,
+              ^currency
+            ),
+            MoneyEcto
+          ),
+        max_price:
+          type(
+            fragment(
+              "CASE WHEN ? IS NOT NULL THEN (?, ?)::money_with_currency ELSE NULL END",
+              l.max_price,
+              l.max_price,
+              ^currency
+            ),
+            MoneyEcto
+          ),
+        avg_price:
+          type(
+            fragment(
+              "CASE WHEN ? IS NOT NULL THEN (?, ?)::money_with_currency ELSE NULL END",
+              l.avg_price,
+              l.avg_price,
+              ^currency
+            ),
+            MoneyEcto
+          )
     })
   end
 
