@@ -52,7 +52,7 @@ defmodule Needlist.Repo.Want do
           basic_information: BasicInformation.t() | nil
         }
 
-  @type sort_order() :: :asc | :desc
+  @type sort_order() :: :asc | :desc | :asc_nulls_last | :desc_nulls_last
   @type sort_key() :: :artist | :title | :label | :added | :min_price | :avg_price | :max_price | :year
 
   @spec changeset(t() | Changeset.t(t()), map()) :: Changeset.t(t())
