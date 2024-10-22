@@ -5,6 +5,7 @@ defmodule Needlist.Release do
   """
   @app :needlist
 
+  @spec migrate() :: any()
   def migrate do
     load_app()
 
@@ -13,6 +14,7 @@ defmodule Needlist.Release do
     end
   end
 
+  @spec rollback(any(), any()) :: any()
   def rollback(repo, version) do
     load_app()
     {:ok, _, _} = Ecto.Migrator.with_repo(repo, &Ecto.Migrator.run(&1, :down, to: version))
