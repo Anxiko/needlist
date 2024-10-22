@@ -38,7 +38,9 @@ defmodule NeedlistWeb.NeedlistLive.State do
   def parse(params) do
     %__MODULE__{}
     |> changeset(params)
+    |> IO.inspect(label: "w/ errors")
     |> remove_errors(params)
+    |> IO.inspect(label: "w/o errors")
     |> Changeset.apply_action!(:parse)
   end
 
@@ -92,8 +94,8 @@ defmodule NeedlistWeb.NeedlistLive.State do
   defp remove_errors(%Changeset{valid?: true} = changeset, _params), do: changeset
 
   defp remove_errors(%Changeset{errors: errors} = changeset, params) do
-    fields_in_error = Keyword.keys(errors)
-    params = Map.drop(params, fields_in_error)
+    fields_in_error = errors |> Keyword.keys() |> Enum.map(&Atom.to_string/1)
+    params = Map.filter(params, fn {k, _v} -> to_string(k) not in fields_in_error end)
 
     changeset(changeset.data, params)
   end
