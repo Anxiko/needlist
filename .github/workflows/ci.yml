@@ -96,6 +96,8 @@ jobs:
 
       - name: Dyalizer check
         run: mix dialyzer --format github
+        env:
+          MIX_ENV: dev
 
       # Step: Execute the tests.
       - name: Run tests
