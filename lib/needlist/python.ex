@@ -5,7 +5,6 @@ defmodule Needlist.Python do
 
   alias Nullables.Result
   @python_path [:code.priv_dir(:needlist), "python"] |> Path.join()
-  @python_binary [@python_path, "venv/bin/python"] |> Path.join()
 
   @spec scrape_listings(integer()) :: Result.result(String.t())
   def scrape_listings(release_id) do
