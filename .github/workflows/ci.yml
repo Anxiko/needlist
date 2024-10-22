@@ -32,6 +32,10 @@ jobs:
     runs-on: ubuntu-latest
     name: Analyze, check and test
     steps:
+      # Step: Check out the code.
+      - name: Checkout code
+        uses: actions/checkout@v3
+
       # Step: read the versions to use for Elixir and Erlang from .tool-versions
       - name: Read .tool-versions
         uses: marocchino/tool-versions-action@v1
@@ -43,10 +47,6 @@ jobs:
         with:
           otp-version: ${{steps.versions.outputs.erlang}}
           elixir-version: ${{steps.versions.outputs.elixir}}
-
-      # Step: Check out the code.
-      - name: Checkout code
-        uses: actions/checkout@v3
 
       # Step: Define how to cache deps. Restores existing cache if present.
       - name: Cache deps
