@@ -38,9 +38,7 @@ defmodule NeedlistWeb.NeedlistLive.State do
   def parse(params) do
     %__MODULE__{}
     |> changeset(params)
-    |> IO.inspect(label: "w/ errors")
     |> remove_errors(params)
-    |> IO.inspect(label: "w/o errors")
     |> Changeset.apply_action!(:parse)
   end
 

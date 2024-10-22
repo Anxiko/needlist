@@ -23,9 +23,8 @@ defmodule NeedlistWeb.Needlist.StateTest do
     end
 
     test "handles an invalid state gracefully" do
-
+      # all of these are invalid!
       actual =
-        # all of these are invalid!
         "page=-10&per_page=many&sort_key=fake_key&sort_order=random"
         |> URI.decode_query()
         |> State.parse()
