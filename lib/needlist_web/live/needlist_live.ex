@@ -247,33 +247,30 @@ defmodule NeedlistWeb.NeedlistLive do
     """
   end
 
-  defp header_sorting(%{sort_order: :asc} = assigns),
-    do: ~H"""
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      fill="none"
-      viewBox="0 0 24 24"
-      stroke-width="1.5"
-      stroke="currentColor"
-      class="w-4 h-4"
-    >
-      <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 15.75 7.5-7.5 7.5 7.5" />
-    </svg>
-    """
+  defp header_sorting(%{sort_order: sort_order} = assigns) do
+    maybe_rotated =
+      case sort_order do
+        :asc -> nil
+        :desc -> "rotate-180"
+      end
 
-  defp header_sorting(%{sort_order: :desc} = assigns),
-    do: ~H"""
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      fill="none"
-      viewBox="0 0 24 24"
-      stroke-width="1.5"
-      stroke="currentColor"
-      class="w-4 h-4"
-    >
-      <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-    </svg>
+    assigns = assign(assigns, :rotated, maybe_rotated)
+
+    ~H"""
+    <span class={"transition-all duration-300 #{@rotated}"}>
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke-width="1.5"
+        stroke="currentColor"
+        class="w-4 h-4"
+      >
+        <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 15.75 7.5-7.5 7.5 7.5" />
+      </svg>
+    </span>
     """
+  end
 
   defp per_page_selector(assigns) do
     assigns =
