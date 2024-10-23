@@ -9,6 +9,7 @@ defmodule NeedlistWeb.NeedlistLive do
   alias NeedlistWeb.NeedlistLive.State
   alias Nullables.Fallible
   alias Phoenix.LiveView.Socket
+  alias Phoenix.LiveView.JS
 
   use NeedlistWeb, :live_view
 
@@ -299,7 +300,10 @@ defmodule NeedlistWeb.NeedlistLive do
   defp table_header(%{column_key: column_key} = assigns) do
     phx_attrs =
       if column_key != nil do
-        %{"phx-click": "sort-by", "phx-value-key": column_key}
+        %{
+          "phx-click": "sort-by" |> JS.push() |> JS.toggle_class("rotate-180", to: ".chevron"),
+          "phx-value-key": column_key
+        }
       else
         %{}
       end
@@ -313,7 +317,7 @@ defmodule NeedlistWeb.NeedlistLive do
       <span class={"inline-flex items-center font-medium #{@column_key != nil && "cursor-pointer text-blue-600 dark:text-blue-300 hover:underline"}"}>
         <%= @column_name %>
         <%= if @state.sort_key == @column_key and @state.sort_order != nil do %>
-          <.header_sorting sort_order={@state.sort_order} />
+          <span class="chevron transition-all duration-300">^</span>
         <% end %>
       </span>
     </th>
