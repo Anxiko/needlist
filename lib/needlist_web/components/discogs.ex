@@ -6,6 +6,8 @@ defmodule NeedlistWeb.Components.Discogs do
   use Phoenix.Component
 
   alias Needlist.Repo.Want
+  alias Needlist.Discogs.LinkGenerator
+
   alias Phoenix.LiveView.Rendered
 
   attr :artist, Want.Artist, required: true
@@ -13,7 +15,7 @@ defmodule NeedlistWeb.Components.Discogs do
   @spec want_artist(map()) :: Rendered.t()
   def want_artist(assigns) do
     ~H"""
-    <a class="font-medium text-blue-600 dark:text-blue-300 hover:underline" href={@artist.resource_url}>
+    <a class="dark:text-blue-300 hover:underline font-medium text-blue-600" href={LinkGenerator.from_artist(@artist)}>
       <%= if @artist.anv do %>
         <%= @artist.anv %>*
       <% else %>
@@ -29,7 +31,7 @@ defmodule NeedlistWeb.Components.Discogs do
   def want_label(assigns) do
     ~H"""
     <span>
-      <a class="font-medium text-blue-600 dark:text-blue-300 hover:underline" href={@label.resource_url}>
+      <a class="dark:text-blue-300 hover:underline font-medium text-blue-600" href={@label.resource_url}>
         <%= @label.name %>
       </a>
       - <%= @label.catno %>
