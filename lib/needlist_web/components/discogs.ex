@@ -28,13 +28,13 @@ defmodule NeedlistWeb.Components.Discogs do
   @spec want_artist(map()) :: Rendered.t()
   def want_artist(assigns) do
     ~H"""
-    <a class="dark:text-blue-300 hover:underline font-medium text-blue-600" href={LinkGenerator.from_artist(@artist)}>
+    <.link class="dark:text-blue-300 hover:underline font-medium text-blue-600" href={LinkGenerator.from_artist(@artist)}>
       <%= if @artist.anv do %>
         <%= @artist.anv %>*
       <% else %>
         <%= @artist.name %>
       <% end %>
-    </a>
+    </.link>
     """
   end
 
