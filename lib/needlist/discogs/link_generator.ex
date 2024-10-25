@@ -4,6 +4,7 @@ defmodule Needlist.Discogs.LinkGenerator do
   """
   alias Needlist.Repo.Want
   alias Needlist.Repo.Want.Artist
+  alias Needlist.Repo.Want.Label
 
   @base_url :needlist |> Application.compile_env!(__MODULE__) |> Keyword.fetch!(:base) |> URI.new!()
 
@@ -15,12 +16,7 @@ defmodule Needlist.Discogs.LinkGenerator do
   @spec from_artist_id(artist_id :: integer(), display_name :: String.t() | nil) :: String.t()
   @spec from_artist_id(artist_id :: integer()) :: String.t()
   def from_artist_id(artist_id, display_name \\ nil) do
-    artist_path =
-      if display_name != nil do
-        "#{artist_id}-#{encode_name(display_name)}"
-      else
-        "#{artist_id}"
-      end
+    artist_path = with_optional_name(artist_id, display_name)
 
     @base_url
     |> URI.append_path("/artist/#{artist_path}")
@@ -38,17 +34,28 @@ defmodule Needlist.Discogs.LinkGenerator do
     from_want_id(want_id)
   end
 
-  @spec from_want_id(want_id :: integer(), artist_names :: String.t() | nil) :: term()
+  @spec from_want_id(want_id :: integer(), artist_names :: String.t() | nil) :: String.t()
+  @spec from_want_id(want_id :: integer()) :: String.t()
   def from_want_id(want_id, artist_names \\ nil) do
-    want_path =
-      if artist_names != nil do
-        "#{want_id}-#{encode_name(artist_names)}"
-      else
-        "#{want_id}"
-      end
+    want_path = with_optional_name(want_id, artist_names)
 
     @base_url
     |> URI.append_path("/release/#{want_path}")
+    |> URI.to_string()
+  end
+
+  @spec from_label(Label.t()) :: String.t()
+  def from_label(%Label{id: label_id, name: name} = label) do
+    from_label_id(label_id, name)
+  end
+
+  @spec from_label_id(label_id :: String.t(), display_name :: String.t() | nil) :: String.t()
+  @spec from_label_id(label_id :: String.t()) :: String.t()
+  def from_label_id(label_id, display_name \\ nil) do
+    label_path = with_optional_name(label_id, display_name)
+
+    @base_url
+    |> URI.append_path("/label/#{label_path}")
     |> URI.to_string()
   end
 
@@ -57,5 +64,14 @@ defmodule Needlist.Discogs.LinkGenerator do
     raw_string
     |> String.replace(" ", "-")
     |> URI.encode()
+  end
+
+  @spec with_optional_name(id :: integer(), optional_name :: String.t() | nil) :: String.t()
+  defp with_optional_name(id, nil) do
+    "#{id}"
+  end
+
+  defp with_optional_name(id, optional_name) do
+    "#{id}-#{encode_name(optional_name)}"
   end
 end

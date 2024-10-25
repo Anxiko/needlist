@@ -41,11 +41,13 @@ defmodule NeedlistWeb.Components.Discogs do
 
   @spec want_label(map()) :: Rendered.t()
   def want_label(assigns) do
+    assigns = assign(assigns, :href, LinkGenerator.from_label(assigns.label))
+
     ~H"""
     <span>
-      <a class="dark:text-blue-300 hover:underline font-medium text-blue-600" href={@label.resource_url}>
+      <.link class="dark:text-blue-300 hover:underline font-medium text-blue-600" href={@href}>
         <%= @label.name %>
-      </a>
+      </.link>
       - <%= @label.catno %>
     </span>
     """
