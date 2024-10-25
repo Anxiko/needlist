@@ -12,6 +12,7 @@ defmodule NeedlistWeb.Components.Discogs do
 
   attr :want, Want, required: true
 
+  @spec want_title(map()) :: Rendered.t()
   def want_title(assigns) do
     assigns = assign(assigns, :href, LinkGenerator.from_want(assigns.want))
 

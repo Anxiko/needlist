@@ -45,12 +45,12 @@ defmodule Needlist.Discogs.LinkGenerator do
   end
 
   @spec from_label(Label.t()) :: String.t()
-  def from_label(%Label{id: label_id, name: name} = label) do
+  def from_label(%Label{id: label_id, name: name}) do
     from_label_id(label_id, name)
   end
 
-  @spec from_label_id(label_id :: String.t(), display_name :: String.t() | nil) :: String.t()
-  @spec from_label_id(label_id :: String.t()) :: String.t()
+  @spec from_label_id(label_id :: integer(), display_name :: String.t() | nil) :: String.t()
+  @spec from_label_id(label_id :: integer()) :: String.t()
   def from_label_id(label_id, display_name \\ nil) do
     label_path = with_optional_name(label_id, display_name)
 
