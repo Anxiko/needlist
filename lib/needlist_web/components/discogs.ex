@@ -10,6 +10,18 @@ defmodule NeedlistWeb.Components.Discogs do
 
   alias Phoenix.LiveView.Rendered
 
+  attr :want, Want, required: true
+
+  def want_title(assigns) do
+    assigns = assign(assigns, :href, LinkGenerator.from_want(assigns.want))
+
+    ~H"""
+    <.link class="dark:text-blue-300 hover:underline font-medium text-blue-600" href={@href}>
+      <%= @want.basic_information.title %>
+    </.link>
+    """
+  end
+
   attr :artist, Want.Artist, required: true
 
   @spec want_artist(map()) :: Rendered.t()

@@ -2,7 +2,7 @@ defmodule Needlist.Discogs.LinkGenerator do
   @moduledoc """
   Generate URLs to Discogs entities from their schemas
   """
-
+  alias Needlist.Repo.Want
   alias Needlist.Repo.Want.Artist
 
   @base_url :needlist |> Application.compile_env!(__MODULE__) |> Keyword.fetch!(:base) |> URI.new!()
@@ -24,6 +24,31 @@ defmodule Needlist.Discogs.LinkGenerator do
 
     @base_url
     |> URI.append_path("/artist/#{artist_path}")
+    |> URI.to_string()
+  end
+
+  @spec from_want(want :: Want.t()) :: String.t()
+  def from_want(%Want{id: want_id, basic_information: %Want.BasicInformation{artists: [_ | _] = artists}}) do
+    artists_names = Enum.map_join(artists, "-", &Artist.display_name/1)
+
+    from_want_id(want_id, artists_names)
+  end
+
+  def from_want(%Want{id: want_id}) do
+    from_want_id(want_id)
+  end
+
+  @spec from_want_id(want_id :: integer(), artist_names :: String.t() | nil) :: term()
+  def from_want_id(want_id, artist_names \\ nil) do
+    want_path =
+      if artist_names != nil do
+        "#{want_id}-#{encode_name(artist_names)}"
+      else
+        "#{want_id}"
+      end
+
+    @base_url
+    |> URI.append_path("/release/#{want_path}")
     |> URI.to_string()
   end
 
