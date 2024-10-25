@@ -6,20 +6,35 @@ defmodule NeedlistWeb.Components.Discogs do
   use Phoenix.Component
 
   alias Needlist.Repo.Want
+  alias Needlist.Discogs.LinkGenerator
+
   alias Phoenix.LiveView.Rendered
+
+  attr :want, Want, required: true
+
+  @spec want_title(map()) :: Rendered.t()
+  def want_title(assigns) do
+    assigns = assign(assigns, :href, LinkGenerator.from_want(assigns.want))
+
+    ~H"""
+    <.link class="dark:text-blue-300 hover:underline font-medium text-blue-600" href={@href}>
+      <%= @want.basic_information.title %>
+    </.link>
+    """
+  end
 
   attr :artist, Want.Artist, required: true
 
   @spec want_artist(map()) :: Rendered.t()
   def want_artist(assigns) do
     ~H"""
-    <a class="font-medium text-blue-600 dark:text-blue-300 hover:underline" href={@artist.resource_url}>
+    <.link class="dark:text-blue-300 hover:underline font-medium text-blue-600" href={LinkGenerator.from_artist(@artist)}>
       <%= if @artist.anv do %>
         <%= @artist.anv %>*
       <% else %>
         <%= @artist.name %>
       <% end %>
-    </a>
+    </.link>
     """
   end
 
@@ -27,11 +42,13 @@ defmodule NeedlistWeb.Components.Discogs do
 
   @spec want_label(map()) :: Rendered.t()
   def want_label(assigns) do
+    assigns = assign(assigns, :href, LinkGenerator.from_label(assigns.label))
+
     ~H"""
     <span>
-      <a class="font-medium text-blue-600 dark:text-blue-300 hover:underline" href={@label.resource_url}>
+      <.link class="dark:text-blue-300 hover:underline font-medium text-blue-600" href={@href}>
         <%= @label.name %>
-      </a>
+      </.link>
       - <%= @label.catno %>
     </span>
     """
