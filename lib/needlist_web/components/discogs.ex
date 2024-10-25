@@ -10,6 +10,8 @@ defmodule NeedlistWeb.Components.Discogs do
 
   alias Phoenix.LiveView.Rendered
 
+  import NeedlistWeb.CoreComponents, only: [styled_link: 1]
+
   attr :want, Want, required: true
 
   @spec want_title(map()) :: Rendered.t()
@@ -17,9 +19,9 @@ defmodule NeedlistWeb.Components.Discogs do
     assigns = assign(assigns, :href, LinkGenerator.from_want(assigns.want))
 
     ~H"""
-    <.link class="dark:text-blue-300 hover:underline font-medium text-blue-600" href={@href}>
+    <.styled_link href={@href}>
       <%= @want.basic_information.title %>
-    </.link>
+    </.styled_link>
     """
   end
 
@@ -28,13 +30,13 @@ defmodule NeedlistWeb.Components.Discogs do
   @spec want_artist(map()) :: Rendered.t()
   def want_artist(assigns) do
     ~H"""
-    <.link class="dark:text-blue-300 hover:underline font-medium text-blue-600" href={LinkGenerator.from_artist(@artist)}>
+    <.styled_link href={LinkGenerator.from_artist(@artist)}>
       <%= if @artist.anv do %>
         <%= @artist.anv %>*
       <% else %>
         <%= @artist.name %>
       <% end %>
-    </.link>
+    </.styled_link>
     """
   end
 
@@ -46,9 +48,9 @@ defmodule NeedlistWeb.Components.Discogs do
 
     ~H"""
     <span>
-      <.link class="dark:text-blue-300 hover:underline font-medium text-blue-600" href={@href}>
+      <.styled_link href={@href}>
         <%= @label.name %>
-      </.link>
+      </.styled_link>
       - <%= @label.catno %>
     </span>
     """

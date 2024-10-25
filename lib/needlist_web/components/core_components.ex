@@ -18,6 +18,7 @@ defmodule NeedlistWeb.CoreComponents do
   use Phoenix.Component
 
   alias Phoenix.LiveView.JS
+  alias Phoenix.LiveView.Rendered
   import NeedlistWeb.Gettext
 
   @doc """
@@ -51,7 +52,7 @@ defmodule NeedlistWeb.CoreComponents do
       data-cancel={JS.exec(@on_cancel, "phx-remove")}
       class="relative z-50 hidden"
     >
-      <div id={"#{@id}-bg"} class="fixed inset-0 transition-opacity bg-zinc-50/90" aria-hidden="true" />
+      <div id={"#{@id}-bg"} class="bg-zinc-50/90 fixed inset-0 transition-opacity" aria-hidden="true" />
       <div
         class="fixed inset-0 overflow-y-auto"
         aria-labelledby={"#{@id}-title"}
@@ -61,19 +62,19 @@ defmodule NeedlistWeb.CoreComponents do
         tabindex="0"
       >
         <div class="flex items-center justify-center min-h-full">
-          <div class="w-full max-w-3xl p-4 sm:p-6 lg:py-8">
+          <div class="sm:p-6 lg:py-8 w-full max-w-3xl p-4">
             <.focus_wrap
               id={"#{@id}-container"}
               phx-window-keydown={JS.exec("data-cancel", to: "##{@id}")}
               phx-key="escape"
               phx-click-away={JS.exec("data-cancel", to: "##{@id}")}
-              class="relative hidden transition bg-white shadow-lg shadow-zinc-700/10 ring-zinc-700/10 rounded-2xl p-14 ring-1"
+              class="shadow-zinc-700/10 ring-zinc-700/10 rounded-2xl p-14 ring-1 relative hidden transition bg-white shadow-lg"
             >
-              <div class="absolute top-6 right-5">
+              <div class="top-6 right-5 absolute">
                 <button
                   phx-click={JS.exec("data-cancel", to: "##{@id}")}
                   type="button"
-                  class="flex-none p-3 -m-3 opacity-20 hover:opacity-40"
+                  class="opacity-20 hover:opacity-40 flex-none p-3 -m-3"
                   aria-label={gettext("close")}
                 >
                   <.icon name="hero-x-mark-solid" class="w-5 h-5" />
@@ -128,8 +129,8 @@ defmodule NeedlistWeb.CoreComponents do
         <%= @title %>
       </p>
       <p class="mt-2 text-sm leading-5"><%= msg %></p>
-      <button type="button" class="absolute p-2 group top-1 right-1" aria-label={gettext("close")}>
-        <.icon name="hero-x-mark-solid" class="w-5 h-5 opacity-40 group-hover:opacity-70" />
+      <button type="button" class="group top-1 right-1 absolute p-2" aria-label={gettext("close")}>
+        <.icon name="hero-x-mark-solid" class="opacity-40 group-hover:opacity-70 w-5 h-5" />
       </button>
     </div>
     """
@@ -158,7 +159,7 @@ defmodule NeedlistWeb.CoreComponents do
         phx-connected={hide("#client-error")}
         hidden
       >
-        Attempting to reconnect <.icon name="hero-arrow-path" class="w-3 h-3 ml-1 animate-spin" />
+        Attempting to reconnect <.icon name="hero-arrow-path" class="animate-spin w-3 h-3 ml-1" />
       </.flash>
 
       <.flash
@@ -169,7 +170,7 @@ defmodule NeedlistWeb.CoreComponents do
         phx-connected={hide("#server-error")}
         hidden
       >
-        Hang in there while we get back on track <.icon name="hero-arrow-path" class="w-3 h-3 ml-1 animate-spin" />
+        Hang in there while we get back on track <.icon name="hero-arrow-path" class="animate-spin w-3 h-3 ml-1" />
       </.flash>
     </div>
     """
@@ -306,7 +307,7 @@ defmodule NeedlistWeb.CoreComponents do
 
     ~H"""
     <div phx-feedback-for={@name}>
-      <label class="flex items-center gap-4 text-sm leading-6 text-zinc-600">
+      <label class="text-zinc-600 flex items-center gap-4 text-sm leading-6">
         <input type="hidden" name={@name} value="false" />
         <input
           type="checkbox"
@@ -314,7 +315,7 @@ defmodule NeedlistWeb.CoreComponents do
           name={@name}
           value="true"
           checked={@checked}
-          class="rounded border-zinc-300 text-zinc-900 focus:ring-0"
+          class="border-zinc-300 text-zinc-900 focus:ring-0 rounded"
           {@rest}
         />
         <%= @label %>
@@ -394,7 +395,7 @@ defmodule NeedlistWeb.CoreComponents do
 
   def label(assigns) do
     ~H"""
-    <label for={@for} class="block text-sm font-semibold leading-6 text-zinc-800">
+    <label for={@for} class="text-zinc-800 block text-sm font-semibold leading-6">
       <%= render_slot(@inner_block) %>
     </label>
     """
@@ -407,7 +408,7 @@ defmodule NeedlistWeb.CoreComponents do
 
   def error(assigns) do
     ~H"""
-    <p class="flex gap-3 mt-3 text-sm leading-6 text-rose-600 phx-no-feedback:hidden">
+    <p class="text-rose-600 phx-no-feedback:hidden flex gap-3 mt-3 text-sm leading-6">
       <.icon name="hero-exclamation-circle-mini" class="mt-0.5 h-5 w-5 flex-none" />
       <%= render_slot(@inner_block) %>
     </p>
@@ -427,10 +428,10 @@ defmodule NeedlistWeb.CoreComponents do
     ~H"""
     <header class={[@actions != [] && "flex items-center justify-between gap-6", @class]}>
       <div>
-        <h1 class="text-lg font-semibold leading-8 text-zinc-800">
+        <h1 class="text-zinc-800 text-lg font-semibold leading-8">
           <%= render_slot(@inner_block) %>
         </h1>
-        <p :if={@subtitle != []} class="mt-2 text-sm leading-6 text-zinc-600">
+        <p :if={@subtitle != []} class="text-zinc-600 mt-2 text-sm leading-6">
           <%= render_slot(@subtitle) %>
         </p>
       </div>
@@ -471,9 +472,9 @@ defmodule NeedlistWeb.CoreComponents do
       end
 
     ~H"""
-    <div class="px-4 overflow-y-auto sm:overflow-visible sm:px-0">
+    <div class="sm:overflow-visible sm:px-0 px-4 overflow-y-auto">
       <table class="w-[40rem] mt-11 sm:w-full">
-        <thead class="text-sm leading-6 text-left text-zinc-500">
+        <thead class="text-zinc-500 text-sm leading-6 text-left">
           <tr>
             <th :for={col <- @col} class="p-0 pb-4 pr-6 font-normal"><%= col[:label] %></th>
             <th :if={@action != []} class="relative p-0 pb-4">
@@ -484,7 +485,7 @@ defmodule NeedlistWeb.CoreComponents do
         <tbody
           id={@id}
           phx-update={match?(%Phoenix.LiveView.LiveStream{}, @rows) && "stream"}
-          class="relative text-sm leading-6 border-t divide-y divide-zinc-100 border-zinc-200 text-zinc-700"
+          class="divide-zinc-100 border-zinc-200 text-zinc-700 relative text-sm leading-6 border-t divide-y"
         >
           <tr :for={row <- @rows} id={@row_id && @row_id.(row)} class="group hover:bg-zinc-50">
             <td
@@ -493,18 +494,18 @@ defmodule NeedlistWeb.CoreComponents do
               class={["relative p-0", @row_click && "hover:cursor-pointer"]}
             >
               <div class="block py-4 pr-6">
-                <span class="absolute right-0 -inset-y-px -left-4 group-hover:bg-zinc-50 sm:rounded-l-xl" />
+                <span class="-inset-y-px -left-4 group-hover:bg-zinc-50 sm:rounded-l-xl absolute right-0" />
                 <span class={["relative", i == 0 && "font-semibold text-zinc-900"]}>
                   <%= render_slot(col, @row_item.(row)) %>
                 </span>
               </div>
             </td>
-            <td :if={@action != []} class="relative p-0 w-14">
-              <div class="relative py-4 text-sm font-medium text-right whitespace-nowrap">
-                <span class="absolute left-0 -inset-y-px -right-4 group-hover:bg-zinc-50 sm:rounded-r-xl" />
+            <td :if={@action != []} class="w-14 relative p-0">
+              <div class="whitespace-nowrap relative py-4 text-sm font-medium text-right">
+                <span class="-inset-y-px -right-4 group-hover:bg-zinc-50 sm:rounded-r-xl absolute left-0" />
                 <span
                   :for={action <- @action}
-                  class="relative ml-4 font-semibold leading-6 text-zinc-900 hover:text-zinc-700"
+                  class="text-zinc-900 hover:text-zinc-700 relative ml-4 font-semibold leading-6"
                 >
                   <%= render_slot(action, @row_item.(row)) %>
                 </span>
@@ -534,9 +535,9 @@ defmodule NeedlistWeb.CoreComponents do
   def list(assigns) do
     ~H"""
     <div class="mt-14">
-      <dl class="-my-4 divide-y divide-zinc-100">
-        <div :for={item <- @item} class="flex gap-4 py-4 text-sm leading-6 sm:gap-8">
-          <dt class="flex-none w-1/4 text-zinc-500"><%= item.title %></dt>
+      <dl class="divide-zinc-100 -my-4 divide-y">
+        <div :for={item <- @item} class="sm:gap-8 flex gap-4 py-4 text-sm leading-6">
+          <dt class="text-zinc-500 flex-none w-1/4"><%= item.title %></dt>
           <dd class="text-zinc-700"><%= render_slot(item) %></dd>
         </div>
       </dl>
@@ -557,7 +558,7 @@ defmodule NeedlistWeb.CoreComponents do
   def back(assigns) do
     ~H"""
     <div class="mt-16">
-      <.link navigate={@navigate} class="text-sm font-semibold leading-6 text-zinc-900 hover:text-zinc-700">
+      <.link navigate={@navigate} class="text-zinc-900 hover:text-zinc-700 text-sm font-semibold leading-6">
         <.icon name="hero-arrow-left-solid" class="w-3 h-3" />
         <%= render_slot(@inner_block) %>
       </.link>
@@ -581,7 +582,7 @@ defmodule NeedlistWeb.CoreComponents do
   ## Examples
 
       <.icon name="hero-x-mark-solid" />
-      <.icon name="hero-arrow-path" class="w-3 h-3 ml-1 animate-spin" />
+      <.icon name="hero-arrow-path" class="animate-spin w-3 h-3 ml-1" />
   """
   attr :name, :string, required: true
   attr :class, :string, default: nil
@@ -589,6 +590,22 @@ defmodule NeedlistWeb.CoreComponents do
   def icon(%{name: "hero-" <> _} = assigns) do
     ~H"""
     <span class={[@name, @class]} />
+    """
+  end
+
+  @spec styled_link(map()) :: Rendered.t()
+  def styled_link(assigns) do
+    assigns =
+      assign(
+        assigns,
+        :class,
+        "dark:text-blue-300 hover:underline visited:dark:text-purple-300 visited:text-purple-600 font-medium text-blue-600 testclass"
+      )
+
+    ~H"""
+    <.link {assigns}>
+      <%= render_slot(@inner_block) %>
+    </.link>
     """
   end
 
