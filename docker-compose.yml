@@ -1,0 +1,14 @@
+services:
+  needlist:
+    build: .
+    ports:
+      - "8000:4000"
+
+    env_file:
+      - path: "needlist.dev.env"
+    environment:
+      MIX_ENV: dev
+  db:
+    image: "postgres:16.4"
+    env_file:
+      - path: "db.dev.env"
