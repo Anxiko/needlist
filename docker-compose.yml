@@ -3,12 +3,13 @@ services:
     build: .
     ports:
       - "8000:4000"
-
     env_file:
       - path: "needlist.dev.env"
     environment:
       MIX_ENV: dev
   db:
     image: "postgres:16.4"
+    ports:
+      - "5432:5432"
     env_file:
       - path: "db.dev.env"
