@@ -2,7 +2,7 @@ services:
   needlist:
     build: .
     ports:
-      - "8000:4000"
+      - "8080:8080"
     env_file:
       - path: "needlist.dev.env"
     environment:
