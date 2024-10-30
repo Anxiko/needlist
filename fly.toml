@@ -15,6 +15,7 @@ kill_signal = 'SIGTERM'
 [env]
   PHX_HOST = 'needlist.anxiko.com'
   PORT = '8080'
+  ECTO_IPV6='true'
 
 [http_service]
   internal_port = 8080
