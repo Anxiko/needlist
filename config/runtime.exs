@@ -20,7 +20,7 @@ if System.get_env("PHX_SERVER") do
   config :needlist, NeedlistWeb.Endpoint, server: true
 end
 
-if System.gen_env("DISABLE_SSL") do
+if System.get_env("DISABLE_SSL") do
   config :needlist, NeedlistWeb.Endpoint, force_ssl: []
 end
 
