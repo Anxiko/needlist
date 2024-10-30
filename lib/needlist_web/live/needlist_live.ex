@@ -293,10 +293,12 @@ defmodule NeedlistWeb.NeedlistLive do
     """
   end
 
-  defp table_header(%{column_key: column_key} = assigns) do
+  defp table_header(assigns) do
+    assigns = assign_new(assigns, :column_key, fn -> nil end)
+
     phx_attrs =
-      if column_key != nil do
-        %{"phx-click": "sort-by", "phx-value-key": column_key}
+      if assigns.column_key != nil do
+        %{"phx-click": "sort-by", "phx-value-key": assigns.column_key}
       else
         %{}
       end
@@ -304,6 +306,8 @@ defmodule NeedlistWeb.NeedlistLive do
     assigns =
       assigns
       |> assign(:phx_attrs, phx_attrs)
+      |> assign_new(:class, fn -> nil end)
+
 
     ~H"""
     <th scope="col" class="px-6 py-3" {@phx_attrs}>

@@ -8,18 +8,14 @@
       <table class="rtl:text-right dark:text-gray-400 w-full text-sm text-left text-gray-500 table-fixed">
         <thead class="bg-gray-50 dark:bg-gray-700 dark:text-gray-400 text-xs text-gray-700 uppercase">
           <tr>
-            <%= for {column_key, column_name} <- [
-              artist: "Artist",
-              title: "Title",
-              label: "Label",
-              nil: "Formats",
-              year: "Year",
-              min_price: "Min price",
-              avg_price: "Avg price",
-              max_price: "Max price"
-              ] do %>
-              <.table_header state={@state} column_key={column_key} column_name={column_name} />
-            <% end %>
+            <.table_header state={@state} column_key={:artist} column_name="Artist" />
+            <.table_header state={@state} column_key={:title} column_name="Title" />
+            <.table_header state={@state} column_key={:label} column_name="Label" />
+            <.table_header state={@state} column_name="Formats" />
+            <.table_header state={@state} column_key={:year} column_name="Year" />
+            <.table_header state={@state} column_key={:min_price} column_name="Min price" />
+            <.table_header state={@state} column_key={:avg_price} column_name="Avg price" />
+            <.table_header state={@state} column_key={:max_price} column_name="Max price" />
           </tr>
         </thead>
         <tbody>
