@@ -15,3 +15,6 @@ services:
       - "5432:5432"
     env_file:
       - path: "db.dev.env"
+    volumes:
+      - ./db/dump.sql:/docker-entrypoint-initdb.d/dump.sql
+      - /var/lib/postgresql/data
