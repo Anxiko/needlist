@@ -5,27 +5,23 @@
 
   <%= if @current_page != nil do %>
     <div class="relative overflow-x-auto">
-      <table class="rtl:text-right dark:text-gray-400 w-full text-sm text-left text-gray-500">
+      <table class="rtl:text-right dark:text-gray-400 w-full text-sm text-left text-gray-500 table-fixed">
         <thead class="bg-gray-50 dark:bg-gray-700 dark:text-gray-400 text-xs text-gray-700 uppercase">
           <tr>
-            <%= for {column_key, column_name} <- [
-              artist: "Artist",
-              title: "Title",
-              label: "Label",
-              nil: "Formats",
-              year: "Year",
-              min_price: "Min price",
-              avg_price: "Avg price",
-              max_price: "Max price"
-              ] do %>
-              <.table_header state={@state} column_key={column_key} column_name={column_name} />
-            <% end %>
+            <.table_header state={@state} column_key={:artist} column_name="Artist" class="w-2/12" />
+            <.table_header state={@state} column_key={:title} column_name="Title" class="w-2/12" />
+            <.table_header state={@state} column_key={:label} column_name="Label" class="w-2/12" />
+            <.table_header state={@state} column_name="Formats" class="w-2/12" />
+            <.table_header state={@state} column_key={:year} column_name="Year" class="w-1/12" />
+            <.table_header state={@state} column_key={:min_price} column_name="Min price" class="w-1/12" />
+            <.table_header state={@state} column_key={:avg_price} column_name="Avg price" class="w-1/12" />
+            <.table_header state={@state} column_key={:max_price} column_name="Max price" class="w-1/12" />
           </tr>
         </thead>
         <tbody>
           <%= for item <- elem(@current_page, 1).items do %>
             <tr class="dark:bg-gray-800 dark:border-gray-700 bg-white border-b">
-              <td scope="row" class=" px-6 py-4">
+              <td class=" px-6 py-4">
                 <.want_artists artists={item.basic_information.artists} />
               </td>
               <td class="px-6 py-4">
