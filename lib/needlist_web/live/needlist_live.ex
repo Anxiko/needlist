@@ -308,9 +308,8 @@ defmodule NeedlistWeb.NeedlistLive do
       |> assign(:phx_attrs, phx_attrs)
       |> assign_new(:class, fn -> nil end)
 
-
     ~H"""
-    <th scope="col" class="px-6 py-3" {@phx_attrs}>
+    <th scope="col" class={"px-6 py-3 #{@class}"} {@phx_attrs}>
       <span class={"inline-flex items-center font-medium #{@column_key != nil && "cursor-pointer text-blue-600 dark:text-blue-300 hover:underline"}"}>
         <%= @column_name %>
         <%= if @state.sort_key == @column_key and @state.sort_order != nil do %>
