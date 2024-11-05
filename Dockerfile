@@ -18,7 +18,7 @@ ARG DEBIAN_VERSION=bullseye-20240701-slim
 ARG BUILDER_IMAGE="hexpm/elixir:${ELIXIR_VERSION}-erlang-${OTP_VERSION}-debian-${DEBIAN_VERSION}"
 ARG RUNNER_IMAGE="debian:${DEBIAN_VERSION}"
 
-FROM ${BUILDER_IMAGE} as builder
+FROM ${BUILDER_IMAGE} AS builder
 
 ARG NODE_VERSION=v20.18.0
 
@@ -92,13 +92,14 @@ RUN apt-get update -y && \
   && apt-get clean && rm -f /var/lib/apt/lists/*_*
 
 # Install pyenv
-ENV HOME="/root"
-WORKDIR $HOME
+WORKDIR "/python"
 RUN git clone --depth=1 https://github.com/pyenv/pyenv.git .pyenv
-ENV PYENV_ROOT="$HOME/.pyenv"
+ENV PYENV_ROOT="/python/.pyenv"
 ENV PATH="$PYENV_ROOT/shims:$PYENV_ROOT/bin:$PATH"
 RUN pyenv install ${PYTHON_VERSION}
 RUN pyenv global ${PYTHON_VERSION}
+
+RUN chown nobody /python
 
 # install python packages
 COPY "priv/python/requirements.txt" "."
