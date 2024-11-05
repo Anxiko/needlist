@@ -35,4 +35,13 @@ needlist-*.tar
 npm-debug.log
 /assets/node_modules/
 
+# Environment variable files
 .env*
+
+
+# Python
+venv/
+**/__pycache__/**
+
+# Project temp files
+.payloads/
