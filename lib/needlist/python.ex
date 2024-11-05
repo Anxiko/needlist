@@ -4,11 +4,10 @@ defmodule Needlist.Python do
   """
 
   alias Nullables.Result
-  @python_path [:code.priv_dir(:needlist), "python"] |> Path.join()
 
   @spec scrape_listings(integer()) :: Result.result(String.t())
   def scrape_listings(release_id) do
-    case :python.start(python_path: String.to_charlist(@python_path)) do
+    case :python.start(python_path: String.to_charlist(python_path())) do
       {:ok, pid} ->
         do_scrape_listings(pid, release_id)
 
@@ -29,5 +28,12 @@ defmodule Needlist.Python do
     e in ErlangError ->
       :python.stop(pid)
       {:error, {:python_call, e}}
+  end
+
+  @spec python_path :: String.t()
+  defp python_path do
+    :needlist
+    |> :code.priv_dir()
+    |> Path.join("python")
   end
 end
