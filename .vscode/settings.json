@@ -29,5 +29,5 @@
         "venv",
         "wantlist"
     ],
-    "python.analysis.typeCheckingMode": "basic"
+    "python.analysis.typeCheckingMode": "standard"
 }
