@@ -10,6 +10,8 @@ defmodule Needlist.Discogs.Api do
   alias Needlist.Repo.Want
   alias Needlist.Repo.User
 
+  @base_api_url :needlist |> Application.compile_env!(Needlist.Discogs) |> Keyword.fetch!(:base_api_url)
+
   @type sort_key() :: SortKey.t()
   @type sort_order() :: SortOrder.t()
 
@@ -44,7 +46,7 @@ defmodule Needlist.Discogs.Api do
   end
 
   @spec base_api_url() :: String.t()
-  defp base_api_url(), do: "https://api.discogs.com"
+  defp base_api_url(), do: @base_api_url
 
   @spec get_user_needlist_raw(String.t(), needlist_options()) :: {:ok, map()} | :error
   defp get_user_needlist_raw(user, opts) do

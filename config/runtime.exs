@@ -1,4 +1,5 @@
 import Config
+import Dotenvy
 
 # config/runtime.exs is executed for all environments, including
 # during releases. It is executed after compilation and before the
@@ -6,6 +7,16 @@ import Config
 # and secrets from environment variables or elsewhere. Do not define
 # any compile-time configuration in here, as it won't be applied.
 # The block below contains prod specific runtime configuration.
+
+# Read the relevant .env files
+# See https://hexdocs.pm/dotenvy/cheatsheet.html#setup
+dir = System.get_env("RELEASE_ROOT") || "envs/"
+
+source!([
+  "#{dir}#{config_env()}.env",
+  "#{dir}#{config_env()}.local.env",
+  System.get_env()
+])
 
 # ## Using releases
 #
@@ -23,6 +34,10 @@ end
 if System.get_env("DISABLE_SSL") do
   config :needlist, NeedlistWeb.Endpoint, force_ssl: []
 end
+
+config :needlist, Needlist.Discogs.Oauth,
+  consumer_key: env!("DISCOGS_OAUTH_CONSUMER_KEY", :string!),
+  consumer_secret: env!("DISCOGS_OAUTH_CONSUMER_SECRET", :string!)
 
 if config_env() == :prod do
   database_url =
