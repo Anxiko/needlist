@@ -22,6 +22,12 @@ defmodule NeedlistWeb.Router do
     live "/needlist/:username", NeedlistLive
   end
 
+  scope "/oauth", NeedlistWeb do
+    pipe_through :browser
+
+    get "/login", OauthController, :request
+  end
+
   # Other scopes may use custom stacks.
   # scope "/api", NeedlistWeb do
   #   pipe_through :api
