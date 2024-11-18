@@ -33,7 +33,7 @@ defmodule Needlist.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:cachex, "~> 3.6"},
+      {:cachex, "~> 4.0"},
       {:dotenvy, "~> 0.8.0"},
       {:phoenix, "~> 1.7.10"},
       {:phoenix_ecto, "~> 4.4"},
