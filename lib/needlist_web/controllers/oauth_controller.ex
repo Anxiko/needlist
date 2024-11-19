@@ -10,7 +10,10 @@ defmodule NeedlistWeb.OauthController do
 
   @spec request(Plug.Conn.t(), map()) :: Plug.Conn.t()
   def request(conn, _params) do
-    with {:ok, request_token_pair} = Oauth.generate_oauth_request_tokens() |> tag_error(:request),
+    oauth_callback = callback_url()
+
+    with {:ok, request_token_pair} =
+           Oauth.generate_oauth_request_tokens(oauth_callback) |> tag_error(:request),
          {:ok, _} <- save_token_pair(request_token_pair) |> tag_error(:cache_request),
          verify_url = Oauth.verify_url(request_token_pair) do
       redirect(conn, external: verify_url)
@@ -24,7 +27,36 @@ defmodule NeedlistWeb.OauthController do
     end
   end
 
-  defp save_token_pair({token, token_secret}) do
-    Cachex.put(@cache, token, token_secret)
+  @spec callback(Plug.Conn.t(), map()) :: Plug.Conn.t()
+  def callback(conn, %{"oauth_token" => oauth_token, "oauth_verifier" => oauth_verifier}) do
+    with {:ok, request_token_pair} <- retrieve_token_pair(oauth_token) |> tag_error(:cache),
+         {:ok, _access_token_pair} = Oauth.generate_oauth_access_tokens(request_token_pair, oauth_verifier) do
+      conn
+      |> put_status(200)
+      |> text("Authorization complete")
+    else
+      _ ->
+        conn
+        |> put_status(500)
+        |> text("An error occurred during the final authorization step.")
+    end
+  end
+
+  defp callback_url do
+    url(~p"/oauth/callback")
+  end
+
+  defp save_token_pair({request_token, request_token_secret}) do
+    Cachex.put(@cache, request_token, request_token_secret)
+  end
+
+  defp retrieve_token_pair(request_token) do
+    case Cachex.get(@cache, request_token) do
+      {:ok, nil} ->
+        {:error, :not_found}
+
+      {:ok, request_token_secret} when is_binary(request_token_secret) ->
+        {:ok, {request_token, request_token_secret}}
+    end
   end
 end

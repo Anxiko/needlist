@@ -26,6 +26,8 @@ defmodule NeedlistWeb.Router do
     pipe_through :browser
 
     get "/login", OauthController, :request
+
+    get "/callback", OauthController, :callback
   end
 
   # Other scopes may use custom stacks.

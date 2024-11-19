@@ -8,12 +8,20 @@ defmodule Needlist.Discogs.Oauth do
   @base_api_url :needlist |> Application.compile_env!(Needlist.Discogs) |> Keyword.fetch!(:base_api_url)
   @base_web_url :needlist |> Application.compile_env!(Needlist.Discogs) |> Keyword.fetch!(:base_web_url)
 
+  @spec generate_oauth_request_tokens(callback_url :: String.t() | nil) :: Nullables.Result.result(token_pair())
   @spec generate_oauth_request_tokens() :: Nullables.Result.result(token_pair())
-  def generate_oauth_request_tokens do
+  def generate_oauth_request_tokens(callback_url \\ nil) do
     request_token_url = @base_api_url <> "/oauth/request_token"
 
+    opts =
+      if callback_url != nil do
+        [oauth_callback: callback_url]
+      else
+        []
+      end
+
     :post
-    |> authenticated_request(request_token_url, nil)
+    |> authenticated_request(request_token_url, opts)
     |> Req.request()
     |> Nullables.Result.flat_map(&extract_tokens_from_response/1)
   end
@@ -23,7 +31,7 @@ defmodule Needlist.Discogs.Oauth do
     access_token_url = @base_api_url <> "/oauth/access_token"
 
     :post
-    |> authenticated_request(access_token_url, request_tokens, [{"oauth_verifier", verifier}])
+    |> authenticated_request(access_token_url, token_pair: request_tokens, oauth_verifier: verifier)
     |> Req.request()
     |> Nullables.Result.flat_map(&extract_tokens_from_response/1)
   end
@@ -41,17 +49,18 @@ defmodule Needlist.Discogs.Oauth do
   @spec authenticated_request(
           method :: atom(),
           url :: String.t(),
-          token_pair :: token_pair() | nil,
-          query_args :: [{String.t(), String.t()}]
+          opts :: keyword()
         ) :: Req.Request.t()
   @spec authenticated_request(
           method :: atom(),
-          url :: String.t(),
-          token_pair :: token_pair() | nil
+          url :: String.t()
         ) :: Req.Request.t()
-  defp authenticated_request(method, url, token_pair, query_args \\ []) do
+  defp authenticated_request(method, url, opts \\ []) do
+    {token_pair, opts} = Keyword.pop(opts, :token_pair)
+    opts = Enum.map(opts, fn {k, v} -> {to_string(k), v} end)
+
     credentials = oauther_credentials(token_pair)
-    params = OAuther.sign(Atom.to_string(method), url, query_args, credentials)
+    params = OAuther.sign(Atom.to_string(method), url, opts, credentials)
     {header, query_args} = OAuther.header(params)
 
     Req.new(method: method, url: url, headers: [header], params: query_args)
