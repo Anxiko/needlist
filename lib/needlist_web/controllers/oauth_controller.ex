@@ -14,10 +14,9 @@ defmodule NeedlistWeb.OauthController do
   def request(conn, _params) do
     oauth_callback = callback_url()
 
-    with {:ok, request_token_pair} =
-           Oauth.generate_oauth_request_tokens(oauth_callback) |> tag_error(:request),
-         {:ok, _} <- save_token_pair(request_token_pair) |> tag_error(:cache_request),
-         verify_url = Oauth.verify_url(request_token_pair) do
+    with {:ok, request_token_pair} <- Oauth.generate_oauth_request_tokens(oauth_callback) |> tag_error(:request),
+         {:ok, _} <- save_token_pair(request_token_pair) |> tag_error(:cache_request) do
+      verify_url = Oauth.verify_url(request_token_pair)
       redirect(conn, external: verify_url)
     else
       error ->
