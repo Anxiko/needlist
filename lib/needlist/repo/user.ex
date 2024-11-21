@@ -9,15 +9,20 @@ defmodule Needlist.Repo.User do
 
   alias Ecto.Changeset
   alias Needlist.Repo.Want
+  alias Needlist.Repo.User.Oauth
 
   @required_fields [:id, :username]
   @optional_fields []
+  @embedded_fields [
+    {:oauth, [:required]}
+  ]
   @fields @required_fields ++ @optional_fields
 
   @primary_key false
   schema "users" do
     field :id, :id, primary_key: true
     field :username, :string
+    embeds_one :oauth, Oauth
     many_to_many :wants, Want, join_through: "user_wantlist"
   end
 
@@ -33,6 +38,7 @@ defmodule Needlist.Repo.User do
   def changeset(struct, params \\ %{}) do
     struct
     |> Changeset.cast(params, @fields)
+    |> EctoExtra.cast_many_embeds(@embedded_fields)
     |> Changeset.validate_required(@required_fields)
   end
 
