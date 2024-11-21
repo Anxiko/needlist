@@ -46,16 +46,45 @@ defmodule Needlist.Discogs.Oauth do
     |> URI.to_string()
   end
 
+  @spec oauther_credentials(token_pair() | nil) :: OAuther.Credentials.t()
+  def oauther_credentials(tokens) do
+    Application.fetch_env!(:needlist, __MODULE__)
+    |> Keyword.take([:consumer_key, :consumer_secret])
+    |> Keyword.put(:method, :plaintext)
+    |> add_token_pair(tokens)
+    |> OAuther.credentials()
+  end
+
+  @spec authenticate_request(Req.Request.t(), OAuther.Credentials.t(), keyword()) :: Req.Request.t()
+  @spec authenticate_request(Req.Request.t(), OAuther.Credentials.t()) :: Req.Request.t()
+  def authenticate_request(
+        %Req.Request{method: method, url: url, options: %{} = options} = request,
+        credentials,
+        extra_oauth_params \\ []
+      ) do
+    extra_oauth_params =
+      extra_oauth_params
+      |> Enum.map(fn {k, v} -> {to_string(k), v} end)
+
+    if non_oauth_extra_option = Enum.find(extra_oauth_params, fn {k, _v} -> not String.starts_with?(k, "oauth_") end) do
+      raise ArgumentError,
+        message: "Only OAuth options may be provided as extra options, found: #{non_oauth_extra_option}"
+    end
+
+    extra_query_params = Map.get(options, :params) || %{} |> Enum.map(fn {k, v} -> {to_string(k), v} end)
+    all_params = OAuther.sign(Atom.to_string(method), url, extra_query_params ++ extra_oauth_params, credentials)
+
+    {{"Authorization", oauth_header}, _non_oauth_params} = OAuther.header(all_params)
+
+    Req.Request.put_header(request, "Authorization", oauth_header)
+  end
+
   @spec authenticated_request(
           method :: atom(),
           url :: String.t(),
           opts :: keyword()
         ) :: Req.Request.t()
-  @spec authenticated_request(
-          method :: atom(),
-          url :: String.t()
-        ) :: Req.Request.t()
-  defp authenticated_request(method, url, opts \\ []) do
+  defp authenticated_request(method, url, opts) do
     {token_pair, opts} = Keyword.pop(opts, :token_pair)
     opts = Enum.map(opts, fn {k, v} -> {to_string(k), v} end)
 
@@ -76,15 +105,6 @@ defmodule Needlist.Discogs.Oauth do
       {step, {:error, details}} -> {:error, {step, details}}
       {step, _} -> {:error, step}
     end
-  end
-
-  @spec oauther_credentials(token_pair() | nil) :: OAuther.Credentials.t()
-  defp oauther_credentials(tokens) do
-    Application.fetch_env!(:needlist, Needlist.Discogs.Oauth)
-    |> Keyword.take([:consumer_key, :consumer_secret])
-    |> Keyword.put(:method, :plaintext)
-    |> add_token_pair(tokens)
-    |> OAuther.credentials()
   end
 
   @spec add_token_pair(keyword(), token_pair() | nil) :: keyword()

@@ -3,7 +3,9 @@ defmodule Needlist.Discogs.Api do
   Discogs API client
   """
 
+  alias Needlist.Discogs.Oauth
   alias Nullables.Result
+  alias Needlist.Discogs.Api.Types.Identity
   alias Needlist.Discogs.Api.Types.SortOrder
   alias Needlist.Discogs.Api.Types.SortKey
   alias Needlist.Repo.Pagination, as: RepoPagination
@@ -43,6 +45,19 @@ defmodule Needlist.Discogs.Api do
     |> Req.request()
     |> Result.flat_map(&body_from_ok/1)
     |> Result.flat_map(&User.cast/1)
+  end
+
+  @spec identity(access_token_pair :: Oauth.token_pair()) :: Result.result(Identity.t())
+  def identity(access_token_pair) do
+    credentials = Oauth.oauther_credentials(access_token_pair)
+
+    base_api_url()
+    |> Kernel.<>("/oauth/identity")
+    |> then(&Req.new(url: &1, method: :get))
+    |> Oauth.authenticate_request(credentials)
+    |> Req.request()
+    |> Result.flat_map(&body_from_ok/1)
+    |> Result.flat_map(&Identity.cast/1)
   end
 
   @spec base_api_url() :: String.t()
