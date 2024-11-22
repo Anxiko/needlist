@@ -6,7 +6,7 @@ defmodule Needlist.Discogs.LinkGenerator do
   alias Needlist.Repo.Want.Artist
   alias Needlist.Repo.Want.Label
 
-  @base_url :needlist |> Application.compile_env!(__MODULE__) |> Keyword.fetch!(:base) |> URI.new!()
+  @base_url :needlist |> Application.compile_env!(Needlist.Discogs) |> Keyword.fetch!(:base_web_url) |> URI.new!()
 
   @spec from_artist(want :: Artist.t()) :: String.t()
   def from_artist(%Artist{id: artist_id} = artist) do

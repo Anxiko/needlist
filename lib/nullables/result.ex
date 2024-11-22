@@ -86,4 +86,13 @@ defmodule Nullables.Result do
     end)
     |> map(&Enum.reverse/1)
   end
+
+  @doc """
+  Transform the error variant of a result, wrapping the error details in a tuple with the tag.
+  The success variant is left untouched.
+  Useful in with chains, to identify which step caused a failure.
+  """
+  @spec tag_error(result :: result(t, e), tag :: tag) :: result(t, {tag, e}) when t: var, e: var, tag: var
+  def tag_error({:ok, _} = result, _tag), do: result
+  def tag_error({:error, error}, tag), do: {:error, {tag, error}}
 end

@@ -13,9 +13,13 @@ defmodule EctoExtra do
     msg: :message
   }
 
+  @type embed_options() :: [atom() | {atom(), any()}]
+
   alias Ecto.Changeset
 
-  @spec cast_many_embeds(Changeset.t(schema), [{atom(), Keyword.t()} | atom()]) :: Changeset.t(schema) when schema: var
+  @spec cast_many_embeds(changeset :: Changeset.t(schema), embeds :: [atom() | {atom(), embed_options()}]) ::
+          Changeset.t(schema)
+        when schema: var
   @doc """
   Utility function that casts several embeds into a changeset.
   Embeds can be provided by just their name, or in a tuple with options to forward to cast_embed/3

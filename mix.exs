@@ -33,7 +33,8 @@ defmodule Needlist.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:cachex, "~> 3.6"},
+      {:cachex, "~> 4.0"},
+      {:dotenvy, "~> 0.8.0"},
       {:phoenix, "~> 1.7.10"},
       {:phoenix_ecto, "~> 4.4"},
       {:ecto_sql, "~> 3.10"},
@@ -44,6 +45,7 @@ defmodule Needlist.MixProject do
       {:phoenix_live_view, "~> 0.20.17"},
       {:floki, "~> 0.36.0"},
       {:phoenix_live_dashboard, "~> 0.8.2"},
+      {:oauther, "~> 1.3"},
       {:esbuild, "~> 0.8", runtime: Mix.env() == :dev},
       {:tailwind, "~> 0.2.0", runtime: Mix.env() == :dev},
       {:swoosh, "~> 1.3"},

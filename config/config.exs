@@ -56,7 +56,7 @@ config :tailwind,
 # Configures Elixir's Logger
 config :logger, :console,
   format: "$time $metadata[$level] $message\n",
-  metadata: [:request_id]
+  metadata: [:request_id, :error]
 
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
@@ -64,7 +64,11 @@ config :phoenix, :json_library, Jason
 config :money,
   default_currency: :EUR
 
-config :needlist, Needlist.Discogs.LinkGenerator, base: "https://www.discogs.com"
+config :needlist, Needlist.Discogs,
+  base_api_url: "https://api.discogs.com",
+  base_web_url: "https://www.discogs.com"
+
+config :needlist, :cache_key, :needlist
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.

@@ -8,7 +8,7 @@ defmodule Needlist.Application do
   @impl true
   def start(_type, _args) do
     children = [
-      {Cachex, name: :discogs_cache},
+      {Cachex, [Application.fetch_env!(:needlist, :cache_key)]},
       NeedlistWeb.Telemetry,
       Needlist.Repo,
       {DNSCluster, query: Application.get_env(:needlist, :dns_cluster_query) || :ignore},
