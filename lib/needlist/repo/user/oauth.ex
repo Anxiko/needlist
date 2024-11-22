@@ -5,11 +5,10 @@ defmodule Needlist.Repo.User.Oauth do
 
   alias Ecto.Changeset
 
-  @required [:id, :token, :token_secret, :inserted_at, :updated_at]
-  @optional []
+  @required [:token, :token_secret]
+  @optional [:inserted_at, :updated_at]
 
   @type t() :: %__MODULE__{
-          id: integer(),
           token: String.t(),
           token_secret: String.t(),
           inserted_at: DateTime.t(),
@@ -18,7 +17,6 @@ defmodule Needlist.Repo.User.Oauth do
 
   @primary_key false
   embedded_schema do
-    field :id, :id, primary_key: true
     field :token, :string
     field :token_secret, :string
     timestamps()

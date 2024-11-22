@@ -22,7 +22,7 @@ defmodule Needlist.Repo.User do
   schema "users" do
     field :id, :id, primary_key: true
     field :username, :string
-    embeds_one :oauth, Oauth
+    embeds_one :oauth, Oauth, on_replace: :update
     many_to_many :wants, Want, join_through: "user_wantlist"
   end
 
@@ -40,6 +40,12 @@ defmodule Needlist.Repo.User do
     |> Changeset.cast(params, @fields)
     |> EctoExtra.cast_many_embeds(@embedded_fields)
     |> Changeset.validate_required(@required_fields)
+  end
+
+  @spec by_id(Ecto.Query.t() | __MODULE__, integer()) :: Ecto.Query.t()
+  @spec by_id(integer()) :: Ecto.Query.t()
+  def by_id(query \\ __MODULE__, id) do
+    where(query, id: ^id)
   end
 
   @spec by_username(Ecto.Query.t() | __MODULE__, String.t()) :: Ecto.Query.t()

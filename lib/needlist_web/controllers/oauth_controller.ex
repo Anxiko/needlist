@@ -4,6 +4,7 @@ defmodule NeedlistWeb.OauthController do
   import Nullables.Result, only: [tag_error: 2]
 
   require Logger
+  alias Needlist.Users
   alias Needlist.Discogs.Api
   alias Needlist.Discogs.Api.Types.Identity
   alias Needlist.Discogs.Oauth
@@ -33,12 +34,16 @@ defmodule NeedlistWeb.OauthController do
     with {:ok, request_token_pair} <- retrieve_token_pair(oauth_token) |> tag_error(:cache),
          {:ok, access_token_pair} <-
            Oauth.generate_oauth_access_tokens(request_token_pair, oauth_verifier) |> tag_error(:access),
-         {:ok, %Identity{username: username}} <- Api.identity(access_token_pair) |> tag_error(:identity) do
+         {:ok, %Identity{id: id, username: username}} <-
+           Api.identity(access_token_pair) |> tag_error(:identity),
+         {:ok, _} <- Users.upsert_user_with_oauth_tokens(id, username, access_token_pair) do
       conn
       |> put_status(200)
       |> text("You are now logged in as #{username}")
     else
-      _ ->
+      error ->
+        Logger.warning("Failed to process OAuth callback: #{inspect(error)}", error: error)
+
         conn
         |> put_status(500)
         |> text("An error occurred during the final authorization step.")

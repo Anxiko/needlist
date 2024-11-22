@@ -3,6 +3,7 @@ defmodule Needlist.Users do
   Users context.
   """
 
+  alias Needlist.Discogs.Oauth
   alias Nullables.Result
   alias Needlist.Repo.User
   alias Needlist.Repo
@@ -17,5 +18,28 @@ defmodule Needlist.Users do
     |> User.maybe_with_wantlist(preload_wantlist?)
     |> Repo.one()
     |> Nullables.nullable_to_result(:not_found)
+  end
+
+  @spec get_by_id(id :: integer()) :: Result.result(User.t())
+  def get_by_id(id) do
+    User
+    |> User.by_id(id)
+    |> Repo.one()
+    |> Nullables.nullable_to_result(:not_found)
+  end
+
+  @spec upsert_user_with_oauth_tokens(
+          id :: integer(),
+          username :: String.t(),
+          token_pair :: Oauth.token_pair()
+        ) :: Result.result(User.t())
+  def upsert_user_with_oauth_tokens(id, username, {token, token_secret}) do
+    params = %{id: id, username: username, oauth: %{token: token, token_secret: token_secret}}
+
+    id
+    |> get_by_id()
+    |> Result.unwrap(%User{})
+    |> User.changeset(params)
+    |> Repo.insert_or_update()
   end
 end
