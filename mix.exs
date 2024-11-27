@@ -59,7 +59,8 @@ defmodule Needlist.MixProject do
       {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false},
       {:req, "~> 0.4.0"},
       {:credo, "~> 1.6", only: [:dev, :test], runtime: false},
-      {:money, "~> 1.12"}
+      {:money, "~> 1.12"},
+      {:tiny_maps, "~> 3.0"}
     ]
   end
 
