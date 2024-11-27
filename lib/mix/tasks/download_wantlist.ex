@@ -40,7 +40,7 @@ defmodule Mix.Tasks.DownloadWantlist do
   defp get_needlist(username) do
     1
     |> Stream.iterate(&Kernel.+(&1, 1))
-    |> Stream.map(&Api.get_user_needlist_repo(username, per_page: @per_page, page: &1))
+    |> Stream.map(&Api.get_user_needlist(username, per_page: @per_page, page: &1))
     |> Enum.reduce_while({:ok, []}, fn
       {:ok, %Pagination{items: items, page_info: page_info}}, {:ok, pages} ->
         pages = [items | pages]

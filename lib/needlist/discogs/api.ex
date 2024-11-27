@@ -3,6 +3,8 @@ defmodule Needlist.Discogs.Api do
   Discogs API client
   """
 
+  import Nullables.Result, only: [tag_error: 2]
+
   alias Needlist.Discogs.Oauth
   alias Nullables.Result
   alias Needlist.Discogs.Api.Types.Identity
@@ -11,6 +13,7 @@ defmodule Needlist.Discogs.Api do
   alias Needlist.Repo.Pagination, as: RepoPagination
   alias Needlist.Repo.Want
   alias Needlist.Repo.User
+  alias Needlist.Users
 
   @base_api_url :needlist |> Application.compile_env!(Needlist.Discogs) |> Keyword.fetch!(:base_api_url)
 
@@ -24,14 +27,21 @@ defmodule Needlist.Discogs.Api do
           sort_order: sort_order()
         ]
 
-  @spec get_user_needlist_repo(String.t(), needlist_options()) ::
+  @spec get_user_needlist(username :: String.t(), options :: needlist_options()) ::
           Result.result(RepoPagination.t(Want.t()), Ecto.Changeset.t(RepoPagination.t(Want.t())))
-  @spec get_user_needlist_repo(String.t()) ::
+  @spec get_user_needlist(username :: String.t()) ::
           Result.result(RepoPagination.t(Want.t()), Ecto.Changeset.t(RepoPagination.t(Want.t())))
-  def get_user_needlist_repo(user, opts \\ []) do
-    user
-    |> get_user_needlist_raw(opts)
-    |> Nullables.fallible_to_result(:request)
+  def get_user_needlist(username, opts \\ []) do
+    [
+      base_url: base_api_url(),
+      url: "/users/#{URI.encode(username)}/wants",
+      params: opts_to_params(opts),
+      method: :get
+    ]
+    |> Req.new()
+    |> maybe_authenticate_request_with_user(username)
+    |> Req.request()
+    |> Result.flat_map(&body_from_ok/1)
     |> Result.flat_map(&RepoPagination.parse(&1, :wants, Want))
   end
 
@@ -63,25 +73,6 @@ defmodule Needlist.Discogs.Api do
   @spec base_api_url() :: String.t()
   defp base_api_url(), do: @base_api_url
 
-  @spec get_user_needlist_raw(String.t(), needlist_options()) :: {:ok, map()} | :error
-  defp get_user_needlist_raw(user, opts) do
-    user = URI.encode(user)
-
-    params = opts_to_params(opts)
-
-    base_api_url()
-    |> Kernel.<>("/users/#{user}/wants")
-    |> then(&Req.new(url: &1, method: :get, params: params))
-    |> Req.request()
-    |> case do
-      {:ok, %Req.Response{status: 200, body: body}} ->
-        {:ok, body}
-
-      _ ->
-        :error
-    end
-  end
-
   @spec opts_to_params(needlist_options()) :: Keyword.t()
   defp opts_to_params(opts) do
     opts
@@ -97,5 +88,28 @@ defmodule Needlist.Discogs.Api do
 
   defp body_from_ok(%Req.Response{status: actual}, expected) do
     {:error, "Expected status #{expected}, got #{actual}"}
+  end
+
+  @spec fetch_user_tokens(username :: String.t()) :: Result.result(Oauth.token_pair())
+  defp fetch_user_tokens(username) do
+    with {:ok, %User{oauth: oauth}} <- Users.get_by_username(username) |> tag_error(:user),
+         {_, token_pair} when token_pair != nil <-
+           oauth |> User.Oauth.token_pair() |> Nullables.nullable_to_result(:unauthenticated) |> tag_error(:token) do
+      {:ok, token_pair}
+    else
+      error -> Nullables.normalize(error)
+    end
+  end
+
+  @spec maybe_authenticate_request_with_user(request :: Req.Request.t(), username :: String.t()) :: Req.Request.t()
+  defp maybe_authenticate_request_with_user(request, username) do
+    case fetch_user_tokens(username) do
+      {:ok, token_pair} ->
+        credentials = Oauth.oauther_credentials(token_pair)
+        Oauth.authenticate_request(request, credentials)
+
+      _ ->
+        request
+    end
   end
 end
