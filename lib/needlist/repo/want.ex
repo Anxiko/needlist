@@ -10,7 +10,7 @@ defmodule Needlist.Repo.Want do
   alias Needlist.Repo.Want
   alias Needlist.Repo.Listing
   alias Ecto.Changeset
-  alias EctoExtra
+  alias EctoExtra.DumpableSchema
   alias Needlist.Repo.Want.BasicInformation
   alias Needlist.Repo.User
   alias Needlist.Repo.Want.Artist
@@ -259,6 +259,24 @@ defmodule Needlist.Repo.Want do
   def maybe_limit(query \\ __MODULE__, limit)
   def maybe_limit(query, nil), do: query
   def maybe_limit(query, limit), do: limit(query, ^limit)
+
+  defimpl DumpableSchema do
+    @spec dump(Needlist.Repo.Want.t()) :: map()
+    def dump(want) do
+      want
+      |> Map.from_struct()
+      |> Map.take([
+        :id,
+        :display_artists,
+        :display_labels,
+        :date_added,
+        :listings_last_updated,
+        :notes,
+        :basic_information
+      ])
+      |> DumpableSchema.Embeds.dump_embed_fields([:basic_information])
+    end
+  end
 
   @spec pricing_subquery(String.t()) :: Ecto.Query.t()
   defp pricing_subquery(currency) do

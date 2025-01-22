@@ -7,6 +7,8 @@ defmodule Needlist.Repo.Want.Artist do
 
   alias Ecto.Changeset
 
+  @derive EctoExtra.DumpableSchema
+
   @required_fields [:id, :name, :resource_url]
   @optional_fields [:join, :anv]
   @fields @required_fields ++ @optional_fields

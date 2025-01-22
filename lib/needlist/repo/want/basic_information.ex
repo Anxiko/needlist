@@ -12,6 +12,7 @@ defmodule Needlist.Repo.Want.BasicInformation do
 
   alias Ecto.Changeset
 
+  alias EctoExtra.DumpableSchema
   alias Needlist.Repo.Want.Artist
   alias Needlist.Repo.Want.Format
   alias Needlist.Repo.Want.Label
@@ -50,5 +51,14 @@ defmodule Needlist.Repo.Want.BasicInformation do
   @spec new() :: t()
   def new() do
     %__MODULE__{}
+  end
+
+  defimpl DumpableSchema do
+    @spec dump(Needlist.Repo.Want.BasicInformation.t()) :: map()
+    def dump(basic_information) do
+      basic_information
+      |> Map.from_struct()
+      |> DumpableSchema.Embeds.dump_embed_fields([:artists, :labels, :formats])
+    end
   end
 end

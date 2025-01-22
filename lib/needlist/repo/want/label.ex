@@ -7,6 +7,8 @@ defmodule Needlist.Repo.Want.Label do
 
   alias Ecto.Changeset
 
+  @derive EctoExtra.DumpableSchema
+
   @required_fields [:id, :name, :catno, :resource_url]
   @optional_fields []
   @fields @required_fields ++ @optional_fields
