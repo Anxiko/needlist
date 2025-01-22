@@ -90,12 +90,12 @@ defmodule Needlist.Discogs.Api do
     {:error, "Expected status #{expected}, got #{actual}"}
   end
 
+  # TODO: verify that the tokens are not expired
   @spec fetch_user_tokens(username :: String.t()) :: Result.result(Oauth.token_pair())
   defp fetch_user_tokens(username) do
     with {:ok, %User{oauth: oauth}} <- Users.get_by_username(username) |> tag_error(:user),
-         {_, token_pair} when token_pair != nil <-
-           oauth |> User.Oauth.token_pair() |> Nullables.nullable_to_result(:unauthenticated) |> tag_error(:token) do
-      {:ok, token_pair}
+         {:ok, oauth} <- Nullables.nullable_to_result(oauth, :token) do
+      {:ok, User.Oauth.token_pair(oauth)}
     else
       error -> Nullables.normalize(error)
     end

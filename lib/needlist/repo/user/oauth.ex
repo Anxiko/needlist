@@ -37,10 +37,8 @@ defmodule Needlist.Repo.User.Oauth do
   @spec new :: %__MODULE__{}
   def new, do: %__MODULE__{}
 
-  @spec token_pair(t()) :: Oauth.token_pair() | nil
-  def token_pair(%__MODULE__{token: token, token_secret: token_secret}) when token != nil and token_secret != nil do
+  @spec token_pair(t()) :: Oauth.token_pair()
+  def token_pair(%__MODULE__{token: token, token_secret: token_secret}) do
     {token, token_secret}
   end
-
-  def token_pair(%__MODULE__{}), do: nil
 end
