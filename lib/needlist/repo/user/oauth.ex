@@ -4,7 +4,7 @@ defmodule Needlist.Repo.User.Oauth do
   use Ecto.Schema
 
   alias Ecto.Changeset
-
+  alias EctoExtra.DumpableSchema
   alias Needlist.Discogs.Oauth
 
   @required [:token, :token_secret]
@@ -40,5 +40,12 @@ defmodule Needlist.Repo.User.Oauth do
   @spec token_pair(t()) :: Oauth.token_pair()
   def token_pair(%__MODULE__{token: token, token_secret: token_secret}) do
     {token, token_secret}
+  end
+
+  defimpl DumpableSchema do
+    @spec dump(@for.t()) :: map()
+    def dump(oauth) do
+      Map.from_struct(oauth)
+    end
   end
 end

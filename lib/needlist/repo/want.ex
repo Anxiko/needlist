@@ -9,6 +9,7 @@ defmodule Needlist.Repo.Want do
 
   alias Needlist.Repo.Want
   alias Needlist.Repo.Listing
+  alias Ecto.Association.NotLoaded
   alias Ecto.Changeset
   alias EctoExtra.DumpableSchema
   alias Needlist.Repo.Want.BasicInformation
@@ -44,19 +45,24 @@ defmodule Needlist.Repo.Want do
   use EctoExtra.SchemaType, schema: __MODULE__
 
   @type t() :: %__MODULE__{
-          id: integer() | nil,
-          display_artists: String.t() | nil,
-          display_labels: String.t() | nil,
-          date_added: DateTime.t() | nil,
+          id: integer(),
+          display_artists: String.t(),
+          display_labels: String.t(),
+          date_added: DateTime.t(),
           listings_last_updated: DateTime.t() | nil,
+          notes: String.t() | nil,
           min_price: Money.t() | nil,
-          basic_information: BasicInformation.t() | nil
+          max_price: Money.t() | nil,
+          avg_price: Money.t() | nil,
+          basic_information: BasicInformation.t(),
+          users: [User.t()] | NotLoaded.t(),
+          listings: [Listing.t()] | NotLoaded.t()
         }
 
   @type sort_order() :: :asc | :desc | :asc_nulls_last | :desc_nulls_last
   @type sort_key() :: :artist | :title | :label | :added | :min_price | :avg_price | :max_price | :year
 
-  @spec changeset(t() | Changeset.t(t()), map()) :: Changeset.t(t())
+  @spec changeset(%__MODULE__{} | t() | Changeset.t(t()), map()) :: Changeset.t(t())
   @spec changeset(map()) :: Changeset.t(t())
   def changeset(struct, params \\ %{}) do
     struct
@@ -66,7 +72,7 @@ defmodule Needlist.Repo.Want do
     |> compute_sorting_fields()
   end
 
-  @spec new() :: t()
+  @spec new() :: %__MODULE__{}
   def new() do
     %__MODULE__{}
   end
@@ -197,6 +203,12 @@ defmodule Needlist.Repo.Want do
   @spec with_listings() :: Ecto.Query.t()
   def with_listings(query \\ __MODULE__) do
     preload(query, :listings)
+  end
+
+  @spec with_users(Ecto.Query.t() | __MODULE__) :: Ecto.Query.t()
+  @spec with_users() :: Ecto.Query.t()
+  def with_users(query \\ __MODULE__) do
+    preload(query, :users)
   end
 
   @spec with_price_stats(Ecto.Query.t() | __MODULE__, String.t()) :: Ecto.Query.t()

@@ -18,6 +18,15 @@ defmodule Needlist.Wants do
           sort_order: sort_order()
         ]
 
+  @spec all :: [Want.t()]
+  def all do
+    Want.named_binding()
+    |> Want.with_users()
+    |> Want.with_listings()
+    # |> Want.with_price_stats()
+    |> Repo.all()
+  end
+
   @spec get_needlist_page(String.t(), needlist_page_options()) :: [Want.t()]
   @spec get_needlist_page(String.t()) :: [Want.t()]
   def get_needlist_page(username, options \\ []) do

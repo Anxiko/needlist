@@ -8,6 +8,8 @@ defmodule Needlist.Repo.User do
   import Ecto.Query
 
   alias Ecto.Changeset
+  alias EctoExtra.DumpableSchema
+  alias Ecto.Association.NotLoaded
   alias Needlist.Repo.Want
   alias Needlist.Repo.User.Oauth
 
@@ -26,15 +28,20 @@ defmodule Needlist.Repo.User do
     many_to_many :wants, Want, join_through: "user_wantlist"
   end
 
-  @type t() :: %__MODULE__{}
+  @type t() :: %__MODULE__{
+    id: integer(),
+    username: String.t(),
+    oauth: Oauth.t() | nil,
+    wants: [Want.t()] | NotLoaded.t()
+  }
 
   use EctoExtra.SchemaType, schema: __MODULE__
 
-  @spec new() :: t()
+  @spec new() :: %__MODULE__{}
   def new(), do: %__MODULE__{}
 
-  @spec changeset(t() | Changeset.t(t()), map()) :: Changeset.t(t())
-  @spec changeset(t() | Changeset.t(t())) :: Changeset.t(t())
+  @spec changeset(%__MODULE__{} | t() | Changeset.t(t()), map()) :: Changeset.t(t())
+  @spec changeset(%__MODULE__{} | t() | Changeset.t(t())) :: Changeset.t(t())
   def changeset(struct, params \\ %{}) do
     struct
     |> Changeset.cast(params, @fields)
@@ -65,4 +72,14 @@ defmodule Needlist.Repo.User do
   def maybe_with_wantlist(query \\ __MODULE__, preload_wantlist?)
   def maybe_with_wantlist(query, true), do: with_wantlist(query)
   def maybe_with_wantlist(query, false), do: query
+
+  defimpl DumpableSchema do
+    @spec dump(@for.t()) :: map()
+    def dump(user) do
+      user
+      |> Map.from_struct()
+      |> Map.take([:id, :username, :ouath])
+      |> DumpableSchema.Embeds.dump_embed_fields([:oauth])
+    end
+  end
 end

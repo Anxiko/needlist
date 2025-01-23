@@ -7,6 +7,8 @@ defmodule Needlist.Repo.Release do
 
   alias Ecto.Changeset
 
+  alias Nullables.Result
+  alias Needlist.Repo.Want
   alias Needlist.Repo.Want.Artist
   alias Needlist.Repo.Want.Format
   alias Needlist.Repo.Want.Label
@@ -44,5 +46,14 @@ defmodule Needlist.Repo.Release do
     |> Changeset.cast(params, @required ++ @optional)
     |> Changeset.validate_required(@required)
     |> EctoExtra.cast_many_embeds(@embedded)
+  end
+
+  @spec from_want(Want.t()) :: Result.result(t(), Changeset.t(t()))
+  def from_want(%Want{id: id, basic_information: basic_information}) do
+    basic_information
+    |> EctoExtra.DumpableSchema.dump()
+    |> Map.put(:id, id)
+    |> changeset()
+    |> Changeset.apply_action(:cast)
   end
 end
