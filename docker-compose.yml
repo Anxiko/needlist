@@ -1,12 +1,15 @@
 services:
   needlist:
-    build: .
+    build:
+      context: .
+      args:
+        MIX_ENV: dev
     ports:
       - "8080:8080"
     env_file:
-      - path: "needlist.dev.env"
-    environment:
-      MIX_ENV: dev
+      - path: "./envs/dev.env"
+      - path: "./envs/dev.local.env"
+        required: false
     depends_on:
       - db
   db:
