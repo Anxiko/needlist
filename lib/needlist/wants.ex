@@ -23,7 +23,7 @@ defmodule Needlist.Wants do
     Want.named_binding()
     |> Want.with_users()
     |> Want.with_listings()
-    # |> Want.with_price_stats()
+    |> Want.with_price_stats()
     |> Repo.all()
   end
 
