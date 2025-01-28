@@ -12,6 +12,8 @@ services:
         required: false
     environment:
       DB_HOST: "db"
+      DNS_CLUSTER_QUERY: "needlist.local"
+      RELEASE_NODE: "needlist@127.0.0.1"
     depends_on:
       - db
   db:

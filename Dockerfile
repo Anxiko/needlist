@@ -115,6 +115,7 @@ ENV LC_ALL en_US.UTF-8
 
 WORKDIR "/app"
 RUN chown nobody /app
+RUN mkdir -p /app/assets
 
 # set runner ENV
 ARG MIX_ENV=prod
