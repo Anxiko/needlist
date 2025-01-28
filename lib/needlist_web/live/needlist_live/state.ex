@@ -2,8 +2,7 @@ defmodule NeedlistWeb.NeedlistLive.State do
   use Ecto.Schema
 
   alias Ecto.Changeset
-  alias Needlist.Discogs.Api
-  alias Needlist.Discogs.Api.Types
+  alias Needlist.Types.QueryOptions, as: Types
 
   @required_fields [:page, :per_page, :sort_key, :sort_order]
   @optional_fields [:max_pages]
@@ -68,7 +67,7 @@ defmodule NeedlistWeb.NeedlistLive.State do
     |> MapUtils.atoms_as_strings()
   end
 
-  @spec as_needlist_options(t()) :: Api.needlist_options()
+  @spec as_needlist_options(t()) :: Types.options()
   def as_needlist_options(state) do
     state
     |> Map.from_struct()

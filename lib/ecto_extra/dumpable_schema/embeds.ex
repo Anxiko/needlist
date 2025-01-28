@@ -1,4 +1,8 @@
 defmodule EctoExtra.DumpableSchema.Embeds do
+  @moduledoc """
+  Helper functions for dumping the embedded fields of a dumpable schema
+  """
+
   @spec dump_embed_field(map :: map(), key :: atom(), fun :: (any() -> any())) :: map()
   @spec dump_embed_field(map :: map(), key :: atom()) :: map()
   def dump_embed_field(map, key, fun \\ &EctoExtra.DumpableSchema.dump/1) do

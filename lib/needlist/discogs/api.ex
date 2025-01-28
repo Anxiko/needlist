@@ -6,28 +6,17 @@ defmodule Needlist.Discogs.Api do
   import Nullables.Result, only: [tag_error: 2]
 
   alias Needlist.Discogs.Oauth
-  alias Nullables.Result
+  alias Needlist.Types.QueryOptions
   alias Needlist.Discogs.Api.Types.Identity
-  alias Needlist.Discogs.Api.Types.SortOrder
-  alias Needlist.Discogs.Api.Types.SortKey
   alias Needlist.Repo.Pagination, as: RepoPagination
   alias Needlist.Repo.Want
   alias Needlist.Repo.User
   alias Needlist.Users
+  alias Nullables.Result
 
   @base_api_url :needlist |> Application.compile_env!(Needlist.Discogs) |> Keyword.fetch!(:base_api_url)
 
-  @type sort_key() :: SortKey.t()
-  @type sort_order() :: SortOrder.t()
-
-  @type needlist_options() :: [
-          page: pos_integer(),
-          per_page: pos_integer(),
-          sort: sort_key(),
-          sort_order: sort_order()
-        ]
-
-  @spec get_user_needlist(username :: String.t(), options :: needlist_options()) ::
+  @spec get_user_needlist(username :: String.t(), options :: QueryOptions.options()) ::
           Result.result(RepoPagination.t(Want.t()), Ecto.Changeset.t(RepoPagination.t(Want.t())))
   @spec get_user_needlist(username :: String.t()) ::
           Result.result(RepoPagination.t(Want.t()), Ecto.Changeset.t(RepoPagination.t(Want.t())))
@@ -73,7 +62,7 @@ defmodule Needlist.Discogs.Api do
   @spec base_api_url() :: String.t()
   defp base_api_url(), do: @base_api_url
 
-  @spec opts_to_params(needlist_options()) :: Keyword.t()
+  @spec opts_to_params(QueryOptions.options()) :: Keyword.t()
   defp opts_to_params(opts) do
     opts
     |> Keyword.filter(fn {_k, v} -> v != nil end)

@@ -1,4 +1,4 @@
-defmodule Needlist.Discogs.Api.Types.SortKey do
+defmodule Needlist.Types.QueryOptions.SortKey do
   @moduledoc """
   Keys to order by on an needlist query.
   """

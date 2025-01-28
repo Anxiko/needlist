@@ -31,7 +31,8 @@
         "tbody",
         "thead",
         "venv",
-        "wantlist"
+        "wantlist",
+        "Wantlists"
     ],
     "python.analysis.typeCheckingMode": "standard"
 }

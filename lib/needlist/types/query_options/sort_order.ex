@@ -1,4 +1,4 @@
-defmodule Needlist.Discogs.Api.Types.SortOrder do
+defmodule Needlist.Types.QueryOptions.SortOrder do
   @moduledoc """
   Order directions on a sorted query.
   """
