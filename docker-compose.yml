@@ -10,6 +10,8 @@ services:
       - path: "./envs/dev.env"
       - path: "./envs/dev.local.env"
         required: false
+    environment:
+      DB_HOST: "db"
     depends_on:
       - db
   db:

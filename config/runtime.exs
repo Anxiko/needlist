@@ -35,6 +35,12 @@ if System.get_env("DISABLE_SSL") do
   config :needlist, NeedlistWeb.Endpoint, force_ssl: []
 end
 
+db_host = System.get_env("DB_HOST")
+
+if db_host do
+  config :needlist, Needlist.Repo, hostname: db_host
+end
+
 config :needlist, Needlist.Discogs.Oauth,
   consumer_key: env!("DISCOGS_OAUTH_CONSUMER_KEY", :string!),
   consumer_secret: env!("DISCOGS_OAUTH_CONSUMER_SECRET", :string!)
