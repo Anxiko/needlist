@@ -122,4 +122,11 @@ defmodule Needlist.Repo.Listing do
       }
     )
   end
+
+  @spec pricing_for_currency(String.t()) :: Ecto.Query.t()
+  def pricing_for_currency(currency) do
+    __MODULE__
+    |> by_total_price_currency(currency)
+    |> pricing_stats()
+  end
 end

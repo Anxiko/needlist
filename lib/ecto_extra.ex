@@ -16,6 +16,7 @@ defmodule EctoExtra do
   @type embed_options() :: [atom() | {atom(), any()}]
 
   alias Ecto.Changeset
+  alias Money.Ecto.Composite.Type, as: MoneyEcto
 
   @spec cast_many_embeds(changeset :: Changeset.t(schema), embeds :: [atom() | {atom(), embed_options()}]) ::
           Changeset.t(schema)
@@ -58,6 +59,24 @@ defmodule EctoExtra do
   def validate_number(changeset, field, opts \\ []) do
     transformed_options = Enum.map(opts, &transform_validate_number_option/1)
     Changeset.validate_number(changeset, field, transformed_options)
+  end
+
+  #FIXME: can't add a bind_quoted since it's not valid within an Ecto query, could be an issue with the duplicated amount...
+  @doc """
+  Macro to convert a nullable integer amount field and a currency into `MoneyEcto` type within an Ecto query
+  """
+  defmacro nullable_amount_to_money(amount, currency) do
+    quote do
+      type(
+        fragment(
+          "CASE WHEN ? IS NOT NULL THEN (?, ?)::money_with_currency ELSE NULL END",
+          unquote(amount),
+          unquote(amount),
+          unquote(currency)
+        ),
+        MoneyEcto
+      )
+    end
   end
 
   defp transform_validate_number_option({k, v} = entry) do

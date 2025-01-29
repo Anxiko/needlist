@@ -5,6 +5,7 @@ defmodule Needlist.Repo.Want do
 
   use Ecto.Schema
 
+  import EctoExtra, only: [nullable_amount_to_money: 2]
   import Ecto.Query
 
   alias Needlist.Repo.Want
@@ -216,42 +217,15 @@ defmodule Needlist.Repo.Want do
   @spec with_price_stats() :: Ecto.Query.t()
   def with_price_stats(query \\ __MODULE__, currency \\ @default_currency) do
     query
-    |> join(:left, [wants: w], l in subquery(pricing_subquery(currency)),
+    |> join(:left, [wants: w], l in subquery(Listing.pricing_for_currency(currency)),
       on: w.id == l.want_id,
       as: :listings
     )
     |> select_merge([wants: w, listings: l], %{
       w
-      | min_price:
-          type(
-            fragment(
-              "CASE WHEN ? IS NOT NULL THEN (?, ?)::money_with_currency ELSE NULL END",
-              l.min_price,
-              l.min_price,
-              ^currency
-            ),
-            MoneyEcto
-          ),
-        max_price:
-          type(
-            fragment(
-              "CASE WHEN ? IS NOT NULL THEN (?, ?)::money_with_currency ELSE NULL END",
-              l.max_price,
-              l.max_price,
-              ^currency
-            ),
-            MoneyEcto
-          ),
-        avg_price:
-          type(
-            fragment(
-              "CASE WHEN ? IS NOT NULL THEN (?, ?)::money_with_currency ELSE NULL END",
-              l.avg_price,
-              l.avg_price,
-              ^currency
-            ),
-            MoneyEcto
-          )
+      | min_price: nullable_amount_to_money(l.min_price, ^currency),
+        max_price: nullable_amount_to_money(l.max_price, ^currency),
+        avg_price: nullable_amount_to_money(l.avg_price, ^currency)
     })
   end
 
@@ -288,13 +262,6 @@ defmodule Needlist.Repo.Want do
       ])
       |> DumpableSchema.Embeds.dump_embed_fields([:basic_information])
     end
-  end
-
-  @spec pricing_subquery(String.t()) :: Ecto.Query.t()
-  defp pricing_subquery(currency) do
-    Listing
-    |> Listing.by_total_price_currency(currency)
-    |> Listing.pricing_stats()
   end
 
   defp maybe_filter_by_expiration(nil), do: false
