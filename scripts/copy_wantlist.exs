@@ -1,3 +1,5 @@
+alias Needlist.Listings
+alias Needlist.Repo.Listing
 alias Needlist.Repo.Wantlist
 alias Needlist.Repo
 alias Needlist.Wants
@@ -25,3 +27,10 @@ end)
 |> Enum.each(
   &Repo.insert!(&1, conflict_target: [:user_id, :release_id], on_conflict: {:replace_all_except, [:inserted_at]})
 )
+
+Listings.all()
+|> Enum.each(fn %Listing{want_id: want_id} = listing ->
+  listing
+  |> Listing.changeset(%{release_id: want_id})
+  |> Repo.update!()
+end)

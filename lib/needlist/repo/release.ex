@@ -5,9 +5,11 @@ defmodule Needlist.Repo.Release do
 
   use Ecto.Schema
 
+  alias Ecto.Association.NotLoaded
   alias Ecto.Changeset
 
   alias Nullables.Result
+  alias Needlist.Repo.Listing
   alias Needlist.Repo.Want
   alias Needlist.Repo.Want.Artist
   alias Needlist.Repo.Want.Format
@@ -24,7 +26,8 @@ defmodule Needlist.Repo.Release do
           year: integer() | nil,
           artists: [Artist.t()] | nil,
           labels: [Label.t()] | nil,
-          formats: [Format.t()] | nil
+          formats: [Format.t()] | nil,
+          listings: [Listing.t()] | NotLoaded.t()
         }
 
   @primary_key false
@@ -37,6 +40,8 @@ defmodule Needlist.Repo.Release do
     embeds_many :artists, Artist, on_replace: :delete
     embeds_many :labels, Label, on_replace: :delete
     embeds_many :formats, Format, on_replace: :delete
+
+    has_many :listings, Listing, references: :id
   end
 
   @spec changeset(release :: t() | %__MODULE__{}, params :: map()) :: Changeset.t(t())

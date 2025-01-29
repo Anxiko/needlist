@@ -7,6 +7,12 @@ defmodule Needlist.Listings do
   alias Needlist.Repo
   alias Needlist.Repo.Listing
 
+  @spec all :: [Listing.t()]
+  def all do
+    Listing
+    |> Repo.all()
+  end
+
   @spec by_want_id(integer(), boolean() | :any) :: [Listing.t()]
   @spec by_want_id(integer()) :: [Listing.t()]
   def by_want_id(want_id, active_status \\ true) do
