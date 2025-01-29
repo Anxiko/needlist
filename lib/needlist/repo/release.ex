@@ -37,6 +37,9 @@ defmodule Needlist.Repo.Release do
     field :title, :string
     field :year, :integer
 
+    field :display_artists, :string
+    field :display_labels, :string
+
     embeds_many :artists, Artist, on_replace: :delete
     embeds_many :labels, Label, on_replace: :delete
     embeds_many :formats, Format, on_replace: :delete
@@ -51,6 +54,7 @@ defmodule Needlist.Repo.Release do
     |> Changeset.cast(params, @required ++ @optional)
     |> Changeset.validate_required(@required)
     |> EctoExtra.cast_many_embeds(@embedded)
+    |> compute_sorting_fields()
   end
 
   @spec from_want(Want.t()) :: Result.result(t(), Changeset.t(t()))
@@ -61,4 +65,16 @@ defmodule Needlist.Repo.Release do
     |> changeset()
     |> Changeset.apply_action(:cast)
   end
+
+  @spec compute_sorting_fields(Changeset.t(t())) :: Changeset.t(t())
+  defp compute_sorting_fields(%Ecto.Changeset{valid?: true} = changeset) do
+    artists = Changeset.fetch_field!(changeset, :artists)
+    labels = Changeset.fetch_field!(changeset, :labels)
+
+    changeset
+    |> Changeset.put_change(:display_artists, Artist.display_artists(artists))
+    |> Changeset.put_change(:display_labels, Label.display_labels(labels))
+  end
+
+  defp compute_sorting_fields(changeset), do: changeset
 end
