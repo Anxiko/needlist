@@ -10,13 +10,14 @@ defmodule Needlist.Repo.Release do
 
   alias Nullables.Result
   alias Needlist.Repo.Listing
+  alias Needlist.Repo.User
   alias Needlist.Repo.Want
   alias Needlist.Repo.Want.Artist
   alias Needlist.Repo.Want.Format
   alias Needlist.Repo.Want.Label
 
   @required [:id, :master_id, :title]
-  @optional [:year]
+  @optional [:year, :listings_last_updated]
   @embedded [:artists, :labels, :formats]
 
   @type t() :: %__MODULE__{
@@ -24,10 +25,12 @@ defmodule Needlist.Repo.Release do
           master_id: integer(),
           title: String.t(),
           year: integer() | nil,
+          listings_last_updated: DateTime.t() | nil,
           artists: [Artist.t()] | nil,
           labels: [Label.t()] | nil,
           formats: [Format.t()] | nil,
-          listings: [Listing.t()] | NotLoaded.t()
+          listings: [Listing.t()] | NotLoaded.t(),
+          users: [User.t()] | NotLoaded.t()
         }
 
   @primary_key false
@@ -36,6 +39,7 @@ defmodule Needlist.Repo.Release do
     field :master_id, :id
     field :title, :string
     field :year, :integer
+    field :listings_last_updated, :utc_datetime
 
     field :display_artists, :string
     field :display_labels, :string
@@ -45,6 +49,7 @@ defmodule Needlist.Repo.Release do
     embeds_many :formats, Format, on_replace: :delete
 
     has_many :listings, Listing, references: :id
+    many_to_many :users, User, join_through: "wantlist"
   end
 
   @spec changeset(release :: t() | %__MODULE__{}, params :: map()) :: Changeset.t(t())
