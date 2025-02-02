@@ -217,7 +217,7 @@ defmodule Needlist.Repo.Want do
   @spec with_price_stats() :: Ecto.Query.t()
   def with_price_stats(query \\ __MODULE__, currency \\ @default_currency) do
     query
-    |> join(:left, [wants: w], l in subquery(Listing.pricing_for_currency(currency)),
+    |> join(:left, [wants: w], l in subquery(Listing.pricing_for_want(currency)),
       on: w.id == l.want_id,
       as: :listings
     )

@@ -108,25 +108,32 @@ defmodule Needlist.Repo.Listing do
     })
   end
 
-  @spec pricing_stats(Ecto.Query.t() | __MODULE__) :: Ecto.Query.t()
-  def pricing_stats(query \\ __MODULE__) do
+  @spec pricing_for_want(currency :: String.t() | atom()) :: Ecto.Query.t()
+  def pricing_for_want(currency) do
+    __MODULE__
+    |> by_total_price_currency(currency)
+    |> pricing_stats(:want_id)
+  end
+
+  @spec pricing_for_release(currency :: String.t() | atom()) :: Ecto.Query.t()
+  def pricing_for_release(currency) do
+    __MODULE__
+    |> by_total_price_currency(currency)
+    |> pricing_stats(:release_id)
+  end
+
+  @spec pricing_stats(query :: Ecto.Query.t(), group_by :: atom()) :: Ecto.Query.t()
+  defp pricing_stats(query, group_by) do
     query
-    |> group_by(:want_id)
+    |> group_by(^group_by)
     |> select(
       [l],
       %{
-        want_id: l.want_id,
+        ^group_by => field(l, ^group_by),
         min_price: min(fragment("(?).amount", l.total_price)),
         max_price: max(fragment("(?).amount", l.total_price)),
         avg_price: type(avg(fragment("(?).amount", l.total_price)), :integer)
       }
     )
-  end
-
-  @spec pricing_for_currency(String.t()) :: Ecto.Query.t()
-  def pricing_for_currency(currency) do
-    __MODULE__
-    |> by_total_price_currency(currency)
-    |> pricing_stats()
   end
 end

@@ -5,8 +5,12 @@ defmodule Needlist.Repo.Release do
 
   use Ecto.Schema
 
+  import Ecto.Query
+  import EctoExtra, only: [nullable_amount_to_money: 2]
+
   alias Ecto.Association.NotLoaded
   alias Ecto.Changeset
+  alias Money.Ecto.Composite.Type, as: MoneyEcto
 
   alias Nullables.Result
   alias Needlist.Repo.Listing
@@ -15,6 +19,8 @@ defmodule Needlist.Repo.Release do
   alias Needlist.Repo.Want.Artist
   alias Needlist.Repo.Want.Format
   alias Needlist.Repo.Want.Label
+
+  @default_currency Application.compile_env!(:money, :default_currency) |> Atom.to_string()
 
   @required [:id, :master_id, :title]
   @optional [:year, :listings_last_updated]
@@ -26,9 +32,14 @@ defmodule Needlist.Repo.Release do
           title: String.t(),
           year: integer() | nil,
           listings_last_updated: DateTime.t() | nil,
-          artists: [Artist.t()] | nil,
-          labels: [Label.t()] | nil,
-          formats: [Format.t()] | nil,
+          display_artists: String.t(),
+          display_labels: String.t(),
+          min_price: Money.t() | nil,
+          max_price: Money.t() | nil,
+          avg_price: Money.t() | nil,
+          artists: [Artist.t()],
+          labels: [Label.t()],
+          formats: [Format.t()],
           listings: [Listing.t()] | NotLoaded.t(),
           users: [User.t()] | NotLoaded.t()
         }
@@ -43,6 +54,10 @@ defmodule Needlist.Repo.Release do
 
     field :display_artists, :string
     field :display_labels, :string
+
+    field :min_price, MoneyEcto, virtual: true
+    field :max_price, MoneyEcto, virtual: true
+    field :avg_price, MoneyEcto, virtual: true
 
     embeds_many :artists, Artist, on_replace: :delete
     embeds_many :labels, Label, on_replace: :delete
@@ -69,6 +84,28 @@ defmodule Needlist.Repo.Release do
     |> Map.put(:id, id)
     |> changeset()
     |> Changeset.apply_action(:cast)
+  end
+
+
+  @spec named_binding() :: Ecto.Query.t()
+  def named_binding() do
+    from __MODULE__, as: :releases
+  end
+
+  @spec with_price_stats(Ecto.Query.t() | __MODULE__, String.t()) :: Ecto.Query.t()
+  @spec with_price_stats(Ecto.Query.t() | __MODULE__) :: Ecto.Query.t()
+  def with_price_stats(query, currency \\ @default_currency) do
+    query
+    |> join(:left, [releases: r], l in subquery(Listing.pricing_for_release(currency)),
+      on: r.id == l.release_id,
+      as: :listings
+    )
+    |> select_merge([releases: r, listings: l], %{
+      r
+      | min_price: nullable_amount_to_money(l.min_price, ^currency),
+        max_price: nullable_amount_to_money(l.max_price, ^currency),
+        avg_price: nullable_amount_to_money(l.avg_price, ^currency)
+    })
   end
 
   @spec compute_sorting_fields(Changeset.t(t())) :: Changeset.t(t())
