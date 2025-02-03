@@ -86,10 +86,30 @@ defmodule Needlist.Repo.Release do
     |> Changeset.apply_action(:cast)
   end
 
-
   @spec named_binding() :: Ecto.Query.t()
   def named_binding() do
     from __MODULE__, as: :releases
+  end
+
+  @spec with_listings(Ecto.Query.t() | __MODULE__) :: Ecto.Query.t()
+  @spec with_listings() :: Ecto.Query.t()
+  def with_listings(query \\ __MODULE__) do
+    preload(query, :listings)
+  end
+
+  @spec with_users(Ecto.Query.t() | __MODULE__) :: Ecto.Query.t()
+  @spec with_users() :: Ecto.Query.t()
+  def with_users(query \\ __MODULE__) do
+    preload(query, :users)
+  end
+
+  @spec wanted_by_username(query :: Ecto.Query.t() | __MODULE__, username :: String.t()) :: Ecto.Query.t()
+  @spec wanted_by_username(username :: String.t()) :: Ecto.Query.t()
+  def wanted_by_username(query \\ __MODULE__, username) do
+    query
+    |> join(:inner, [releases: r], u in assoc(r, :users), as: :users)
+    |> where([users: u], u.username == ^username)
+    |> select_merge([releases: r], r)
   end
 
   @spec with_price_stats(Ecto.Query.t() | __MODULE__, String.t()) :: Ecto.Query.t()

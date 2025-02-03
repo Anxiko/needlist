@@ -9,6 +9,8 @@ defmodule Needlist.Releases do
   @spec all :: [Release.t()]
   def all do
     Release.named_binding()
+    |> Release.with_listings()
+    |> Release.with_users()
     |> Release.with_price_stats()
     |> Repo.all()
   end
