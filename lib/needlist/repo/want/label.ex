@@ -9,6 +9,8 @@ defmodule Needlist.Repo.Want.Label do
 
   @derive EctoExtra.DumpableSchema
 
+  @label_catno_joiner "–"
+
   @required_fields [:id, :name, :catno, :resource_url]
   @optional_fields []
   @fields @required_fields ++ @optional_fields
@@ -38,13 +40,19 @@ defmodule Needlist.Repo.Want.Label do
 
   @spec display_name(t()) :: String.t()
   def display_name(%__MODULE__{name: name, catno: catno}) do
-    "#{name} – #{catno}"
+    "#{name} #{@label_catno_joiner} #{catno}"
   end
 
   @spec display_labels([t()]) :: String.t()
   def display_labels(labels) do
-    labels
-    |> Enum.map(&display_name/1)
-    |> Enum.map_join(", ", &String.downcase/1)
+    label_names = Enum.map_join(labels, ", ", fn %__MODULE__{name: name} -> String.downcase(name) end)
+    label_catnos = Enum.map_join(labels, ", ", fn %__MODULE__{catno: catno} -> String.downcase(catno) end)
+
+    "#{label_names} #{@label_catno_joiner} #{label_catnos}"
+  end
+
+  @spec display_catnos([t()]) :: String.t()
+  def display_catnos(labels) do
+    Enum.map_join(labels, ", ", fn %__MODULE__{catno: catno} -> String.downcase(catno) end)
   end
 end

@@ -8,6 +8,8 @@ defmodule Needlist.Repo.Release do
   import Ecto.Query
   import EctoExtra, only: [nullable_amount_to_money: 2]
 
+  alias Needlist.Types.QueryOptions.SortOrder
+  alias Needlist.Types.QueryOptions.SortKey
   alias Ecto.Association.NotLoaded
   alias Ecto.Changeset
   alias Money.Ecto.Composite.Type, as: MoneyEcto
@@ -26,6 +28,17 @@ defmodule Needlist.Repo.Release do
   @optional [:year, :listings_last_updated]
   @embedded [:artists, :labels, :formats]
 
+  @sorting_fields %{
+    label: :display_labels,
+    artist: :display_artists,
+    title: :title,
+    catno: :display_catnos,
+    year: :year,
+    min_price: {:min_price, [null_last: true]},
+    avg_price: {:avg_price, [null_last: true]},
+    max_price: {:max_price, [null_last: true]}
+  }
+
   @type t() :: %__MODULE__{
           id: integer(),
           master_id: integer(),
@@ -34,6 +47,7 @@ defmodule Needlist.Repo.Release do
           listings_last_updated: DateTime.t() | nil,
           display_artists: String.t(),
           display_labels: String.t(),
+          display_catnos: String.t(),
           min_price: Money.t() | nil,
           max_price: Money.t() | nil,
           avg_price: Money.t() | nil,
@@ -54,6 +68,7 @@ defmodule Needlist.Repo.Release do
 
     field :display_artists, :string
     field :display_labels, :string
+    field :display_catnos, :string
 
     field :min_price, MoneyEcto, virtual: true
     field :max_price, MoneyEcto, virtual: true
@@ -128,6 +143,22 @@ defmodule Needlist.Repo.Release do
     })
   end
 
+  @spec sort_by(query :: Ecto.Query.t() | __MODULE__, key :: SortKey.t(), order :: SortOrder.t()) :: Ecto.Query.t()
+  @spec sort_by(key :: SortKey.t(), order :: SortOrder.t()) :: Ecto.Query.t()
+  def sort_by(query \\ __MODULE__, key, order)
+
+  def sort_by(query, key, order) when is_map_key(@sorting_fields, key) do
+    {field, opts} =
+      case Map.fetch!(@sorting_fields, key) do
+        {field, opts} -> {field, opts}
+        field when is_atom(field) -> {field, []}
+      end
+
+    nulls_last? = Keyword.get(opts, :null_last, false)
+
+    order_by(query, [r], [{^sorting_order(order, nulls_last?), field(r, ^field)}])
+  end
+
   @spec compute_sorting_fields(Changeset.t(t())) :: Changeset.t(t())
   defp compute_sorting_fields(%Ecto.Changeset{valid?: true} = changeset) do
     artists = Changeset.fetch_field!(changeset, :artists)
@@ -136,7 +167,16 @@ defmodule Needlist.Repo.Release do
     changeset
     |> Changeset.put_change(:display_artists, Artist.display_artists(artists))
     |> Changeset.put_change(:display_labels, Label.display_labels(labels))
+    |> Changeset.put_change(:display_catnos, Label.display_catnos(labels))
   end
 
   defp compute_sorting_fields(changeset), do: changeset
+
+  @spec sorting_order(
+          order :: SortOrder.t(),
+          null_last? :: boolean()
+        ) :: :asc | :desc | :asc_nulls_last | :desc_nulls_last
+  defp sorting_order(order, false) when order in [:asc, :desc], do: order
+  defp sorting_order(:asc, true), do: :asc_nulls_last
+  defp sorting_order(:desc, true), do: :desc_nulls_last
 end
