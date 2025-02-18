@@ -156,7 +156,12 @@ defmodule Needlist.Repo.Release do
 
     nulls_last? = Keyword.get(opts, :null_last, false)
 
-    order_by(query, [r], [{^sorting_order(order, nulls_last?), field(r, ^field)}])
+    order_by(query, [releases: r], [{^sorting_order(order, nulls_last?), field(r, ^field)}])
+  end
+
+  @spec fields_sorted_by_release :: [atom()]
+  def fields_sorted_by_release do
+    Map.keys(@sorting_fields)
   end
 
   @spec compute_sorting_fields(Changeset.t(t())) :: Changeset.t(t())

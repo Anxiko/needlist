@@ -5,19 +5,26 @@ defmodule Needlist.Repo.Wantlist do
 
   use Ecto.Schema
 
+  import Ecto.Query
+
+  alias Needlist.Types.QueryOptions.SortOrder
+  alias Needlist.Types.QueryOptions.SortKey
   alias Needlist.Repo.Want
   alias Ecto.Changeset
   alias Needlist.Repo.Release
   alias Needlist.Repo.User
 
   @required [:user_id, :release_id, :date_added]
-  @optional [:notes]
+  @optional [:notes, :rating]
+
+  @sorted_by_release Release.fields_sorted_by_release()
 
   @type t() :: %__MODULE__{
           user_id: integer(),
           release_id: integer(),
           date_added: DateTime.t(),
           notes: String.t() | nil,
+          rating: pos_integer() | nil,
           inserted_at: DateTime.t(),
           updated_at: DateTime.t()
         }
@@ -27,6 +34,7 @@ defmodule Needlist.Repo.Wantlist do
     belongs_to :user, User, primary_key: true
     belongs_to :release, Release, primary_key: true
     field :notes, :string
+    field :rating, :integer
     field :date_added, :utc_datetime
 
     timestamps()
@@ -55,5 +63,18 @@ defmodule Needlist.Repo.Wantlist do
       {:error, changeset}, _acc ->
         {:halt, changeset}
     end)
+  end
+
+  @spec sort_by(query :: Ecto.Query.t(), key :: SortKey.t(), order :: SortOrder.t()) :: Ecto.Query.t()
+  def sort_by(query, key, order) when key in @sorted_by_release do
+    Release.sort_by(query, key, order)
+  end
+
+  def sort_by(query, :rating, order) do
+    order_by(query, [wantlist: w], {^SortOrder.nulls_last(order), w.rating})
+  end
+
+  def sort_by(query, :added, order) do
+    order_by(query, [wantlist: w], {^SortOrder.nulls_last(order), w.date_added})
   end
 end
