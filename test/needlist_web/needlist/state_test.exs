@@ -1,8 +1,9 @@
 defmodule NeedlistWeb.Needlist.StateTest do
   use ExUnit.Case
 
+  alias Needlist.Types.QueryOptions.SortKey
+  alias Needlist.Types.QueryOptions.SortOrder
   alias NeedlistWeb.NeedlistLive.State
-  alias Needlist.Discogs.Api.Types
 
   describe "parsing a state from params" do
     test "produces the correct result for a valid state" do
@@ -15,8 +16,8 @@ defmodule NeedlistWeb.Needlist.StateTest do
         page: 2,
         max_pages: nil,
         per_page: 25,
-        sort_key: Types.SortKey.artist(),
-        sort_order: Types.SortOrder.desc()
+        sort_key: SortKey.artist(),
+        sort_order: SortOrder.desc()
       }
 
       assert actual == expected
