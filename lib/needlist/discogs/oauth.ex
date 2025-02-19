@@ -71,7 +71,7 @@ defmodule Needlist.Discogs.Oauth do
         message: "Only OAuth options may be provided as extra options, found: #{non_oauth_extra_option}"
     end
 
-    extra_query_params = Map.get(options, :params) || %{} |> Enum.map(fn {k, v} -> {to_string(k), v} end)
+    extra_query_params = (Map.get(options, :params) || %{}) |> Enum.map(fn {k, v} -> {to_string(k), v} end)
     all_params = OAuther.sign(Atom.to_string(method), url, extra_query_params ++ extra_oauth_params, credentials)
 
     {{"Authorization", oauth_header}, _non_oauth_params} = OAuther.header(all_params)

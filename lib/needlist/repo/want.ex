@@ -18,7 +18,7 @@ defmodule Needlist.Repo.Want do
   alias Money.Ecto.Composite.Type, as: MoneyEcto
 
   @required_fields [:id, :date_added]
-  @optional_fields [:min_price, :listings_last_updated]
+  @optional_fields [:listings_last_updated, :notes]
   @embedded_fields [:basic_information]
   @fields @required_fields ++ @optional_fields
 
@@ -32,6 +32,7 @@ defmodule Needlist.Repo.Want do
     field :display_labels, :string
     field :date_added, :utc_datetime
     field :listings_last_updated, :utc_datetime
+    field :notes, :string
     field :min_price, MoneyEcto, virtual: true
     field :max_price, MoneyEcto, virtual: true
     field :avg_price, MoneyEcto, virtual: true
