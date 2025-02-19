@@ -96,8 +96,28 @@ defmodule Needlist.Repo.Wantlist do
 
   @spec with_release(query :: Ecto.Query.t()) :: Ecto.Query.t()
   def with_release(query) do
+    release_query =
+      Release
+      |> from(as: :releases)
+      |> Release.with_price_stats()
+
+
     query
     |> join(:inner, [wantlist: w], r in assoc(w, :release), as: :releases)
-    |> preload(:release)
+    |> preload([release: ^release_query])
+  end
+
+  @spec by_username(query :: Ecto.Query.t(), username :: String.t()) :: Ecto.Query.t()
+  def by_username(query, username) do
+    where(query, [users: u], u.username == ^username)
+  end
+
+  @spec paginated(query :: Ecto.Query.t(), page :: pos_integer(), per_page :: pos_integer()) :: Ecto.Query.t()
+  def paginated(query, page, per_page) do
+    offset = per_page * (page - 1)
+
+    query
+    |> limit(^per_page)
+    |> offset(^offset)
   end
 end
