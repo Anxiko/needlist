@@ -7,6 +7,7 @@ defmodule Needlist.Repo.Wantlist do
 
   import Ecto.Query
 
+  alias Ecto.Association.NotLoaded
   alias Needlist.Types.QueryOptions.SortOrder
   alias Needlist.Types.QueryOptions.SortKey
   alias Needlist.Repo.Want
@@ -26,7 +27,9 @@ defmodule Needlist.Repo.Wantlist do
           notes: String.t() | nil,
           rating: pos_integer() | nil,
           inserted_at: DateTime.t(),
-          updated_at: DateTime.t()
+          updated_at: DateTime.t(),
+          user: User.t() | NotLoaded.t(),
+          release: Release.t() | NotLoaded.t()
         }
 
   @primary_key false
@@ -76,5 +79,25 @@ defmodule Needlist.Repo.Wantlist do
 
   def sort_by(query, :added, order) do
     order_by(query, [wantlist: w], {^SortOrder.nulls_last(order), w.date_added})
+  end
+
+  @spec named_binding(query :: Ecto.Query.t() | __MODULE__) :: Ecto.Query.t()
+  @spec named_binding() :: Ecto.Query.t()
+  def named_binding(query \\ __MODULE__) do
+    from(query, as: :wantlist)
+  end
+
+  @spec with_user(query :: Ecto.Query.t()) :: Ecto.Query.t()
+  def with_user(query) do
+    query
+    |> join(:inner, [wantlist: w], u in assoc(w, :user), as: :users)
+    |> preload(:user)
+  end
+
+  @spec with_release(query :: Ecto.Query.t()) :: Ecto.Query.t()
+  def with_release(query) do
+    query
+    |> join(:inner, [wantlist: w], r in assoc(w, :release), as: :releases)
+    |> preload(:release)
   end
 end
