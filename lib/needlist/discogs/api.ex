@@ -79,6 +79,7 @@ defmodule Needlist.Discogs.Api do
     {:error, "Expected status #{expected}, got #{actual}"}
   end
 
+  # credo:disable-for-next-line Credo.Check.Design.TagTODO
   # TODO: verify that the tokens are not expired
   @spec fetch_user_tokens(username :: String.t()) :: Result.result(Oauth.token_pair())
   defp fetch_user_tokens(username) do
