@@ -8,6 +8,13 @@ defmodule Needlist.Users do
   alias Needlist.Repo.User
   alias Needlist.Repo
 
+  @spec all :: [User.t()]
+  def all do
+    User
+    |> User.with_wantlist()
+    |> Repo.all()
+  end
+
   @spec get_by_username(String.t(), keyword()) :: Result.result(User.t())
   @spec get_by_username(String.t()) :: Result.result(User.t())
   def get_by_username(username, opts \\ []) do

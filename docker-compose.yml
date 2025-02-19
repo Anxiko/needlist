@@ -1,12 +1,19 @@
 services:
   needlist:
-    build: .
+    build:
+      context: .
+      args:
+        MIX_ENV: dev
     ports:
       - "8080:8080"
     env_file:
-      - path: "needlist.dev.env"
+      - path: "./envs/dev.env"
+      - path: "./envs/dev.local.env"
+        required: false
     environment:
-      MIX_ENV: dev
+      DB_HOST: "db"
+      DNS_CLUSTER_QUERY: "needlist.local"
+      RELEASE_NODE: "needlist@127.0.0.1"
     depends_on:
       - db
   db:

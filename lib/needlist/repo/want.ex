@@ -5,12 +5,14 @@ defmodule Needlist.Repo.Want do
 
   use Ecto.Schema
 
+  import EctoExtra, only: [nullable_amount_to_money: 2]
   import Ecto.Query
 
   alias Needlist.Repo.Want
   alias Needlist.Repo.Listing
+  alias Ecto.Association.NotLoaded
   alias Ecto.Changeset
-  alias EctoExtra
+  alias EctoExtra.DumpableSchema
   alias Needlist.Repo.Want.BasicInformation
   alias Needlist.Repo.User
   alias Needlist.Repo.Want.Artist
@@ -44,19 +46,24 @@ defmodule Needlist.Repo.Want do
   use EctoExtra.SchemaType, schema: __MODULE__
 
   @type t() :: %__MODULE__{
-          id: integer() | nil,
-          display_artists: String.t() | nil,
-          display_labels: String.t() | nil,
-          date_added: DateTime.t() | nil,
+          id: integer(),
+          display_artists: String.t(),
+          display_labels: String.t(),
+          date_added: DateTime.t(),
           listings_last_updated: DateTime.t() | nil,
+          notes: String.t() | nil,
           min_price: Money.t() | nil,
-          basic_information: BasicInformation.t() | nil
+          max_price: Money.t() | nil,
+          avg_price: Money.t() | nil,
+          basic_information: BasicInformation.t(),
+          users: [User.t()] | NotLoaded.t(),
+          listings: [Listing.t()] | NotLoaded.t()
         }
 
   @type sort_order() :: :asc | :desc | :asc_nulls_last | :desc_nulls_last
   @type sort_key() :: :artist | :title | :label | :added | :min_price | :avg_price | :max_price | :year
 
-  @spec changeset(t() | Changeset.t(t()), map()) :: Changeset.t(t())
+  @spec changeset(%__MODULE__{} | t() | Changeset.t(t()), map()) :: Changeset.t(t())
   @spec changeset(map()) :: Changeset.t(t())
   def changeset(struct, params \\ %{}) do
     struct
@@ -66,7 +73,7 @@ defmodule Needlist.Repo.Want do
     |> compute_sorting_fields()
   end
 
-  @spec new() :: t()
+  @spec new() :: %__MODULE__{}
   def new() do
     %__MODULE__{}
   end
@@ -199,47 +206,26 @@ defmodule Needlist.Repo.Want do
     preload(query, :listings)
   end
 
+  @spec with_users(Ecto.Query.t() | __MODULE__) :: Ecto.Query.t()
+  @spec with_users() :: Ecto.Query.t()
+  def with_users(query \\ __MODULE__) do
+    preload(query, :users)
+  end
+
   @spec with_price_stats(Ecto.Query.t() | __MODULE__, String.t()) :: Ecto.Query.t()
   @spec with_price_stats(Ecto.Query.t() | __MODULE__) :: Ecto.Query.t()
   @spec with_price_stats() :: Ecto.Query.t()
   def with_price_stats(query \\ __MODULE__, currency \\ @default_currency) do
     query
-    |> join(:left, [wants: w], l in subquery(pricing_subquery(currency)),
+    |> join(:left, [wants: w], l in subquery(Listing.pricing_for_want(currency)),
       on: w.id == l.want_id,
       as: :listings
     )
     |> select_merge([wants: w, listings: l], %{
       w
-      | min_price:
-          type(
-            fragment(
-              "CASE WHEN ? IS NOT NULL THEN (?, ?)::money_with_currency ELSE NULL END",
-              l.min_price,
-              l.min_price,
-              ^currency
-            ),
-            MoneyEcto
-          ),
-        max_price:
-          type(
-            fragment(
-              "CASE WHEN ? IS NOT NULL THEN (?, ?)::money_with_currency ELSE NULL END",
-              l.max_price,
-              l.max_price,
-              ^currency
-            ),
-            MoneyEcto
-          ),
-        avg_price:
-          type(
-            fragment(
-              "CASE WHEN ? IS NOT NULL THEN (?, ?)::money_with_currency ELSE NULL END",
-              l.avg_price,
-              l.avg_price,
-              ^currency
-            ),
-            MoneyEcto
-          )
+      | min_price: nullable_amount_to_money(l.min_price, ^currency),
+        max_price: nullable_amount_to_money(l.max_price, ^currency),
+        avg_price: nullable_amount_to_money(l.avg_price, ^currency)
     })
   end
 
@@ -260,11 +246,22 @@ defmodule Needlist.Repo.Want do
   def maybe_limit(query, nil), do: query
   def maybe_limit(query, limit), do: limit(query, ^limit)
 
-  @spec pricing_subquery(String.t()) :: Ecto.Query.t()
-  defp pricing_subquery(currency) do
-    Listing
-    |> Listing.by_total_price_currency(currency)
-    |> Listing.pricing_stats()
+  defimpl DumpableSchema do
+    @spec dump(Needlist.Repo.Want.t()) :: map()
+    def dump(want) do
+      want
+      |> Map.from_struct()
+      |> Map.take([
+        :id,
+        :display_artists,
+        :display_labels,
+        :date_added,
+        :listings_last_updated,
+        :notes,
+        :basic_information
+      ])
+      |> DumpableSchema.Embeds.dump_embed_fields([:basic_information])
+    end
   end
 
   defp maybe_filter_by_expiration(nil), do: false

@@ -6,6 +6,8 @@ defmodule Needlist.Repo.Want.Format do
 
   alias Ecto.Changeset
 
+  @derive EctoExtra.DumpableSchema
+
   @required_fields [:name, :qty]
   @optional_fields [:descriptions]
   @fields @required_fields ++ @optional_fields

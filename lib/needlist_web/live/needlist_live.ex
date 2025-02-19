@@ -1,10 +1,10 @@
 defmodule NeedlistWeb.NeedlistLive do
-  alias Needlist.Discogs.Api
-  alias Needlist.Discogs.Api.Types.SortKey
-  alias Needlist.Discogs.Api.Types.SortOrder
   alias Needlist.Discogs.Pagination.PageInfo
   alias Needlist.Repo.Pagination
   alias Needlist.Repo.Want
+  alias Needlist.Types.QueryOptions
+  alias Needlist.Types.QueryOptions.SortKey
+  alias Needlist.Types.QueryOptions.SortOrder
   alias Needlist.Wants
   alias NeedlistWeb.NeedlistLive.State
   alias Nullables.Fallible
@@ -146,7 +146,7 @@ defmodule NeedlistWeb.NeedlistLive do
   end
 
   # Current loaded page matches the requested page
-  @spec load_page(Socket.t(), Api.needlist_options()) :: Socket.t()
+  @spec load_page(Socket.t(), QueryOptions.options()) :: Socket.t()
   defp load_page(
          %Socket{assigns: %{current_page: {requested_needlist_options, _current_page}}} = socket,
          requested_needlist_options
@@ -176,7 +176,7 @@ defmodule NeedlistWeb.NeedlistLive do
     end)
   end
 
-  @spec fetch_page(String.t(), Api.needlist_options()) :: {:ok, paginated_wants()} | {:error, any()}
+  @spec fetch_page(String.t(), QueryOptions.options()) :: {:ok, paginated_wants()} | {:error, any()}
   defp fetch_page(username, needlist_options) do
     needlist = Wants.get_needlist_page(username, needlist_options)
     total = Wants.needlist_size(username)

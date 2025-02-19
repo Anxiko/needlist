@@ -3,11 +3,13 @@
         "Auther",
         "Cachex",
         "catno",
+        "catnos",
         "cloudscraper",
         "datastructure",
         "describedby",
         "Discogs",
         "Dotenvy",
+        "Dumpable",
         "enctype",
         "Floki",
         "Heroicon",
@@ -30,7 +32,8 @@
         "tbody",
         "thead",
         "venv",
-        "wantlist"
+        "wantlist",
+        "Wantlists"
     ],
     "python.analysis.typeCheckingMode": "standard"
 }
