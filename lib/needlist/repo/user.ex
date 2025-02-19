@@ -29,11 +29,11 @@ defmodule Needlist.Repo.User do
   end
 
   @type t() :: %__MODULE__{
-    id: integer(),
-    username: String.t(),
-    oauth: Oauth.t() | nil,
-    wants: [Want.t()] | NotLoaded.t()
-  }
+          id: integer(),
+          username: String.t(),
+          oauth: Oauth.t() | nil,
+          wants: [Want.t()] | NotLoaded.t()
+        }
 
   use EctoExtra.SchemaType, schema: __MODULE__
 

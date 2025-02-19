@@ -101,10 +101,9 @@ defmodule Needlist.Repo.Wantlist do
       |> from(as: :releases)
       |> Release.with_price_stats()
 
-
     query
     |> join(:inner, [wantlist: w], r in assoc(w, :release), as: :releases)
-    |> preload([release: ^release_query])
+    |> preload(release: ^release_query)
   end
 
   @spec by_username(query :: Ecto.Query.t(), username :: String.t()) :: Ecto.Query.t()

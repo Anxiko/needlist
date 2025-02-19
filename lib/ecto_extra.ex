@@ -61,7 +61,7 @@ defmodule EctoExtra do
     Changeset.validate_number(changeset, field, transformed_options)
   end
 
-  #FIXME: can't add a bind_quoted since it's not valid within an Ecto query, could be an issue with the duplicated amount...
+  # FIXME: can't add a bind_quoted since it's not valid within an Ecto query, could be an issue with the duplicated amount...
   @doc """
   Macro to convert a nullable integer amount field and a currency into `MoneyEcto` type within an Ecto query
   """
