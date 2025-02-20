@@ -6,6 +6,7 @@ defmodule NeedlistWeb.NeedlistLive do
   alias Needlist.Types.QueryOptions.SortKey
   alias Needlist.Types.QueryOptions.SortOrder
   alias Needlist.Wants
+  alias Needlist.Wantlists
   alias NeedlistWeb.NeedlistLive.State
   alias Nullables.Fallible
   alias Phoenix.LiveView.Socket
@@ -178,8 +179,8 @@ defmodule NeedlistWeb.NeedlistLive do
 
   @spec fetch_page(String.t(), QueryOptions.options()) :: {:ok, paginated_wants()} | {:error, any()}
   defp fetch_page(username, needlist_options) do
-    needlist = Wants.get_needlist_page(username, needlist_options)
-    total = Wants.needlist_size(username)
+    needlist = Wantlists.get_needlist_page(username, needlist_options)
+    total = Wantlists.needlist_size(username)
 
     page = Keyword.get(needlist_options, :page, 1)
     per_page = Keyword.get(needlist_options, :per_page, 50)

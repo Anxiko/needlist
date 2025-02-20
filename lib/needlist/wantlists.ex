@@ -21,4 +21,12 @@ defmodule Needlist.Wantlists do
     |> Wantlist.paginated(page, per_page)
     |> Repo.all()
   end
+
+  @spec needlist_size(String.t()) :: non_neg_integer()
+  def needlist_size(username) do
+    Wantlist.named_binding()
+    |> Wantlist.with_user()
+    |> Wantlist.by_username(username)
+    |> Repo.aggregate(:count)
+  end
 end

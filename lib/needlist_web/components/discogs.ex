@@ -6,6 +6,7 @@ defmodule NeedlistWeb.Components.Discogs do
   use Phoenix.Component
 
   alias Needlist.Repo.Want
+  alias Needlist.Repo.Release
   alias Needlist.Discogs.LinkGenerator
 
   alias Phoenix.LiveView.Rendered
@@ -21,6 +22,20 @@ defmodule NeedlistWeb.Components.Discogs do
     ~H"""
     <.styled_link href={@href}>
       <%= @want.basic_information.title %>
+    </.styled_link>
+    """
+  end
+
+
+  attr :release, Release, required: true
+
+  @spec release_title(map()) :: Rendered.t()
+  def release_title(assigns) do
+    assigns = assign(assigns, :href, LinkGenerator.from_release(assigns.release))
+
+    ~H"""
+    <.styled_link href={@href}>
+      <%= @release.title %>
     </.styled_link>
     """
   end

@@ -5,6 +5,7 @@ defmodule Needlist.Discogs.LinkGenerator do
   alias Needlist.Repo.Want
   alias Needlist.Repo.Want.Artist
   alias Needlist.Repo.Want.Label
+  alias Needlist.Repo.Release
 
   @base_url :needlist |> Application.compile_env!(Needlist.Discogs) |> Keyword.fetch!(:base_web_url) |> URI.new!()
 
@@ -34,6 +35,17 @@ defmodule Needlist.Discogs.LinkGenerator do
     from_want_id(want_id)
   end
 
+  @spec from_release(release :: Release.t()) :: String.t()
+  def from_release(%Release{id: release_id, artists: [_ | _] = artists}) do
+    artists_names = Enum.map_join(artists, "-", &Artist.display_name/1)
+
+    from_release_id(release_id, artists_names)
+  end
+
+  def from_release(%Release{id: release_id}) do
+    from_release_id(release_id)
+  end
+
   @spec from_want_id(want_id :: integer(), artist_names :: String.t() | nil) :: String.t()
   @spec from_want_id(want_id :: integer()) :: String.t()
   def from_want_id(want_id, artist_names \\ nil) do
@@ -41,6 +53,16 @@ defmodule Needlist.Discogs.LinkGenerator do
 
     @base_url
     |> URI.append_path("/release/#{want_path}")
+    |> URI.to_string()
+  end
+
+  @spec from_release_id(release_id :: integer(), artist_names :: String.t() | nil) :: String.t()
+  @spec from_release_id(release_id :: integer()) :: String.t()
+  def from_release_id(release_id, artist_names \\ nil) do
+    release_path = with_optional_name(release_id, artist_names)
+
+    @base_url
+    |> URI.append_path("/release/#{release_path}")
     |> URI.to_string()
   end
 
