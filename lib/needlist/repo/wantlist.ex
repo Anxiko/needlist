@@ -92,7 +92,7 @@ defmodule Needlist.Repo.Wantlist do
   def with_user(query) do
     query
     |> join(:inner, [wantlist: w], u in assoc(w, :user), as: :users)
-    |> preload(:user)
+    |> preload([users: u], user: u)
   end
 
   @spec with_release(query :: Ecto.Query.t(), currency :: String.t()) :: Ecto.Query.t()
