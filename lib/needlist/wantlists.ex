@@ -7,6 +7,8 @@ defmodule Needlist.Wantlists do
   alias Needlist.Repo.Wantlist
   alias Needlist.Types.QueryOptions
 
+  @default_currency Application.compile_env!(:money, :default_currency) |> Atom.to_string()
+
   @spec get_needlist_page(username :: String.t(), options :: QueryOptions.options()) :: [Wantlist.t()]
   @spec get_needlist_page(username :: String.t()) :: [Wantlist.t()]
   def get_needlist_page(username, options \\ []) do
@@ -14,7 +16,7 @@ defmodule Needlist.Wantlists do
       QueryOptions.parse(options)
 
     Wantlist.named_binding()
-    |> Wantlist.with_release()
+    |> Wantlist.with_release(@default_currency)
     |> Wantlist.with_user()
     |> Wantlist.by_username(username)
     |> Wantlist.sort_by(sort_key, sort_order)

@@ -5,7 +5,6 @@ defmodule NeedlistWeb.NeedlistLive do
   alias Needlist.Types.QueryOptions
   alias Needlist.Types.QueryOptions.SortKey
   alias Needlist.Types.QueryOptions.SortOrder
-  alias Needlist.Wants
   alias Needlist.Wantlists
   alias NeedlistWeb.NeedlistLive.State
   alias Nullables.Fallible
