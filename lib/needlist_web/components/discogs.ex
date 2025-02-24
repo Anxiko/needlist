@@ -26,7 +26,6 @@ defmodule NeedlistWeb.Components.Discogs do
     """
   end
 
-
   attr :release, Release, required: true
 
   @spec release_title(map()) :: Rendered.t()
