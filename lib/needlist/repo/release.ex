@@ -6,7 +6,6 @@ defmodule Needlist.Repo.Release do
   use Ecto.Schema
 
   import Ecto.Query
-  import EctoExtra, only: [nullable_amount_to_money: 2]
 
   alias Needlist.Types.QueryOptions.SortOrder
   alias Needlist.Types.QueryOptions.SortKey
@@ -33,11 +32,10 @@ defmodule Needlist.Repo.Release do
     artist: :display_artists,
     title: :title,
     catno: :display_catnos,
-    year: :year,
-    min_price: {:min_price, [null_last: true]},
-    avg_price: {:avg_price, [null_last: true]},
-    max_price: {:max_price, [null_last: true]}
+    year: :year
   }
+
+  @listing_sorting_fields [:min_price, :avg_price, :max_price]
 
   @type t() :: %__MODULE__{
           id: integer(),
@@ -135,33 +133,25 @@ defmodule Needlist.Repo.Release do
       on: r.id == l.release_id,
       as: :listings
     )
-    |> select_merge([releases: r, listings: l], %{
-      r
-      | min_price: nullable_amount_to_money(l.min_price, ^currency),
-        max_price: nullable_amount_to_money(l.max_price, ^currency),
-        avg_price: nullable_amount_to_money(l.avg_price, ^currency)
-    })
   end
 
   @spec sort_by(query :: Ecto.Query.t() | __MODULE__, key :: SortKey.t(), order :: SortOrder.t()) :: Ecto.Query.t()
   @spec sort_by(key :: SortKey.t(), order :: SortOrder.t()) :: Ecto.Query.t()
   def sort_by(query \\ __MODULE__, key, order)
 
+  def sort_by(query, key, order) when key in @listing_sorting_fields do
+    order_by(query, [listings: l], [{^SortOrder.nulls_last(order), field(l, ^key)}])
+  end
+
   def sort_by(query, key, order) when is_map_key(@sorting_fields, key) do
-    {field, opts} =
-      case Map.fetch!(@sorting_fields, key) do
-        {field, opts} -> {field, opts}
-        field when is_atom(field) -> {field, []}
-      end
+    field = Map.fetch!(@sorting_fields, key)
 
-    nulls_last? = Keyword.get(opts, :null_last, false)
-
-    order_by(query, [releases: r], [{^sorting_order(order, nulls_last?), field(r, ^field)}])
+    order_by(query, [releases: r], [{^order, field(r, ^field)}])
   end
 
   @spec fields_sorted_by_release :: [atom()]
   def fields_sorted_by_release do
-    Map.keys(@sorting_fields)
+    Map.keys(@sorting_fields) ++ @listing_sorting_fields
   end
 
   @spec compute_sorting_fields(Changeset.t(t())) :: Changeset.t(t())
@@ -176,12 +166,4 @@ defmodule Needlist.Repo.Release do
   end
 
   defp compute_sorting_fields(changeset), do: changeset
-
-  @spec sorting_order(
-          order :: SortOrder.t(),
-          null_last? :: boolean()
-        ) :: :asc | :desc | :asc_nulls_last | :desc_nulls_last
-  defp sorting_order(order, false) when order in [:asc, :desc], do: order
-  defp sorting_order(:asc, true), do: :asc_nulls_last
-  defp sorting_order(:desc, true), do: :desc_nulls_last
 end

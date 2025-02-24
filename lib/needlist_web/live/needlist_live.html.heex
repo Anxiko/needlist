@@ -22,28 +22,28 @@
           <%= for item <- elem(@current_page, 1).items do %>
             <tr class="dark:bg-gray-800 dark:border-gray-700 bg-white border-b">
               <td class=" px-6 py-4">
-                <.want_artists artists={item.basic_information.artists} />
+                <.want_artists artists={item.release.artists} />
               </td>
               <td class="px-6 py-4">
-                <.want_title want={item} />
+                <.release_title release={item.release} />
               </td>
               <td class="px-6 py-4">
-                <.want_labels labels={item.basic_information.labels} />
+                <.want_labels labels={item.release.labels} />
               </td>
               <td class="px-6 py-4">
-                <.want_formats formats={item.basic_information.formats} />
+                <.want_formats formats={item.release.formats} />
               </td>
               <td class="px-6 py-4">
-                <.want_year year={item.basic_information.year} />
+                <.want_year year={item.release.year} />
               </td>
               <td class="px-6 py-4">
-                <.want_price price={item.min_price} />
+                <.want_price price={item.release.min_price} />
               </td>
               <td class="px-6 py-4">
-                <.want_price price={item.avg_price} />
+                <.want_price price={item.release.avg_price} />
               </td>
               <td class="px-6 py-4">
-                <.want_price price={item.max_price} />
+                <.want_price price={item.release.max_price} />
               </td>
             </tr>
           <% end %>

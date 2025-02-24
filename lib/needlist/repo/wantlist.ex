@@ -6,6 +6,7 @@ defmodule Needlist.Repo.Wantlist do
   use Ecto.Schema
 
   import Ecto.Query
+  import EctoExtra, only: [nullable_amount_to_money: 2]
 
   alias Ecto.Association.NotLoaded
   alias Needlist.Types.QueryOptions.SortOrder
@@ -91,19 +92,23 @@ defmodule Needlist.Repo.Wantlist do
   def with_user(query) do
     query
     |> join(:inner, [wantlist: w], u in assoc(w, :user), as: :users)
-    |> preload(:user)
+    |> preload([users: u], user: u)
   end
 
-  @spec with_release(query :: Ecto.Query.t()) :: Ecto.Query.t()
-  def with_release(query) do
-    release_query =
-      Release
-      |> from(as: :releases)
-      |> Release.with_price_stats()
-
+  @spec with_release(query :: Ecto.Query.t(), currency :: String.t()) :: Ecto.Query.t()
+  def with_release(query, currency) do
     query
     |> join(:inner, [wantlist: w], r in assoc(w, :release), as: :releases)
-    |> preload(release: ^release_query)
+    |> Release.with_price_stats(currency)
+    |> select_merge([wantlist: w, releases: r, listings: l], %{
+      w
+      | release: %{
+          r
+          | min_price: nullable_amount_to_money(l.min_price, ^currency),
+            avg_price: nullable_amount_to_money(l.avg_price, ^currency),
+            max_price: nullable_amount_to_money(l.max_price, ^currency)
+        }
+    })
   end
 
   @spec by_username(query :: Ecto.Query.t(), username :: String.t()) :: Ecto.Query.t()
