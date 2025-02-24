@@ -42,4 +42,16 @@ defmodule Needlist.Releases do
       end
     end)
   end
+
+  @spec outdated_listings(Keyword.t()) :: [Release.t()]
+  @spec outdated_listings() :: [Release.t()]
+  def outdated_listings(args \\ []) do
+    expiration = Keyword.get(args, :expiration)
+    limit = Keyword.get(args, :limit)
+
+    Release
+    |> Release.filter_by_outdated_listings(expiration)
+    |> Release.maybe_limit(limit)
+    |> Repo.all()
+  end
 end
