@@ -13,25 +13,25 @@ defmodule Needlist.Listings do
     |> Repo.all()
   end
 
-  @spec by_want_id(integer(), boolean() | :any) :: [Listing.t()]
-  @spec by_want_id(integer()) :: [Listing.t()]
-  def by_want_id(want_id, active_status \\ true) do
+  @spec by_release_id(release_id :: integer(), active :: boolean() | :any) :: [Listing.t()]
+  @spec by_release_id(release_id :: integer()) :: [Listing.t()]
+  def by_release_id(release_id, active_status \\ true) do
     Listing
     |> Listing.filter_by_active(active_status)
-    |> Listing.by_want_id(want_id)
+    |> Listing.by_release_id(release_id)
     |> Repo.all()
   end
 
-  @spec update_release_listings(integer(), [map()], DateTime.t()) :: {:ok, [Listing.t()]} | {:error, Changeset.t()}
-  @spec update_release_listings(integer(), [map()]) :: {:ok, [Listing.t()]} | {:error, Changeset.t()}
-  def update_release_listings(want_id, active_listings, timestamp \\ DateTime.utc_now()) do
+  @spec update_release_listings(release_id :: integer(), active_listings :: [map()], timestamp :: DateTime.t()) :: {:ok, [Listing.t()]} | {:error, Changeset.t()}
+  @spec update_release_listings(release_id :: integer(), active_listings :: [map()]) :: {:ok, [Listing.t()]} | {:error, Changeset.t()}
+  def update_release_listings(release_id, active_listings, timestamp \\ DateTime.utc_now()) do
     mapped_active_listings =
       Map.new(active_listings, fn %{id: id} = params ->
         {id, {:new, params}}
       end)
 
-    want_id
-    |> by_want_id(:any)
+    release_id
+    |> by_release_id(:any)
     |> Map.new(fn %Listing{id: id} = listing -> {id, {:current, listing}} end)
     |> Map.merge(mapped_active_listings, fn _key, {:current, current_listing}, {:new, params} ->
       {:updated, current_listing, params}

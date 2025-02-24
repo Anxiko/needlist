@@ -8,7 +8,7 @@ defmodule Mix.Tasks.Listings do
   import Needlist.Python, only: [scrape_listings: 1]
 
   require Logger
-  alias Needlist.Wants
+  alias Needlist.Releases
   alias Needlist.Repo.Listing
 
   @scrapped_filename_pattern ~r"release_listings_(?P<release_id>\d+)\.html$"
@@ -57,8 +57,8 @@ defmodule Mix.Tasks.Listings do
 
     Logger.info("Found #{length(listing_params_list)} listings for #{release_id}")
 
-    {:ok, want} = Wants.get_by_id(release_id)
-    {:ok, _want} = Wants.update_active_listings(want, listing_params_list)
+    {:ok, release} = Releases.get_by_id(release_id)
+    {:ok, _want} = Releases.update_active_listings(release, listing_params_list)
 
     :ok
   end

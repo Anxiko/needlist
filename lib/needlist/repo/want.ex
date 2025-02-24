@@ -5,11 +5,9 @@ defmodule Needlist.Repo.Want do
 
   use Ecto.Schema
 
-  import EctoExtra, only: [nullable_amount_to_money: 2]
   import Ecto.Query
 
   alias Needlist.Repo.Want
-  alias Needlist.Repo.Listing
   alias Ecto.Association.NotLoaded
   alias Ecto.Changeset
   alias EctoExtra.DumpableSchema
@@ -24,7 +22,6 @@ defmodule Needlist.Repo.Want do
   @embedded_fields [:basic_information]
   @fields @required_fields ++ @optional_fields
 
-  @default_currency Application.compile_env!(:money, :default_currency) |> Atom.to_string()
   @default_listing_expiration Duration.new!(week: 1)
 
   @primary_key false
@@ -40,7 +37,6 @@ defmodule Needlist.Repo.Want do
     field :avg_price, MoneyEcto, virtual: true
     embeds_one :basic_information, BasicInformation, on_replace: :update
     many_to_many :users, User, join_through: "user_wantlist"
-    has_many :listings, Listing, references: :id
   end
 
   use EctoExtra.SchemaType, schema: __MODULE__
@@ -57,7 +53,6 @@ defmodule Needlist.Repo.Want do
           avg_price: Money.t() | nil,
           basic_information: BasicInformation.t(),
           users: [User.t()] | NotLoaded.t(),
-          listings: [Listing.t()] | NotLoaded.t()
         }
 
   @type sort_order() :: :asc | :desc | :asc_nulls_last | :desc_nulls_last
@@ -210,23 +205,6 @@ defmodule Needlist.Repo.Want do
   @spec with_users() :: Ecto.Query.t()
   def with_users(query \\ __MODULE__) do
     preload(query, :users)
-  end
-
-  @spec with_price_stats(Ecto.Query.t() | __MODULE__, String.t()) :: Ecto.Query.t()
-  @spec with_price_stats(Ecto.Query.t() | __MODULE__) :: Ecto.Query.t()
-  @spec with_price_stats() :: Ecto.Query.t()
-  def with_price_stats(query \\ __MODULE__, currency \\ @default_currency) do
-    query
-    |> join(:left, [wants: w], l in subquery(Listing.pricing_for_want(currency)),
-      on: w.id == l.want_id,
-      as: :listings
-    )
-    |> select_merge([wants: w, listings: l], %{
-      w
-      | min_price: nullable_amount_to_money(l.min_price, ^currency),
-        max_price: nullable_amount_to_money(l.max_price, ^currency),
-        avg_price: nullable_amount_to_money(l.avg_price, ^currency)
-    })
   end
 
   @spec filter_by_outdated_listings(Ecto.Query.t() | __MODULE__, DateTime.t() | Duration.t() | nil) :: Ecto.Query.t()

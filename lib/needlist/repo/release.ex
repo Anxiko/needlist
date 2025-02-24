@@ -90,6 +90,11 @@ defmodule Needlist.Repo.Release do
     |> compute_sorting_fields()
   end
 
+  @spec by_id(query :: Ecto.Query.t() | __MODULE__, release_id :: integer()) :: Ecto.Query.t()
+  def by_id(query \\ __MODULE__, release_id) do
+    where(query, id: ^release_id)
+  end
+
   @spec from_want(Want.t()) :: Result.result(t(), Changeset.t(t()))
   def from_want(%Want{id: id, basic_information: basic_information}) do
     basic_information

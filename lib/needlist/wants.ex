@@ -18,31 +18,6 @@ defmodule Needlist.Wants do
           sort_order: sort_order()
         ]
 
-  @spec all :: [Want.t()]
-  def all do
-    Want.named_binding()
-    |> Want.with_users()
-    |> Want.with_listings()
-    |> Want.with_price_stats()
-    |> Repo.all()
-  end
-
-  @spec get_needlist_page(String.t(), needlist_page_options()) :: [Want.t()]
-  @spec get_needlist_page(String.t()) :: [Want.t()]
-  def get_needlist_page(username, options \\ []) do
-    page = Keyword.get(options, :page, 1)
-    per_page = Keyword.get(options, :per_page, 50)
-    sort_key = Keyword.get(options, :sort, :label)
-    sort_order = Keyword.get(options, :sort_order, :asc)
-
-    Want.named_binding()
-    |> Want.in_user_needlist_by_username(username)
-    |> Want.with_price_stats()
-    |> Want.sort_by(sort_key, sort_order)
-    |> Want.paginated(page, per_page)
-    |> Repo.all()
-  end
-
   @spec get_by_id(integer()) :: {:ok, Want.t()} | {:error, :not_found}
   def get_by_id(want_id) do
     Want
