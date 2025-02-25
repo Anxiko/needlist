@@ -49,8 +49,9 @@ defmodule Needlist.Releases do
     expiration = Keyword.get(args, :expiration)
     limit = Keyword.get(args, :limit)
 
-    Release
+    Release.named_binding()
     |> Release.filter_by_outdated_listings(expiration)
+    |> Release.filter_by_wanted_by_someone()
     |> Release.maybe_limit(limit)
     |> Repo.all()
   end

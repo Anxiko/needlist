@@ -17,6 +17,7 @@ defmodule Needlist.Repo.Release do
   alias Needlist.Repo.Listing
   alias Needlist.Repo.User
   alias Needlist.Repo.Want
+  alias Needlist.Repo.Wantlist
   alias Needlist.Repo.Want.Artist
   alias Needlist.Repo.Want.Format
   alias Needlist.Repo.Want.Label
@@ -176,6 +177,14 @@ defmodule Needlist.Repo.Release do
     query
     |> where(^conditions)
     |> order_by([w], asc_nulls_last: w.listings_last_updated)
+  end
+
+  def filter_by_wanted_by_someone(query \\ __MODULE__) do
+    query
+    |> join(:left, [releases: r], w in Wantlist, on: r.id == w.release_id, as: :wantlists)
+    |> group_by([releases: r], r.id)
+    |> having([wantlists: w], count(w.user_id) > 0)
+    |> select([releases: r], r)
   end
 
   @spec compute_sorting_fields(Changeset.t(t())) :: Changeset.t(t())

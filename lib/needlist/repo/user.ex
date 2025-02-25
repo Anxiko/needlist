@@ -10,7 +10,7 @@ defmodule Needlist.Repo.User do
   alias Ecto.Changeset
   alias EctoExtra.DumpableSchema
   alias Ecto.Association.NotLoaded
-  alias Needlist.Repo.Want
+  alias Needlist.Repo.Wantlist
   alias Needlist.Repo.User.Oauth
 
   @required_fields [:id, :username]
@@ -25,14 +25,14 @@ defmodule Needlist.Repo.User do
     field :id, :id, primary_key: true
     field :username, :string
     embeds_one :oauth, Oauth, on_replace: :update
-    many_to_many :wants, Want, join_through: "user_wantlist"
+    has_many :wantlists, Wantlist, references: :id
   end
 
   @type t() :: %__MODULE__{
           id: integer(),
           username: String.t(),
           oauth: Oauth.t() | nil,
-          wants: [Want.t()] | NotLoaded.t()
+          wantlists: [Wantlist.t()] | NotLoaded.t()
         }
 
   use EctoExtra.SchemaType, schema: __MODULE__
@@ -46,6 +46,7 @@ defmodule Needlist.Repo.User do
     struct
     |> Changeset.cast(params, @fields)
     |> EctoExtra.cast_many_embeds(@embedded_fields)
+    |> Changeset.cast_assoc(:wantlists)
     |> Changeset.validate_required(@required_fields)
   end
 
@@ -64,7 +65,7 @@ defmodule Needlist.Repo.User do
   @spec with_wantlist(Ecto.Query.t() | __MODULE__) :: Ecto.Query.t()
   @spec with_wantlist() :: Ecto.Query.t()
   def with_wantlist(query \\ __MODULE__) do
-    preload(query, :wants)
+    preload(query, :wantlists)
   end
 
   @spec maybe_with_wantlist(Ecto.Query.t() | __MODULE__, boolean()) :: Ecto.Query.t()
@@ -78,8 +79,8 @@ defmodule Needlist.Repo.User do
     def dump(user) do
       user
       |> Map.from_struct()
-      |> Map.take([:id, :username, :ouath])
-      |> DumpableSchema.Embeds.dump_embed_fields([:oauth])
+      |> Map.take([:id, :username, :ouath, :wantlists])
+      |> DumpableSchema.Embeds.dump_embed_fields([:oauth, :wantlists])
     end
   end
 end

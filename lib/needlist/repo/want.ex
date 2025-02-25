@@ -18,7 +18,7 @@ defmodule Needlist.Repo.Want do
   alias Money.Ecto.Composite.Type, as: MoneyEcto
 
   @required_fields [:id, :date_added]
-  @optional_fields [:listings_last_updated, :notes]
+  @optional_fields [:listings_last_updated, :notes, :rating]
   @embedded_fields [:basic_information]
   @fields @required_fields ++ @optional_fields
 
@@ -32,6 +32,7 @@ defmodule Needlist.Repo.Want do
     field :date_added, :utc_datetime
     field :listings_last_updated, :utc_datetime
     field :notes, :string
+    field :rating, :integer
     field :min_price, MoneyEcto, virtual: true
     field :max_price, MoneyEcto, virtual: true
     field :avg_price, MoneyEcto, virtual: true
@@ -48,11 +49,12 @@ defmodule Needlist.Repo.Want do
           date_added: DateTime.t(),
           listings_last_updated: DateTime.t() | nil,
           notes: String.t() | nil,
+          rating: non_neg_integer() | nil,
           min_price: Money.t() | nil,
           max_price: Money.t() | nil,
           avg_price: Money.t() | nil,
           basic_information: BasicInformation.t(),
-          users: [User.t()] | NotLoaded.t(),
+          users: [User.t()] | NotLoaded.t()
         }
 
   @type sort_order() :: :asc | :desc | :asc_nulls_last | :desc_nulls_last
@@ -64,6 +66,7 @@ defmodule Needlist.Repo.Want do
     struct
     |> Changeset.cast(params, @fields)
     |> Changeset.validate_required(@required_fields)
+    |> EctoExtra.validate_number(:rating, [:non_neg])
     |> EctoExtra.cast_many_embeds(@embedded_fields)
     |> compute_sorting_fields()
   end
