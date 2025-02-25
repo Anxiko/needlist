@@ -13,19 +13,6 @@ defmodule NeedlistWeb.Components.Discogs do
 
   import NeedlistWeb.CoreComponents, only: [styled_link: 1]
 
-  attr :want, Want, required: true
-
-  @spec want_title(map()) :: Rendered.t()
-  def want_title(assigns) do
-    assigns = assign(assigns, :href, LinkGenerator.from_want(assigns.want))
-
-    ~H"""
-    <.styled_link href={@href}>
-      <%= @want.basic_information.title %>
-    </.styled_link>
-    """
-  end
-
   attr :release, Release, required: true
 
   @spec release_title(map()) :: Rendered.t()

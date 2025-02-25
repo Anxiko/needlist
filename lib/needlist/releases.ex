@@ -34,8 +34,8 @@ defmodule Needlist.Releases do
     Repo.transaction(fn ->
       with {:ok, _listings} <- Listings.update_release_listings(release_id, active_listings, timestamp),
            changeset = Release.changeset(release, %{listings_last_updated: timestamp}),
-           {:ok, want} <- Repo.update(changeset) do
-        want
+           {:ok, release} <- Repo.update(changeset) do
+        release
       else
         {:error, error} ->
           Repo.rollback(error)

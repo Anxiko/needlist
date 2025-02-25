@@ -58,7 +58,7 @@ defmodule Mix.Tasks.Listings do
     Logger.info("Found #{length(listing_params_list)} listings for #{release_id}")
 
     {:ok, release} = Releases.get_by_id(release_id)
-    {:ok, _want} = Releases.update_active_listings(release, listing_params_list)
+    {:ok, _release} = Releases.update_active_listings(release, listing_params_list)
 
     :ok
   end

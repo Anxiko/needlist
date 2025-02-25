@@ -1,7 +1,6 @@
 defmodule Mix.Tasks.DownloadWantlist do
   @moduledoc """
   Download a user's entire needlist, and insert the user and their needlist into the DB.
-  TODO: fix error when any of the user's wants already exists in the DB.
   TODO: instead of inserting to DB, export to file, and move inserting into DB into a new, separate task.
   """
 
