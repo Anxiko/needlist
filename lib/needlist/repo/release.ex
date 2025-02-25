@@ -179,6 +179,8 @@ defmodule Needlist.Repo.Release do
     |> order_by([w], asc_nulls_last: w.listings_last_updated)
   end
 
+  @spec filter_by_wanted_by_someone(query :: Ecto.Query.t() | __MODULE__) :: Ecto.Query.t()
+  @spec filter_by_wanted_by_someone() :: Ecto.Query.t()
   def filter_by_wanted_by_someone(query \\ __MODULE__) do
     query
     |> join(:left, [releases: r], w in Wantlist, on: r.id == w.release_id, as: :wantlists)
