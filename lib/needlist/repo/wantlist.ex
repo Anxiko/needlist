@@ -26,7 +26,7 @@ defmodule Needlist.Repo.Wantlist do
           release_id: integer(),
           date_added: DateTime.t(),
           notes: String.t() | nil,
-          rating: pos_integer() | nil,
+          rating: non_neg_integer() | nil,
           inserted_at: DateTime.t(),
           updated_at: DateTime.t(),
           user: User.t() | NotLoaded.t(),
@@ -50,23 +50,15 @@ defmodule Needlist.Repo.Wantlist do
     wantlist
     |> Changeset.cast(data, @required ++ @optional)
     |> Changeset.validate_required(@required)
+    |> EctoExtra.validate_number(:rating, [:non_neg])
   end
 
-  @spec from_want(Want.t()) :: {:ok, [t()]} | {:error, Changeset.t(t())}
-  def from_want(%Want{id: release_id, notes: notes, date_added: date_added, users: users}) do
-    users
-    |> Enum.map(fn %User{id: user_id} ->
-      %{user_id: user_id, release_id: release_id, notes: notes, date_added: date_added}
-      |> changeset()
-      |> Changeset.apply_action(:cast)
-    end)
-    |> Enum.reduce_while({:ok, []}, fn
-      {:ok, %__MODULE__{} = wantlist}, {:ok, acc} ->
-        {:cont, {:ok, [wantlist | acc]}}
-
-      {:error, changeset}, _acc ->
-        {:halt, changeset}
-    end)
+  @spec from_scrapped_want(want :: Want.t(), release_id :: non_neg_integer()) ::
+          {:ok, t()} | {:error, Ecto.Changeset.t()}
+  def from_scrapped_want(%Want{id: release_id, notes: notes, rating: rating, date_added: date_added}, user_id) do
+    %{user_id: user_id, release_id: release_id, date_added: date_added, notes: notes, rating: rating}
+    |> changeset()
+    |> Changeset.apply_action(:cast)
   end
 
   @spec sort_by(query :: Ecto.Query.t(), key :: SortKey.t(), order :: SortOrder.t()) :: Ecto.Query.t()

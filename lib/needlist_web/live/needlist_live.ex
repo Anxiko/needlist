@@ -1,7 +1,7 @@
 defmodule NeedlistWeb.NeedlistLive do
   alias Needlist.Discogs.Pagination.PageInfo
   alias Needlist.Repo.Pagination
-  alias Needlist.Repo.Want
+  alias Needlist.Repo.Wantlist
   alias Needlist.Types.QueryOptions
   alias Needlist.Types.QueryOptions.SortKey
   alias Needlist.Types.QueryOptions.SortOrder
@@ -18,7 +18,7 @@ defmodule NeedlistWeb.NeedlistLive do
 
   @initial_sorting_order :asc
 
-  @typep paginated_wants() :: Pagination.t(Want.t())
+  @typep paginated_wants() :: Pagination.t(Wantlist.t())
 
   @impl true
   def mount(%{"username" => username}, _session, socket) do

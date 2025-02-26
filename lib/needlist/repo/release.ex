@@ -17,11 +17,13 @@ defmodule Needlist.Repo.Release do
   alias Needlist.Repo.Listing
   alias Needlist.Repo.User
   alias Needlist.Repo.Want
+  alias Needlist.Repo.Wantlist
   alias Needlist.Repo.Want.Artist
   alias Needlist.Repo.Want.Format
   alias Needlist.Repo.Want.Label
 
   @default_currency Application.compile_env!(:money, :default_currency) |> Atom.to_string()
+  @default_listing_expiration Duration.new!(week: 1)
 
   @required [:id, :master_id, :title]
   @optional [:year, :listings_last_updated]
@@ -90,6 +92,12 @@ defmodule Needlist.Repo.Release do
     |> compute_sorting_fields()
   end
 
+  @spec by_id(query :: Ecto.Query.t() | __MODULE__, release_id :: integer()) :: Ecto.Query.t()
+  @spec by_id(release_id :: integer()) :: Ecto.Query.t()
+  def by_id(query \\ __MODULE__, release_id) do
+    where(query, id: ^release_id)
+  end
+
   @spec from_want(Want.t()) :: Result.result(t(), Changeset.t(t()))
   def from_want(%Want{id: id, basic_information: basic_information}) do
     basic_information
@@ -149,9 +157,36 @@ defmodule Needlist.Repo.Release do
     order_by(query, [releases: r], [{^order, field(r, ^field)}])
   end
 
+  @spec maybe_limit(Ecto.Query.t() | __MODULE__, non_neg_integer() | nil) :: Ecto.Query.t()
+  @spec maybe_limit(non_neg_integer()) :: Ecto.Query.t()
+  def maybe_limit(query \\ __MODULE__, limit)
+  def maybe_limit(query, nil), do: query
+  def maybe_limit(query, limit), do: limit(query, ^limit)
+
   @spec fields_sorted_by_release :: [atom()]
   def fields_sorted_by_release do
     Map.keys(@sorting_fields) ++ @listing_sorting_fields
+  end
+
+  @spec filter_by_outdated_listings(Ecto.Query.t() | __MODULE__, DateTime.t() | Duration.t() | nil) :: Ecto.Query.t()
+  @spec filter_by_outdated_listings(Ecto.Query.t() | __MODULE__) :: Ecto.Query.t()
+  @spec filter_by_outdated_listings() :: Ecto.Query.t()
+  def filter_by_outdated_listings(query \\ __MODULE__, listings_expiration \\ @default_listing_expiration) do
+    conditions = dynamic([w], is_nil(w.listings_last_updated) or ^maybe_filter_by_expiration(listings_expiration))
+
+    query
+    |> where(^conditions)
+    |> order_by([w], asc_nulls_last: w.listings_last_updated)
+  end
+
+  @spec filter_by_wanted_by_someone(query :: Ecto.Query.t() | __MODULE__) :: Ecto.Query.t()
+  @spec filter_by_wanted_by_someone() :: Ecto.Query.t()
+  def filter_by_wanted_by_someone(query \\ __MODULE__) do
+    query
+    |> join(:left, [releases: r], w in Wantlist, on: r.id == w.release_id, as: :wantlists)
+    |> group_by([releases: r], r.id)
+    |> having([wantlists: w], count(w.user_id) > 0)
+    |> select([releases: r], r)
   end
 
   @spec compute_sorting_fields(Changeset.t(t())) :: Changeset.t(t())
@@ -166,4 +201,16 @@ defmodule Needlist.Repo.Release do
   end
 
   defp compute_sorting_fields(changeset), do: changeset
+
+  defp maybe_filter_by_expiration(nil), do: false
+
+  defp maybe_filter_by_expiration(%DateTime{} = expiration) do
+    dynamic([w], w.listings_last_updated <= ^expiration)
+  end
+
+  defp maybe_filter_by_expiration(%Duration{} = duration) do
+    DateTime.utc_now()
+    |> DateTime.shift(Duration.negate(duration))
+    |> maybe_filter_by_expiration()
+  end
 end

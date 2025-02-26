@@ -41,7 +41,7 @@ defmodule EctoExtra do
   @spec validate_number(Ecto.Changeset.t(schema), atom()) :: Ecto.Changeset.t(schema) when schema: var
   @doc """
   Easier to use version of Ecto.Changeset.validate_number/3 and Ecto.Changeset.validate_number/2
-  Provides abbreviations for valid option keys, as well as abbreviations for common constraints:application
+  Provides abbreviations for valid option keys, as well as abbreviations for common constraints:
       {:lt, val} => {:less_than, val}
       {:gt, val} => {:greater_than, val}
       {:le, val} => {:less_than_or_equal_to, val}

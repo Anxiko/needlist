@@ -31,4 +31,12 @@ defmodule Needlist.Wantlists do
     |> Wantlist.by_username(username)
     |> Repo.aggregate(:count)
   end
+
+  @spec by_username(username :: String.t()) :: [Wantlist.t()]
+  def by_username(username) do
+    Wantlist.named_binding()
+    |> Wantlist.with_user()
+    |> Wantlist.by_username(username)
+    |> Repo.all()
+  end
 end
