@@ -1,10 +1,14 @@
 defmodule Needlist.ParsingTest do
+  alias Needlist.Wantlists
   use Needlist.DataCase
 
   alias Nullables.Result
   alias Needlist.Repo
   alias Needlist.Repo.Pagination
+  alias Needlist.Repo.Release
+  alias Needlist.Repo.User
   alias Needlist.Repo.Want
+  alias Needlist.Repo.Wantlist
 
   @paginated_wants_response "test/fixtures/wants.json"
 
@@ -53,6 +57,15 @@ defmodule Needlist.ParsingTest do
   end
 
   describe "parsing from a response of paginated items" do
+    setup do
+      user =
+        %User{}
+        |> User.changeset(%{id: 1, username: "test"})
+        |> Repo.insert!()
+
+      {:ok, %{user: user}}
+    end
+
     test "just one want entry" do
       parse_result =
         @paginated_wants_response
@@ -93,7 +106,7 @@ defmodule Needlist.ParsingTest do
       assert {:ok, _parsed_data} = parse_result
     end
 
-    test "and insert all items into the DB" do
+    test "and insert all items into the DB", %{user: %User{id: id, username: username}} do
       parse_result =
         @paginated_wants_response
         |> File.read!()
@@ -102,12 +115,18 @@ defmodule Needlist.ParsingTest do
 
       assert {:ok, %Pagination{items: [_ | _] = items}} = parse_result
 
-      all_ok =
-        items
-        |> Stream.map(&Repo.insert/1)
-        |> Enum.all?(&Result.ok?/1)
+      items
+      |> Enum.map(&Release.from_want/1)
+      |> Enum.map(&Result.unwrap!/1)
+      |> Enum.map(&Repo.insert!/1)
 
-      assert all_ok
+      wantlists =
+        items
+        |> Enum.map(&Wantlist.from_scrapped_want(&1, id))
+        |> Enum.map(&Result.unwrap!/1)
+        |> Enum.map(&Repo.insert!/1)
+
+      assert length(Wantlists.by_username(username)) == length(wantlists)
     end
   end
 end
