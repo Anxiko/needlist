@@ -16,6 +16,7 @@
             <.table_header state={@state} column_key={:min_price} column_name="Min price" class="w-1/12" />
             <.table_header state={@state} column_key={:avg_price} column_name="Avg price" class="w-1/12" />
             <.table_header state={@state} column_key={:max_price} column_name="Max price" class="w-1/12" />
+            <.table_header state={@state} column_key={:notes} column_name="Notes" class="w-2/12" />
           </tr>
         </thead>
         <tbody>
@@ -44,6 +45,9 @@
               </td>
               <td class="px-6 py-4">
                 <.want_price price={item.release.max_price} />
+              </td>
+              <td class="px-6 py-4">
+                <.release_notes notes={item.notes} />
               </td>
             </tr>
           <% end %>

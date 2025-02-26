@@ -13,6 +13,16 @@ defmodule NeedlistWeb.Components.Discogs do
 
   import NeedlistWeb.CoreComponents, only: [styled_link: 1]
 
+
+  attr :notes, :any, required: true
+
+  @spec release_title(map()) :: Rendered.t()
+  def release_notes(assigns) do
+    ~H"""
+    <%= @notes %>
+    """
+  end
+
   attr :release, Release, required: true
 
   @spec release_title(map()) :: Rendered.t()
