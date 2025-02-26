@@ -22,8 +22,10 @@ defmodule Needlist.Listings do
     |> Repo.all()
   end
 
-  @spec update_release_listings(release_id :: integer(), active_listings :: [map()], timestamp :: DateTime.t()) :: {:ok, [Listing.t()]} | {:error, Changeset.t()}
-  @spec update_release_listings(release_id :: integer(), active_listings :: [map()]) :: {:ok, [Listing.t()]} | {:error, Changeset.t()}
+  @spec update_release_listings(release_id :: integer(), active_listings :: [map()], timestamp :: DateTime.t()) ::
+          {:ok, [Listing.t()]} | {:error, Changeset.t()}
+  @spec update_release_listings(release_id :: integer(), active_listings :: [map()]) ::
+          {:ok, [Listing.t()]} | {:error, Changeset.t()}
   def update_release_listings(release_id, active_listings, timestamp \\ DateTime.utc_now()) do
     mapped_active_listings =
       Map.new(active_listings, fn %{id: id} = params ->

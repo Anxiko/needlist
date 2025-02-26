@@ -2,7 +2,7 @@ defmodule Needlist.Discogs.LinkGenerator do
   @moduledoc """
   Generate URLs to Discogs entities from their schemas
   """
-  
+
   alias Needlist.Repo.Want.Artist
   alias Needlist.Repo.Want.Label
   alias Needlist.Repo.Release

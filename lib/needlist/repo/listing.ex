@@ -99,7 +99,9 @@ defmodule Needlist.Repo.Listing do
   @spec ranked_pricing_per_release() :: Ecto.Query.t()
   def ranked_pricing_per_release(query \\ __MODULE__) do
     query
-    |> windows([l], price_per_release_asc: [partition_by: l.release_id, order_by: fragment("(?).amount", l.total_price)])
+    |> windows([l],
+      price_per_release_asc: [partition_by: l.release_id, order_by: fragment("(?).amount", l.total_price)]
+    )
     |> select([l], %{
       release_id: l.release_id,
       total_price: l.total_price,

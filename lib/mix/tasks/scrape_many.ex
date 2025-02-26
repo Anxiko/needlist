@@ -3,7 +3,6 @@ defmodule Mix.Tasks.ScrapeMany do
   Scrape outdated (or non-existent) listings for many releases, up to a limit of releases
   """
 
-
   require Logger
   alias Nullables.Result
   alias Needlist.Repo.Listing
