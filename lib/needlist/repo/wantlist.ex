@@ -74,6 +74,10 @@ defmodule Needlist.Repo.Wantlist do
     order_by(query, [wantlist: w], {^SortOrder.nulls_last(order), w.date_added})
   end
 
+  def sort_by(query, :notes, order) do
+    order_by(query, [wantlist: w], {^SortOrder.nulls_last(order), w.notes})
+  end
+
   @spec named_binding(query :: Ecto.Query.t() | __MODULE__) :: Ecto.Query.t()
   @spec named_binding() :: Ecto.Query.t()
   def named_binding(query \\ __MODULE__) do

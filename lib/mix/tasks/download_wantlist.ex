@@ -4,6 +4,7 @@ defmodule Mix.Tasks.DownloadWantlist do
   TODO: instead of inserting to DB, export to file, and move inserting into DB into a new, separate task.
   """
 
+  alias Needlist.Users
   alias Needlist.Wantlists
   alias Needlist.Repo.Release
   alias Needlist.Repo.Want
@@ -11,7 +12,6 @@ defmodule Mix.Tasks.DownloadWantlist do
   alias Needlist.Repo
   alias Needlist.Repo.Pagination
   alias Needlist.Repo.Pagination.PageInfo
-  alias Needlist.Repo.User
   alias Needlist.Repo.Wantlist
   alias Nullables.Result
   use Mix.Task
@@ -24,14 +24,18 @@ defmodule Mix.Tasks.DownloadWantlist do
   def run([username]) do
     {:ok, _} = Application.ensure_all_started(:req)
 
-    {:ok, user} = Api.get_user(username)
+    {:ok, user_from_api} = Api.get_user(username)
     {:ok, wants} = get_needlist(username)
 
     Repo.transaction(fn ->
       user =
-        user
-        |> User.changeset()
-        |> Repo.insert!(on_conflict: :replace_all, conflict_target: :id)
+        case Users.get_by_username(username) do
+          {:ok, existing} ->
+            existing
+
+          {:error, :not_found} ->
+            Repo.insert!(user_from_api)
+        end
 
       wants
       |> Enum.map(fn want ->
