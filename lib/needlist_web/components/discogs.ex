@@ -15,7 +15,7 @@ defmodule NeedlistWeb.Components.Discogs do
 
   attr :notes, :any, required: true
 
-  @spec release_title(map()) :: Rendered.t()
+  @spec release_notes(map()) :: Rendered.t()
   def release_notes(assigns) do
     ~H"""
     <%= @notes %>
