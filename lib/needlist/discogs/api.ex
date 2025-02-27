@@ -5,6 +5,8 @@ defmodule Needlist.Discogs.Api do
 
   import Nullables.Result, only: [tag_error: 2]
 
+  require Logger
+  
   alias Needlist.Discogs.Oauth
   alias Needlist.Types.QueryOptions
   alias Needlist.Discogs.Api.Types.Identity
@@ -95,10 +97,12 @@ defmodule Needlist.Discogs.Api do
   defp maybe_authenticate_request_with_user(request, username) do
     case fetch_user_tokens(username) do
       {:ok, token_pair} ->
+        Logger.debug("Authenticating request for user #{username}", user: username)
         credentials = Oauth.oauther_credentials(token_pair)
         Oauth.authenticate_request(request, credentials)
 
       _ ->
+        Logger.debug("No authentication for user #{username}", user: username)
         request
     end
   end
