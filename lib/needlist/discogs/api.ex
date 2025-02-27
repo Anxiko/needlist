@@ -6,7 +6,7 @@ defmodule Needlist.Discogs.Api do
   import Nullables.Result, only: [tag_error: 2]
 
   require Logger
-  
+
   alias Needlist.Discogs.Oauth
   alias Needlist.Types.QueryOptions
   alias Needlist.Discogs.Api.Types.Identity

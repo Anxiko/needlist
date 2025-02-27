@@ -30,7 +30,9 @@ defmodule Mix.Tasks.DownloadWantlist do
     Repo.transaction(fn ->
       user =
         case Users.get_by_username(username) do
-          {:ok, existing} -> existing
+          {:ok, existing} ->
+            existing
+
           {:error, :not_found} ->
             Repo.insert!(user_from_api)
         end
