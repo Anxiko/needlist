@@ -73,6 +73,27 @@ defmodule NeedlistWeb.NeedlistLive do
     {:noreply, socket}
   end
 
+  def handle_event("rating", %{"score" => score, "max-score" => _max_score, "click-id" => click_id}, socket) do
+    username = socket.assigns.username
+    release_id = String.to_integer(click_id)
+    score = String.to_integer(score)
+
+    socket =
+      case Wantlists.update_wantlist(username, release_id, rating: score) do
+        {:ok, wantlist} ->
+          update(socket, :current_page, &replace_page_entry(&1, wantlist))
+
+        {:error, error} ->
+          Logger.warning("Failed to update release #{release_id} for #{username} to #{score}: #{inspect(error)}",
+            error: inspect(error)
+          )
+
+          socket
+      end
+
+    {:noreply, socket}
+  end
+
   @impl true
   def handle_async(
         :table_data,
@@ -185,6 +206,10 @@ defmodule NeedlistWeb.NeedlistLive do
     per_page = Keyword.get(needlist_options, :per_page, 50)
 
     {:ok, Pagination.from_page(needlist, page, per_page, total)}
+  end
+
+  defp replace_page_entry(current_page, %Wantlist{release_id: release_id} = wantlist) do
+    put_in(current_page, [Access.elem(1), Access.key(:items), Access.find(&(&1.release_id == release_id))], wantlist)
   end
 
   defp want_artists(assigns) do

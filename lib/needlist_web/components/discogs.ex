@@ -15,13 +15,21 @@ defmodule NeedlistWeb.Components.Discogs do
 
   attr :score, :integer, required: true
   attr :max_score, :integer, default: 5
+  attr :click_id, :any, default: nil
 
   @spec rating(map()) :: Rendered.t()
   def rating(%{score: score, max_score: max_score} = assigns) when 0 <= score and score <= max_score do
     ~H"""
     <div class="flex items-center">
-      <.star :for={_idx <- 1..@score//1} filled={true} />
-      <.star :for={_idx <- 1..(@max_score - @score)//1} filled={false} />
+      <.star
+        :for={idx <- 1..@max_score//1}
+        disabled={idx == @score}
+        phx-click="rating"
+        phx-value-score={idx}
+        phx-value-max-score={@max_score}
+        phx-value-click-id={@click_id}
+        filled={idx <= @score}
+      />
     </div>
     """
   end
@@ -97,6 +105,7 @@ defmodule NeedlistWeb.Components.Discogs do
   end
 
   attr :filled, :boolean, required: true
+  attr :rest, :global
 
   @spec star(map()) :: Rendered.t()
   defp star(assigns) do
@@ -108,15 +117,17 @@ defmodule NeedlistWeb.Components.Discogs do
       end
 
     ~H"""
-    <svg
-      class={["w-4 h-4 min-w-3 ms-1", @text]}
-      aria-hidden="true"
-      xmlns="http://www.w3.org/2000/svg"
-      fill="currentColor"
-      viewBox="0 0 22 20"
-    >
-      <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
-    </svg>
+    <button {@rest}>
+      <svg
+        class={["w-4 h-4 min-w-3 ms-1", @text]}
+        aria-hidden="true"
+        xmlns="http://www.w3.org/2000/svg"
+        fill="currentColor"
+        viewBox="0 0 22 20"
+      >
+        <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+      </svg>
+    </button>
     """
   end
 end

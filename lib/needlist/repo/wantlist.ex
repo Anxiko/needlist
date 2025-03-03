@@ -112,6 +112,11 @@ defmodule Needlist.Repo.Wantlist do
     where(query, [users: u], u.username == ^username)
   end
 
+  @spec by_release_id(query :: Ecto.Query.t(), release_id :: integer()) :: Ecto.Query.t()
+  def by_release_id(query, release_id) do
+    where(query, [wantlist: w], w.release_id == ^release_id)
+  end
+
   @spec paginated(query :: Ecto.Query.t(), page :: pos_integer(), per_page :: pos_integer()) :: Ecto.Query.t()
   def paginated(query, page, per_page) do
     offset = per_page * (page - 1)

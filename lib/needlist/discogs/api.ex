@@ -61,6 +61,7 @@ defmodule Needlist.Discogs.Api do
     |> Result.flat_map(&Identity.cast/1)
   end
 
+  # CAUTION: Can't rely on the response from the API, since it is often out of date with the change that it has just made
   @spec update_user_wantlist_entry(username :: String.t(), release_id :: integer(), opts :: Keyword.t()) ::
           Result.result(Want.t())
   def update_user_wantlist_entry(username, release_id, opts) do
