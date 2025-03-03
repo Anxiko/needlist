@@ -61,6 +61,31 @@ defmodule Needlist.Discogs.Api do
     |> Result.flat_map(&Identity.cast/1)
   end
 
+  @spec update_user_wantlist_entry(username :: String.t(), release_id :: integer(), opts :: Keyword.t()) ::
+          Result.result(Want.t())
+  def update_user_wantlist_entry(username, release_id, opts) do
+    with {:ok, token_pair} <- fetch_user_tokens(username) do
+      credentials = Oauth.oauther_credentials(token_pair)
+
+      params =
+        opts
+        |> Keyword.take([:notes, :rating])
+        |> Keyword.filter(fn {_key, value} -> value != nil end)
+
+      [
+        base_url: base_api_url(),
+        url: "/users/#{URI.encode(username)}/wants/#{release_id}",
+        method: :put,
+        params: params
+      ]
+      |> Req.new()
+      |> Oauth.authenticate_request(credentials)
+      |> Req.request()
+      |> Result.flat_map(&body_from_ok(&1, 201))
+      |> Result.flat_map(&Want.cast/1)
+    end
+  end
+
   @spec base_api_url() :: String.t()
   defp base_api_url(), do: @base_api_url
 
