@@ -71,17 +71,18 @@ defmodule Needlist.Discogs.Api do
         opts
         |> Keyword.take([:notes, :rating])
         |> Keyword.filter(fn {_key, value} -> value != nil end)
+        |> Map.new(fn {key, value} -> {key, value} end)
 
       [
         base_url: base_api_url(),
         url: "/users/#{URI.encode(username)}/wants/#{release_id}",
-        method: :put,
-        params: params
+        method: :post,
+        json: params
       ]
       |> Req.new()
       |> Oauth.authenticate_request(credentials)
       |> Req.request()
-      |> Result.flat_map(&body_from_ok(&1, 201))
+      |> Result.flat_map(&body_from_ok(&1, 200))
       |> Result.flat_map(&Want.cast/1)
     end
   end
