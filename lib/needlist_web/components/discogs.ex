@@ -18,7 +18,7 @@ defmodule NeedlistWeb.Components.Discogs do
   @spec release_notes(map()) :: Rendered.t()
   def release_notes(assigns) do
     ~H"""
-    <%= @notes %>
+    {@notes}
     """
   end
 
@@ -30,7 +30,7 @@ defmodule NeedlistWeb.Components.Discogs do
 
     ~H"""
     <.styled_link href={@href}>
-      <%= @release.title %>
+      {@release.title}
     </.styled_link>
     """
   end
@@ -42,9 +42,9 @@ defmodule NeedlistWeb.Components.Discogs do
     ~H"""
     <.styled_link href={LinkGenerator.from_artist(@artist)}>
       <%= if @artist.anv do %>
-        <%= @artist.anv %>*
+        {@artist.anv}*
       <% else %>
-        <%= @artist.name %>
+        {@artist.name}
       <% end %>
     </.styled_link>
     """
@@ -59,9 +59,9 @@ defmodule NeedlistWeb.Components.Discogs do
     ~H"""
     <span>
       <.styled_link href={@href}>
-        <%= @label.name %>
+        {@label.name}
       </.styled_link>
-      - <%= @label.catno %>
+      - {@label.catno}
     </span>
     """
   end
@@ -73,10 +73,10 @@ defmodule NeedlistWeb.Components.Discogs do
   def want_format(assigns) do
     ~H"""
     <span {@rest}>
-      <%= @format.name %>
+      {@format.name}
       <%= unless Enum.empty?(@format.descriptions) do %>
         <span>
-          (<%= Enum.join(@format.descriptions, ", ") %>)
+          ({Enum.join(@format.descriptions, ", ")})
         </span>
       <% end %>
     </span>

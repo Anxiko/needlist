@@ -33,7 +33,7 @@ defmodule NeedlistWeb.Navigation.Components do
   defp inner_page_entry(%{page_entry: %PageEntry{page: page}} = assigns)
        when is_pos_integer(page) do
     ~H"""
-    <%= @page_entry.page %>
+    {@page_entry.page}
     """
   end
 

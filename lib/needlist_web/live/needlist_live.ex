@@ -192,7 +192,7 @@ defmodule NeedlistWeb.NeedlistLive do
     <%= for artist <- @artists do %>
       <.want_artist artist={artist} />
       <%= if artist.join do %>
-        <%= artist.join %>
+        {artist.join}
       <% end %>
     <% end %>
     """
@@ -221,14 +221,14 @@ defmodule NeedlistWeb.NeedlistLive do
   defp want_year(assigns) do
     ~H"""
     <%= if @year != 0 do %>
-      <%= @year %>
+      {@year}
     <% end %>
     """
   end
 
   defp want_price(assigns) do
     ~H"""
-    <%= @price %>
+    {@price}
     """
   end
 
@@ -311,7 +311,7 @@ defmodule NeedlistWeb.NeedlistLive do
     ~H"""
     <th scope="col" class={"px-6 py-3 #{@class}"} {@phx_attrs}>
       <span class={"inline-flex items-center font-medium #{@column_key != nil && "cursor-pointer text-blue-600 dark:text-blue-300 hover:underline"}"}>
-        <%= @column_name %>
+        {@column_name}
         <%= if @state.sort_key == @column_key and @state.sort_order != nil do %>
           <.header_sorting sort_order={@state.sort_order} />
         <% end %>
