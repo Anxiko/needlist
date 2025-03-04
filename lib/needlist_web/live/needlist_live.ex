@@ -29,6 +29,7 @@ defmodule NeedlistWeb.NeedlistLive do
       |> assign(:current_page, nil)
       |> assign(:loading_page, nil)
       |> assign(:state, State.default())
+      |> assign(:pending_wantlist_updates, %{})
     }
   end
 
@@ -79,18 +80,10 @@ defmodule NeedlistWeb.NeedlistLive do
     score = String.to_integer(score)
 
     socket =
-      case Wantlists.update_wantlist(username, release_id, rating: score) do
-        {:ok, wantlist} ->
-          update(socket, :current_page, &replace_page_entry(&1, wantlist))
-
-        {:error, error} ->
-          Logger.warning("Failed to update release #{release_id} for #{username} to #{score}: #{inspect(error)}",
-            error: inspect(error)
-          )
-
-          socket
-          |> put_flash(:error, "Failed to update rating")
-      end
+      start_async(socket, {:wantlist_update, release_id}, fn ->
+        Wantlists.update_wantlist(username, release_id, rating: score)
+      end)
+      |> update(:pending_wantlist_updates, &Map.put(&1, release_id, score))
 
     {:noreply, socket}
   end
@@ -130,6 +123,25 @@ defmodule NeedlistWeb.NeedlistLive do
 
   def handle_async(:table_data, {:exit, reason}, socket) do
     {:noreply, put_flash(socket, :error, "Failed to load data: #{reason}")}
+  end
+
+  def handle_async({:wantlist_update, release_id}, result, socket) do
+    socket =
+      case result do
+        {:ok, {:ok, wantlist}} ->
+          update(socket, :current_page, &replace_page_entry(&1, wantlist))
+
+        {:ok, {:error, error}} ->
+          Logger.warning("Failed to update release #{release_id} for #{socket.assigns.username}: #{inspect(error)}",
+            error: inspect(error)
+          )
+
+        {:exit, reason} ->
+          Logger.error("Release update failed with reason: #{inspect(reason)}", error: inspect(reason))
+      end
+      |> update(:pending_wantlist_updates, &Map.delete(&1, release_id))
+
+    {:noreply, socket}
   end
 
   @spec create_sorting_changes(State.t(), SortKey.t()) :: map()

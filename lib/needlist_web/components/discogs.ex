@@ -16,11 +16,12 @@ defmodule NeedlistWeb.Components.Discogs do
   attr :score, :integer, required: true
   attr :max_score, :integer, default: 5
   attr :click_id, :any, default: nil
+  attr :class, :string, default: nil
 
   @spec rating(map()) :: Rendered.t()
   def rating(%{score: score, max_score: max_score} = assigns) when 0 <= score and score <= max_score do
     ~H"""
-    <div class="flex items-center">
+    <div class={["flex items-center", @class]}>
       <.star
         :for={idx <- 1..@max_score//1}
         disabled={idx == @score}

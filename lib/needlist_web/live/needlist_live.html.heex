@@ -51,7 +51,11 @@
                 <.release_notes notes={item.notes} />
               </td>
               <td class="px-6 py-4">
-                <.rating score={item.rating} click_id={item.release_id}/>
+                <.rating
+                  score={item.rating}
+                  click_id={item.release_id}
+                  class={if Map.has_key?(@pending_wantlist_updates, item.release_id), do: "loader"}
+                />
               </td>
             </tr>
           <% end %>
