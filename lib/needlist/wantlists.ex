@@ -4,7 +4,6 @@ defmodule Needlist.Wantlists do
   """
 
   alias Needlist.Discogs.Api
-  alias Needlist.Repo.Want
   alias Nullables.Result
   alias Needlist.Repo
   alias Needlist.Repo.Wantlist

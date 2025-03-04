@@ -89,6 +89,7 @@ defmodule NeedlistWeb.NeedlistLive do
           )
 
           socket
+          |> put_flash(:error, "Failed to update rating")
       end
 
     {:noreply, socket}

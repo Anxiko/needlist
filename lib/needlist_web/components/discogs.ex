@@ -105,6 +105,7 @@ defmodule NeedlistWeb.Components.Discogs do
   end
 
   attr :filled, :boolean, required: true
+  attr :disabled, :boolean, default: false
   attr :rest, :global
 
   @spec star(map()) :: Rendered.t()
@@ -117,7 +118,7 @@ defmodule NeedlistWeb.Components.Discogs do
       end
 
     ~H"""
-    <button {@rest}>
+    <button {@rest} disabled={@disabled}>
       <svg
         class={["w-4 h-4 min-w-3 ms-1", @text]}
         aria-hidden="true"
