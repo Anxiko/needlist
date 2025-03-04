@@ -3,6 +3,8 @@ defmodule Needlist.Wantlists do
   Context for wantlists
   """
 
+  alias Needlist.Discogs.Api
+  alias Nullables.Result
   alias Needlist.Repo
   alias Needlist.Repo.Wantlist
   alias Needlist.Types.QueryOptions
@@ -38,5 +40,28 @@ defmodule Needlist.Wantlists do
     |> Wantlist.with_user()
     |> Wantlist.by_username(username)
     |> Repo.all()
+  end
+
+  @spec from_view(username :: binary(), release_id :: integer()) :: Result.result(Wantlist.t(), :not_found)
+  def from_view(username, release_id) do
+    Wantlist.named_binding()
+    |> Wantlist.with_user()
+    |> Wantlist.with_release(@default_currency)
+    |> Wantlist.by_username(username)
+    |> Wantlist.by_release_id(release_id)
+    |> Repo.one()
+    |> Nullables.nullable_to_result(:not_found)
+  end
+
+  @spec update_wantlist(username :: binary(), release_id :: integer(), params :: keyword()) ::
+          Result.result(Wantlist.t())
+  def update_wantlist(username, release_id, params) do
+    with {:ok, wantlist} <- from_view(username, release_id),
+         {:ok, _want} <-
+           Api.update_user_wantlist_entry(username, release_id, params) do
+      wantlist
+      |> Wantlist.changeset(Map.new(params))
+      |> Repo.update()
+    end
   end
 end

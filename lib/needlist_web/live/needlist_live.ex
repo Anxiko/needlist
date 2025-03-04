@@ -29,6 +29,7 @@ defmodule NeedlistWeb.NeedlistLive do
       |> assign(:current_page, nil)
       |> assign(:loading_page, nil)
       |> assign(:state, State.default())
+      |> assign(:pending_wantlist_updates, %{})
     }
   end
 
@@ -73,6 +74,20 @@ defmodule NeedlistWeb.NeedlistLive do
     {:noreply, socket}
   end
 
+  def handle_event("rating", %{"score" => score, "max-score" => _max_score, "click-id" => click_id}, socket) do
+    username = socket.assigns.username
+    release_id = String.to_integer(click_id)
+    score = String.to_integer(score)
+
+    socket =
+      start_async(socket, {:wantlist_update, release_id}, fn ->
+        Wantlists.update_wantlist(username, release_id, rating: score)
+      end)
+      |> update(:pending_wantlist_updates, &Map.put(&1, release_id, score))
+
+    {:noreply, socket}
+  end
+
   @impl true
   def handle_async(
         :table_data,
@@ -108,6 +123,25 @@ defmodule NeedlistWeb.NeedlistLive do
 
   def handle_async(:table_data, {:exit, reason}, socket) do
     {:noreply, put_flash(socket, :error, "Failed to load data: #{reason}")}
+  end
+
+  def handle_async({:wantlist_update, release_id}, result, socket) do
+    socket =
+      case result do
+        {:ok, {:ok, wantlist}} ->
+          update(socket, :current_page, &replace_page_entry(&1, wantlist))
+
+        {:ok, {:error, error}} ->
+          Logger.warning("Failed to update release #{release_id} for #{socket.assigns.username}: #{inspect(error)}",
+            error: inspect(error)
+          )
+
+        {:exit, reason} ->
+          Logger.error("Release update failed with reason: #{inspect(reason)}", error: inspect(reason))
+      end
+      |> update(:pending_wantlist_updates, &Map.delete(&1, release_id))
+
+    {:noreply, socket}
   end
 
   @spec create_sorting_changes(State.t(), SortKey.t()) :: map()
@@ -185,6 +219,10 @@ defmodule NeedlistWeb.NeedlistLive do
     per_page = Keyword.get(needlist_options, :per_page, 50)
 
     {:ok, Pagination.from_page(needlist, page, per_page, total)}
+  end
+
+  defp replace_page_entry(current_page, %Wantlist{release_id: release_id} = wantlist) do
+    put_in(current_page, [Access.elem(1), Access.key(:items), Access.find(&(&1.release_id == release_id))], wantlist)
   end
 
   defp want_artists(assigns) do
