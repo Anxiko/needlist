@@ -14,50 +14,10 @@
     </script>
   </head>
   <body class="antialiased bg-white dark:bg-gray-800">
-    <ul class="relative z-10 flex items-center gap-4 px-4 sm:px-6 lg:px-8 justify-end">
-      <%= if @current_account do %>
-        <li class="text-[0.8125rem] leading-6 text-zinc-900">
-          {@current_account.email}
-        </li>
-        <li>
-          <.link
-            href={~p"/accounts/settings"}
-            class="text-[0.8125rem] leading-6 text-zinc-900 font-semibold hover:text-zinc-700"
-          >
-            Settings
-          </.link>
-        </li>
-        <li>
-          <.link
-            href={~p"/accounts/log_out"}
-            method="delete"
-            class="text-[0.8125rem] leading-6 text-zinc-900 font-semibold hover:text-zinc-700"
-          >
-            Log out
-          </.link>
-        </li>
-      <% else %>
-        <li>
-          <.link
-            href={~p"/accounts/register"}
-            class="text-[0.8125rem] leading-6 text-zinc-900 font-semibold hover:text-zinc-700"
-          >
-            Register
-          </.link>
-        </li>
-        <li>
-          <.link
-            href={~p"/accounts/log_in"}
-            class="text-[0.8125rem] leading-6 text-zinc-900 font-semibold hover:text-zinc-700"
-          >
-            Log in
-          </.link>
-        </li>
-      <% end %>
-    </ul>
     <header class="my-2">
       <div class="mx-4 text-2xl flex justify-between">
         <span class="dark:text-white">I need it! - Needlist</span>
+        <span class="flex align-top">
         <button
           id="theme-toggle"
           type="button"
@@ -88,6 +48,48 @@
             </path>
           </svg>
         </button>
+        <ul class="flex items-center gap-4 pb-4 px-4 sm:px-6 lg:px-8 justify-end">
+          <%= if @current_account do %>
+            <li class="text-[0.8125rem] leading-6 text-zinc-900">
+              {@current_account.email}
+            </li>
+            <li>
+              <.link
+                href={~p"/accounts/settings"}
+                class="text-[0.8125rem] leading-6 text-zinc-900 font-semibold hover:text-zinc-700"
+              >
+                Settings
+              </.link>
+            </li>
+            <li>
+              <.link
+                href={~p"/accounts/log_out"}
+                method="delete"
+                class="text-[0.8125rem] leading-6 text-zinc-900 font-semibold hover:text-zinc-700"
+              >
+                Log out
+              </.link>
+            </li>
+          <% else %>
+            <li>
+              <.link
+                href={~p"/accounts/register"}
+                class="text-[0.8125rem] leading-6 text-zinc-900 font-semibold hover:text-zinc-700 dark:text-white"
+              >
+                Register
+              </.link>
+            </li>
+            <li>
+              <.link
+                href={~p"/accounts/log_in"}
+                class="text-[0.8125rem] leading-6 text-zinc-900 font-semibold hover:text-zinc-700 dark:text-white"
+              >
+                Log in
+              </.link>
+            </li>
+          <% end %>
+        </ul>
+        </span>
       </div>
     </header>
 
