@@ -26,7 +26,7 @@ defmodule NeedlistWeb.Router do
   end
 
   scope "/oauth", NeedlistWeb do
-    pipe_through :browser
+    pipe_through [:browser, :require_authenticated_account]
 
     get "/login", OauthController, :request
 

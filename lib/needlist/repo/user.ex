@@ -12,6 +12,7 @@ defmodule Needlist.Repo.User do
   alias Ecto.Association.NotLoaded
   alias Needlist.Repo.Wantlist
   alias Needlist.Repo.User.Oauth
+  alias Needlist.Accounts.Account
 
   @required_fields [:id, :username]
   @optional_fields []
@@ -20,12 +21,11 @@ defmodule Needlist.Repo.User do
   ]
   @fields @required_fields ++ @optional_fields
 
-  @primary_key false
   schema "users" do
-    field :id, :id, primary_key: true
     field :username, :string
     embeds_one :oauth, Oauth, on_replace: :update
     has_many :wantlists, Wantlist, references: :id
+    has_one :account, Account
   end
 
   @type t() :: %__MODULE__{
@@ -79,7 +79,7 @@ defmodule Needlist.Repo.User do
     def dump(user) do
       user
       |> Map.from_struct()
-      |> Map.take([:id, :username, :ouath, :wantlists])
+      |> Map.take([:id, :username, :oauth, :wantlists])
       |> DumpableSchema.Embeds.dump_embed_fields([:oauth, :wantlists])
     end
   end

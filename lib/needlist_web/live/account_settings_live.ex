@@ -1,4 +1,8 @@
 defmodule NeedlistWeb.AccountSettingsLive do
+  require Logger
+  alias Needlist.Discogs
+  alias Needlist.Repo.User
+  alias Needlist.Accounts.Account
   use NeedlistWeb, :live_view
 
   alias Needlist.Accounts
@@ -12,12 +16,10 @@ defmodule NeedlistWeb.AccountSettingsLive do
 
     <div class="space-y-12 divide-y">
       <div>
-        <.simple_form
-          for={@email_form}
-          id="email_form"
-          phx-submit="update_email"
-          phx-change="validate_email"
-        >
+        <.link_to_discogs account={@current_account} />
+      </div>
+      <div>
+        <.simple_form for={@email_form} id="email_form" phx-submit="update_email" phx-change="validate_email">
           <.input field={@email_form[:email]} type="email" label="Email" required />
           <.input
             field={@email_form[:current_password]}
@@ -43,18 +45,9 @@ defmodule NeedlistWeb.AccountSettingsLive do
           phx-submit="update_password"
           phx-trigger-action={@trigger_submit}
         >
-          <input
-            name={@password_form[:email].name}
-            type="hidden"
-            id="hidden_account_email"
-            value={@current_email}
-          />
+          <input name={@password_form[:email].name} type="hidden" id="hidden_account_email" value={@current_email} />
           <.input field={@password_form[:password]} type="password" label="New password" required />
-          <.input
-            field={@password_form[:password_confirmation]}
-            type="password"
-            label="Confirm new password"
-          />
+          <.input field={@password_form[:password_confirmation]} type="password" label="Confirm new password" />
           <.input
             field={@password_form[:current_password]}
             name="current_password"
@@ -163,5 +156,56 @@ defmodule NeedlistWeb.AccountSettingsLive do
       {:error, changeset} ->
         {:noreply, assign(socket, password_form: to_form(changeset))}
     end
+  end
+
+  def handle_event("unlink", _params, socket) do
+    socket =
+      with {:ok, _account} <- Accounts.remove_associated_user(socket.assigns.current_account) do
+        push_navigate(socket, to: ~p"/accounts/settings")
+      else
+        {:error, error} ->
+          Logger.warning("Failed to unlink Discogs from account: #{inspect(error)}", error: error)
+          put_flash(socket, :error, "Failed to unlink user")
+      end
+
+    {:noreply, socket}
+  end
+
+  defp link_to_discogs(%{account: %Account{user: nil}} = assigns) do
+    ~H"""
+    <div>
+      <div class="text-zinc-800 block text-sm font-semibold leading-6 dark:text-white mb-8">
+        No Discogs account linked
+      </div>
+      <a
+        href={~p"/oauth/login"}
+        class={[
+          "phx-submit-loading:opacity-75 rounded-lg bg-zinc-900 hover:bg-zinc-700 py-2 px-3",
+          "text-sm font-semibold leading-6 text-white active:text-white/80"
+        ]}
+      >
+        Link to Discogs
+      </a>
+    </div>
+    """
+  end
+
+  defp link_to_discogs(%{account: %Account{user: %User{}}} = assigns) do
+    ~H"""
+    <div>
+      <div class="text-zinc-800 block text-sm font-semibold leading-6 dark:text-white">
+        Linked to Discogs account {@account.user.username}
+      </div>
+      <.button phx-click="unlink">
+        Unlink Discogs
+      </.button>
+    </div>
+    """
+  end
+
+  defp link_to_discogs(assigns) do
+    ~H"""
+    {inspect(assigns.account)}
+    """
   end
 end

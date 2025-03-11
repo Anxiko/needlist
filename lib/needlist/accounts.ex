@@ -4,6 +4,8 @@ defmodule Needlist.Accounts do
   """
 
   import Ecto.Query, warn: false
+  alias Ecto.Changeset
+  alias Needlist.Repo.User
   alias Needlist.Repo
 
   alias Needlist.Accounts.{Account, AccountToken, AccountNotifier}
@@ -23,7 +25,7 @@ defmodule Needlist.Accounts do
 
   """
   def get_account_by_email(email) when is_binary(email) do
-    Repo.get_by(Account, email: email)
+    Repo.get_by(Account, email: email) |> Repo.preload([:user])
   end
 
   @doc """
@@ -40,7 +42,7 @@ defmodule Needlist.Accounts do
   """
   def get_account_by_email_and_password(email, password)
       when is_binary(email) and is_binary(password) do
-    account = Repo.get_by(Account, email: email)
+    account = Repo.get_by(Account, email: email) |> Repo.preload([:user])
     if Account.valid_password?(account, password), do: account
   end
 
@@ -58,7 +60,7 @@ defmodule Needlist.Accounts do
       ** (Ecto.NoResultsError)
 
   """
-  def get_account!(id), do: Repo.get!(Account, id)
+  def get_account!(id), do: Repo.get!(Account, id) |> Repo.preload([:user])
 
   ## Account registration
 
@@ -146,6 +148,21 @@ defmodule Needlist.Accounts do
     end
   end
 
+  @spec associate_with_user(account :: Account.t(), user :: User.t()) ::
+          {:ok, Account.t()} | {:error, Changeset.t(Account.t())}
+  def associate_with_user(account, %User{id: id}) do
+    account
+    |> Account.associate_user_changeset(%{user_id: id})
+    |> Repo.update()
+  end
+
+  @spec remove_associated_user(account :: Account.t()) :: {:ok, Account.t()} | {:error, Changeset.t(Account.t())}
+  def remove_associated_user(account) do
+    account
+    |> Account.associate_user_changeset(%{user_id: nil})
+    |> Repo.update()
+  end
+
   defp account_email_multi(account, email, context) do
     changeset =
       account
@@ -231,7 +248,7 @@ defmodule Needlist.Accounts do
   """
   def get_account_by_session_token(token) do
     {:ok, query} = AccountToken.verify_session_token_query(token)
-    Repo.one(query)
+    Repo.one(query) |> Repo.preload([:user])
   end
 
   @doc """

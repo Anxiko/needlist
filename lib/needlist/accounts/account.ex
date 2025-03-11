@@ -2,12 +2,29 @@ defmodule Needlist.Accounts.Account do
   use Ecto.Schema
   import Ecto.Changeset
 
+  alias Ecto.Changeset
+  alias Ecto.Association.NotLoaded
+  alias Needlist.Repo.User
+
+  @type t() :: %__MODULE__{
+          email: String.t(),
+          password: String.t() | nil,
+          hashed_password: String.t(),
+          current_password: String.t() | nil,
+          confirmed_at: DateTime.t() | nil,
+          inserted_at: DateTime.t(),
+          updated_at: DateTime.t(),
+          user_id: integer() | nil,
+          user: User.t() | nil | NotLoaded.t()
+        }
+
   schema "accounts" do
     field :email, :string
     field :password, :string, virtual: true, redact: true
     field :hashed_password, :string, redact: true
     field :current_password, :string, virtual: true, redact: true
     field :confirmed_at, :utc_datetime
+    belongs_to :user, User
 
     timestamps(type: :utc_datetime)
   end
@@ -128,6 +145,12 @@ defmodule Needlist.Accounts.Account do
   def confirm_changeset(account) do
     now = DateTime.utc_now() |> DateTime.truncate(:second)
     change(account, confirmed_at: now)
+  end
+
+  @spec associate_user_changeset(account :: t(), attrs :: map()) :: Changeset.t(t())
+  def associate_user_changeset(account, attrs) do
+    account
+    |> cast(attrs, [:user_id])
   end
 
   @doc """
