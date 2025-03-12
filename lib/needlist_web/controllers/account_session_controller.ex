@@ -4,6 +4,7 @@ defmodule NeedlistWeb.AccountSessionController do
   alias Needlist.Accounts
   alias NeedlistWeb.AccountAuth
 
+  @spec create(Plug.Conn.t(), map()) :: Plug.Conn.t()
   def create(conn, %{"_action" => "registered"} = params) do
     create(conn, params, "Account created successfully!")
   end
@@ -34,6 +35,7 @@ defmodule NeedlistWeb.AccountSessionController do
     end
   end
 
+  @spec delete(Plug.Conn.t(), map()) :: Plug.Conn.t()
   def delete(conn, _params) do
     conn
     |> put_flash(:info, "Logged out successfully.")

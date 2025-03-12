@@ -1,3 +1,4 @@
+# credo:disable-for-this-file
 defmodule Needlist.AccountsFixtures do
   @moduledoc """
   This module defines test helpers for creating

@@ -4,6 +4,7 @@ defmodule NeedlistWeb.AccountRegistrationLive do
   alias Needlist.Accounts
   alias Needlist.Accounts.Account
 
+  @impl true
   def render(assigns) do
     ~H"""
     <div class="mx-auto max-w-sm">
@@ -42,6 +43,7 @@ defmodule NeedlistWeb.AccountRegistrationLive do
     """
   end
 
+  @impl true
   def mount(_params, _session, socket) do
     changeset = Accounts.change_account_registration(%Account{})
 
@@ -53,6 +55,7 @@ defmodule NeedlistWeb.AccountRegistrationLive do
     {:ok, socket, temporary_assigns: [form: nil]}
   end
 
+  @impl true
   def handle_event("save", %{"account" => account_params}, socket) do
     case Accounts.register_account(account_params) do
       {:ok, account} ->

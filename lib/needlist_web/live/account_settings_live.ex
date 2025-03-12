@@ -7,6 +7,7 @@ defmodule NeedlistWeb.AccountSettingsLive do
   alias Needlist.Accounts.Account
   alias Needlist.Accounts
 
+  @impl true
   def render(assigns) do
     ~H"""
     <.header class="text-center">
@@ -66,6 +67,7 @@ defmodule NeedlistWeb.AccountSettingsLive do
     """
   end
 
+  @impl true
   def mount(%{"token" => token}, _session, socket) do
     socket =
       case Accounts.update_account_email(socket.assigns.current_account, token) do
@@ -96,6 +98,7 @@ defmodule NeedlistWeb.AccountSettingsLive do
     {:ok, socket}
   end
 
+  @impl true
   def handle_event("validate_email", params, socket) do
     %{"current_password" => password, "account" => account_params} = params
 
@@ -160,9 +163,10 @@ defmodule NeedlistWeb.AccountSettingsLive do
 
   def handle_event("unlink", _params, socket) do
     socket =
-      with {:ok, _account} <- Accounts.remove_associated_user(socket.assigns.current_account) do
-        push_navigate(socket, to: ~p"/accounts/settings")
-      else
+      case Accounts.remove_associated_user(socket.assigns.current_account) do
+        {:ok, _account} ->
+          push_navigate(socket, to: ~p"/accounts/settings")
+
         {:error, error} ->
           Logger.warning("Failed to unlink Discogs from account: #{inspect(error)}", error: error)
           put_flash(socket, :error, "Failed to unlink user")

@@ -3,6 +3,7 @@ defmodule NeedlistWeb.AccountResetPasswordLive do
 
   alias Needlist.Accounts
 
+  @impl true
   def render(assigns) do
     ~H"""
     <div class="mx-auto max-w-sm">
@@ -27,6 +28,7 @@ defmodule NeedlistWeb.AccountResetPasswordLive do
     """
   end
 
+  @impl true
   def mount(params, _session, socket) do
     socket = assign_account_and_token(socket, params)
 
@@ -44,6 +46,7 @@ defmodule NeedlistWeb.AccountResetPasswordLive do
 
   # Do not log in the account after reset password to avoid a
   # leaked token giving the account access to the account.
+  @impl true
   def handle_event("reset_password", %{"account" => account_params}, socket) do
     case Accounts.reset_account_password(socket.assigns.account, account_params) do
       {:ok, _} ->

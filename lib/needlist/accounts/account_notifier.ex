@@ -1,3 +1,4 @@
+# credo:disable-for-this-file
 defmodule Needlist.Accounts.AccountNotifier do
   import Swoosh.Email
 

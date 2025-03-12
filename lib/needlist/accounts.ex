@@ -24,6 +24,7 @@ defmodule Needlist.Accounts do
       nil
 
   """
+  @spec get_account_by_email(String.t()) :: Account.t() | nil
   def get_account_by_email(email) when is_binary(email) do
     Repo.get_by(Account, email: email) |> Repo.preload([:user])
   end
@@ -40,6 +41,7 @@ defmodule Needlist.Accounts do
       nil
 
   """
+  @spec get_account_by_email_and_password(String.t(), String.t()) :: Account.t() | nil
   def get_account_by_email_and_password(email, password)
       when is_binary(email) and is_binary(password) do
     account = Repo.get_by(Account, email: email) |> Repo.preload([:user])
@@ -60,6 +62,7 @@ defmodule Needlist.Accounts do
       ** (Ecto.NoResultsError)
 
   """
+  @spec get_account!(integer()) :: Account.t()
   def get_account!(id), do: Repo.get!(Account, id) |> Repo.preload([:user])
 
   ## Account registration
@@ -76,6 +79,7 @@ defmodule Needlist.Accounts do
       {:error, %Ecto.Changeset{}}
 
   """
+  @spec register_account(map()) :: {:ok, Account.t()} | {:error, Changeset.t(Account.t())}
   def register_account(attrs) do
     %Account{}
     |> Account.registration_changeset(attrs)
@@ -91,6 +95,7 @@ defmodule Needlist.Accounts do
       %Ecto.Changeset{data: %Account{}}
 
   """
+  # credo:disable-for-next-line
   def change_account_registration(%Account{} = account, attrs \\ %{}) do
     Account.registration_changeset(account, attrs, hash_password: false, validate_email: false)
   end
@@ -106,6 +111,8 @@ defmodule Needlist.Accounts do
       %Ecto.Changeset{data: %Account{}}
 
   """
+  @spec change_account_email(Account.t(), map()) :: Changeset.t(Account.t())
+  @spec change_account_email(Account.t()) :: Changeset.t(Account.t())
   def change_account_email(account, attrs \\ %{}) do
     Account.email_changeset(account, attrs, validate_email: false)
   end
@@ -123,6 +130,7 @@ defmodule Needlist.Accounts do
       {:error, %Ecto.Changeset{}}
 
   """
+  @spec apply_account_email(Account.t(), String.t(), map()) :: {:ok, Account.t()} | {:error, Changeset.t(Account.t())}
   def apply_account_email(account, password, attrs) do
     account
     |> Account.email_changeset(attrs)
@@ -136,6 +144,7 @@ defmodule Needlist.Accounts do
   If the token matches, the account email is updated and the token is deleted.
   The confirmed_at date is also updated to the current time.
   """
+  @spec update_account_email(Account.t(), String.t()) :: :ok | :error
   def update_account_email(account, token) do
     context = "change:#{account.email}"
 
@@ -183,6 +192,7 @@ defmodule Needlist.Accounts do
       {:ok, %{to: ..., body: ...}}
 
   """
+  # credo:disable-for-next-line
   def deliver_account_update_email_instructions(%Account{} = account, current_email, update_email_url_fun)
       when is_function(update_email_url_fun, 1) do
     {encoded_token, account_token} = AccountToken.build_email_token(account, "change:#{current_email}")
@@ -200,6 +210,7 @@ defmodule Needlist.Accounts do
       %Ecto.Changeset{data: %Account{}}
 
   """
+  @spec change_account_password(Account.t(), map()) :: Changeset.t(Account.t())
   def change_account_password(account, attrs \\ %{}) do
     Account.password_changeset(account, attrs, hash_password: false)
   end
@@ -216,6 +227,8 @@ defmodule Needlist.Accounts do
       {:error, %Ecto.Changeset{}}
 
   """
+  @spec update_account_password(Account.t(), String.t(), map()) ::
+          {:ok, Account.t()} | {:error, Changeset.t(Account.t())}
   def update_account_password(account, password, attrs) do
     changeset =
       account
@@ -237,6 +250,7 @@ defmodule Needlist.Accounts do
   @doc """
   Generates a session token.
   """
+  @spec generate_account_session_token(Account.t()) :: String.t()
   def generate_account_session_token(account) do
     {token, account_token} = AccountToken.build_session_token(account)
     Repo.insert!(account_token)
@@ -246,6 +260,7 @@ defmodule Needlist.Accounts do
   @doc """
   Gets the account with the given signed token.
   """
+  @spec get_account_by_session_token(String.t()) :: Account.t() | nil
   def get_account_by_session_token(token) do
     {:ok, query} = AccountToken.verify_session_token_query(token)
     Repo.one(query) |> Repo.preload([:user])
@@ -254,6 +269,7 @@ defmodule Needlist.Accounts do
   @doc """
   Deletes the signed token with the given context.
   """
+  @spec delete_account_session_token(String.t()) :: :ok
   def delete_account_session_token(token) do
     Repo.delete_all(AccountToken.by_token_and_context_query(token, "session"))
     :ok
@@ -273,6 +289,7 @@ defmodule Needlist.Accounts do
       {:error, :already_confirmed}
 
   """
+  # credo:disable-for-next-line
   def deliver_account_confirmation_instructions(%Account{} = account, confirmation_url_fun)
       when is_function(confirmation_url_fun, 1) do
     if account.confirmed_at do
@@ -290,6 +307,7 @@ defmodule Needlist.Accounts do
   If the token matches, the account account is marked as confirmed
   and the token is deleted.
   """
+  @spec confirm_account(String.t()) :: {:ok, Account.t()} | :error
   def confirm_account(token) do
     with {:ok, query} <- AccountToken.verify_email_token_query(token, "confirm"),
          %Account{} = account <- Repo.one(query),
@@ -317,6 +335,7 @@ defmodule Needlist.Accounts do
       {:ok, %{to: ..., body: ...}}
 
   """
+  # credo:disable-for-next-line
   def deliver_account_reset_password_instructions(%Account{} = account, reset_password_url_fun)
       when is_function(reset_password_url_fun, 1) do
     {encoded_token, account_token} = AccountToken.build_email_token(account, "reset_password")
@@ -336,6 +355,7 @@ defmodule Needlist.Accounts do
       nil
 
   """
+  # credo:disable-for-next-line
   def get_account_by_reset_password_token(token) do
     with {:ok, query} <- AccountToken.verify_email_token_query(token, "reset_password"),
          %Account{} = account <- Repo.one(query) do
@@ -357,6 +377,7 @@ defmodule Needlist.Accounts do
       {:error, %Ecto.Changeset{}}
 
   """
+  # credo:disable-for-next-line
   def reset_account_password(account, attrs) do
     Ecto.Multi.new()
     |> Ecto.Multi.update(:account, Account.password_changeset(account, attrs))

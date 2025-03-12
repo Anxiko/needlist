@@ -14,6 +14,7 @@ defmodule NeedlistWeb.ConnCase do
   by setting `use NeedlistWeb.ConnCase, async: true`, although
   this option is not recommended for other databases.
   """
+  alias Needlist.Accounts.Account
 
   use ExUnit.CaseTemplate
 
@@ -44,6 +45,7 @@ defmodule NeedlistWeb.ConnCase do
   It stores an updated connection and a registered account in the
   test context.
   """
+  @spec register_and_log_in_account(%{:conn => Plug.Conn.t()}) :: %{:conn => Plug.Conn.t()}
   def register_and_log_in_account(%{conn: conn}) do
     account = Needlist.AccountsFixtures.account_fixture()
     %{conn: log_in_account(conn, account), account: account}
@@ -54,6 +56,7 @@ defmodule NeedlistWeb.ConnCase do
 
   It returns an updated `conn`.
   """
+  @spec log_in_account(Plug.Conn.t(), Account.t()) :: Plug.Conn.t()
   def log_in_account(conn, account) do
     token = Needlist.Accounts.generate_account_session_token(account)
 

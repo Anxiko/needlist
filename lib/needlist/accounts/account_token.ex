@@ -1,3 +1,4 @@
+# credo:disable-for-this-file
 defmodule Needlist.Accounts.AccountToken do
   use Ecto.Schema
   import Ecto.Query

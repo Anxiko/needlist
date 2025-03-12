@@ -1,3 +1,4 @@
+# credo:disable-for-this-file
 defmodule NeedlistWeb.AccountConfirmationInstructionsLive do
   use NeedlistWeb, :live_view
 

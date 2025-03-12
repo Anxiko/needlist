@@ -1,3 +1,4 @@
+# credo:disable-for-this-file
 defmodule NeedlistWeb.AccountAuth do
   use NeedlistWeb, :verified_routes
 
