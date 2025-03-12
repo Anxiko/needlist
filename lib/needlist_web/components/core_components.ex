@@ -202,7 +202,7 @@ defmodule NeedlistWeb.CoreComponents do
   def simple_form(assigns) do
     ~H"""
     <.form :let={f} for={@for} as={@as} {@rest}>
-      <div class="mt-10 space-y-8 bg-white">
+      <div class="mt-10 space-y-8">
         {render_slot(@inner_block, f)}
         <div :for={action <- @actions} class="flex items-center justify-between gap-6 mt-2">
           {render_slot(action, f)}
@@ -307,7 +307,7 @@ defmodule NeedlistWeb.CoreComponents do
 
     ~H"""
     <div phx-feedback-for={@name}>
-      <label class="text-zinc-600 flex items-center gap-4 text-sm leading-6">
+      <label class="dark:text-white flex items-center gap-4 text-sm leading-6">
         <input type="hidden" name={@name} value="false" />
         <input
           type="checkbox"
@@ -368,7 +368,7 @@ defmodule NeedlistWeb.CoreComponents do
   def input(assigns) do
     ~H"""
     <div phx-feedback-for={@name}>
-      <.label for={@id}>{@label}</.label>
+      <.label class="dark:text-white" for={@id}>{@label}</.label>
       <input
         type={@type}
         name={@name}
@@ -391,11 +391,12 @@ defmodule NeedlistWeb.CoreComponents do
   Renders a label.
   """
   attr :for, :string, default: nil
+  attr :class, :string, default: nil
   slot :inner_block, required: true
 
   def label(assigns) do
     ~H"""
-    <label for={@for} class="text-zinc-800 block text-sm font-semibold leading-6">
+    <label for={@for} class={["text-zinc-800 block text-sm font-semibold leading-6", @class]}>
       {render_slot(@inner_block)}
     </label>
     """
@@ -428,10 +429,10 @@ defmodule NeedlistWeb.CoreComponents do
     ~H"""
     <header class={[@actions != [] && "flex items-center justify-between gap-6", @class]}>
       <div>
-        <h1 class="text-zinc-800 text-lg font-semibold leading-8">
+        <h1 class="text-zinc-800 dark:text-zinc-200 text-lg font-semibold leading-8">
           {render_slot(@inner_block)}
         </h1>
-        <p :if={@subtitle != []} class="text-zinc-600 mt-2 text-sm leading-6">
+        <p :if={@subtitle != []} class="text-zinc-600 dark:text-zinc-400 mt-2 text-sm leading-6">
           {render_slot(@subtitle)}
         </p>
       </div>
@@ -599,7 +600,7 @@ defmodule NeedlistWeb.CoreComponents do
       assign(
         assigns,
         :class,
-        "dark:text-blue-300 hover:underline visited:dark:text-purple-300 visited:text-purple-600 font-medium text-blue-600 testclass"
+        "dark:text-blue-300 hover:underline visited:dark:text-purple-300 visited:text-purple-600 font-medium text-blue-600"
       )
 
     ~H"""

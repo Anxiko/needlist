@@ -4,6 +4,7 @@ defmodule NeedlistWeb.OauthController do
   import Nullables.Result, only: [tag_error: 2]
 
   require Logger
+  alias Needlist.Accounts
   alias Needlist.Users
   alias Needlist.Discogs.Api
   alias Needlist.Discogs.Api.Types.Identity
@@ -36,10 +37,14 @@ defmodule NeedlistWeb.OauthController do
            Oauth.generate_oauth_access_tokens(request_token_pair, oauth_verifier) |> tag_error(:access),
          {:ok, %Identity{id: id, username: username}} <-
            Api.identity(access_token_pair) |> tag_error(:identity),
-         {:ok, _} <- Users.upsert_user_with_oauth_tokens(id, username, access_token_pair) do
+         {:ok, user} <- Users.upsert_user_with_oauth_tokens(id, username, access_token_pair),
+         account = conn.assigns.current_account,
+         {:ok, _} <- Accounts.associate_with_user(account, user) do
       conn
-      |> put_status(200)
-      |> text("You are now logged in as #{username}")
+      |> put_status(:found)
+      |> put_flash(:info, "Your account is now linked to your Discogs user #{username}")
+      |> redirect(to: ~p"/accounts/settings")
+      |> halt()
     else
       error ->
         Logger.warning("Failed to process OAuth callback: #{inspect(error)}", error: error)
