@@ -22,7 +22,11 @@ defmodule NeedlistWeb.Router do
 
     get "/", PageController, :home
 
-    live "/needlist/:username", NeedlistLive
+    scope "/needlist" do
+      pipe_through [:require_authenticated_account]
+
+      live "/:username", NeedlistLive
+    end
   end
 
   scope "/oauth", NeedlistWeb do
