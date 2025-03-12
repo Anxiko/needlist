@@ -21,8 +21,7 @@ defmodule NeedlistWeb.AccountConfirmationInstructionsLive do
       </.simple_form>
 
       <p class="text-center mt-4">
-        <.link href={~p"/accounts/register"}>Register</.link>
-        | <.link href={~p"/accounts/log_in"}>Log in</.link>
+        <.link href={~p"/accounts/register"}>Register</.link> | <.link href={~p"/accounts/log_in"}>Log in</.link>
       </p>
     </div>
     """

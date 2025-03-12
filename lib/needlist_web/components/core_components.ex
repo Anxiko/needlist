@@ -396,7 +396,7 @@ defmodule NeedlistWeb.CoreComponents do
 
   def label(assigns) do
     ~H"""
-    <label for={@for} class={["text-zinc-800 block text-sm font-semibold leading-6",  @class]}>
+    <label for={@for} class={["text-zinc-800 block text-sm font-semibold leading-6", @class]}>
       {render_slot(@inner_block)}
     </label>
     """

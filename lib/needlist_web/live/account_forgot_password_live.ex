@@ -20,8 +20,7 @@ defmodule NeedlistWeb.AccountForgotPasswordLive do
         </:actions>
       </.simple_form>
       <p class="text-center text-sm mt-4">
-        <.link href={~p"/accounts/register"}>Register</.link>
-        | <.link href={~p"/accounts/log_in"}>Log in</.link>
+        <.link href={~p"/accounts/register"}>Register</.link> | <.link href={~p"/accounts/log_in"}>Log in</.link>
       </p>
     </div>
     """
