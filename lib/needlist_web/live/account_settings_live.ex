@@ -1,10 +1,10 @@
 defmodule NeedlistWeb.AccountSettingsLive do
-  require Logger
-  alias Needlist.Discogs
-  alias Needlist.Repo.User
-  alias Needlist.Accounts.Account
   use NeedlistWeb, :live_view
 
+  require Logger
+
+  alias Needlist.Repo.User
+  alias Needlist.Accounts.Account
   alias Needlist.Accounts
 
   def render(assigns) do
@@ -193,7 +193,7 @@ defmodule NeedlistWeb.AccountSettingsLive do
   defp link_to_discogs(%{account: %Account{user: %User{}}} = assigns) do
     ~H"""
     <div>
-      <div class="text-zinc-800 block text-sm font-semibold leading-6 dark:text-white">
+      <div class="text-zinc-800 block text-sm font-semibold leading-6 dark:text-white mb-8">
         Linked to Discogs account {@account.user.username}
       </div>
       <.button phx-click="unlink">

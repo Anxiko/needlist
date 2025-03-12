@@ -2,7 +2,6 @@ defmodule NeedlistWeb.OauthController do
   use NeedlistWeb, :controller
 
   import Nullables.Result, only: [tag_error: 2]
-  import Phoenix.LiveView, only: [push_navigate: 2]
 
   require Logger
   alias Needlist.Accounts
