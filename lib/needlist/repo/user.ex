@@ -32,7 +32,8 @@ defmodule Needlist.Repo.User do
           id: integer(),
           username: String.t(),
           oauth: Oauth.t() | nil,
-          wantlists: [Wantlist.t()] | NotLoaded.t()
+          wantlists: [Wantlist.t()] | NotLoaded.t(),
+          account: Account.t() | nil | NotLoaded.t()
         }
 
   use EctoExtra.SchemaType, schema: __MODULE__
