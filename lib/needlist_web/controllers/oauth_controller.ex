@@ -42,9 +42,10 @@ defmodule NeedlistWeb.OauthController do
          account = conn.assigns.current_account,
          {:ok, _} <- Accounts.associate_with_user(account, user) do
       conn
-      |> put_status(200)
+      |> put_status(:found)
       |> put_flash(:info, "Your account is now linked to your Discogs user #{username}")
       |> redirect(to: ~p"/accounts/settings")
+      |> halt()
     else
       error ->
         Logger.warning("Failed to process OAuth callback: #{inspect(error)}", error: error)
