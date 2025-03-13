@@ -5,7 +5,9 @@ defmodule NeedlistWeb.AccountAuth do
   import Plug.Conn
   import Phoenix.Controller
 
+  alias Needlist.Repo.User
   alias Needlist.Accounts
+  alias Needlist.Accounts.Account
 
   # Make the remember me cookie valid for 60 days.
   # If you want bump or reduce this value, also change
@@ -172,6 +174,39 @@ defmodule NeedlistWeb.AccountAuth do
       {:halt, Phoenix.LiveView.redirect(socket, to: signed_in_path(socket))}
     else
       {:cont, socket}
+    end
+  end
+
+  def on_mount(:authenticated_with_linked_user, %{"username" => username}, session, socket) do
+    socket = mount_current_account(socket, session)
+
+    case socket.assigns.current_account do
+      nil ->
+        socket =
+          socket
+          |> Phoenix.LiveView.put_flash(:error, "You must log in to access this page.")
+          |> Phoenix.LiveView.redirect(to: ~p"/accounts/log_in")
+
+        {:halt, socket}
+
+      %Account{user: nil} ->
+        socket =
+          socket
+          |> Phoenix.LiveView.put_flash(:error, "You must first link your Discogs account.")
+          |> Phoenix.LiveView.redirect(to: ~p"/accounts/settings")
+
+        {:halt, socket}
+
+      %Account{user: %User{username: ^username}} ->
+        {:cont, socket}
+
+      %Account{user: %User{username: other_username}} ->
+        socket =
+          socket
+          |> Phoenix.LiveView.put_flash(:error, "You may only see your own needlist.")
+          |> Phoenix.LiveView.redirect(to: ~p"/needlist/#{other_username}")
+
+        {:halt, socket}
     end
   end
 
