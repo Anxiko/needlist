@@ -21,10 +21,12 @@ defmodule NeedlistWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :home
+  end
 
-    scope "/needlist" do
-      pipe_through [:require_authenticated_account]
+  scope "/needlist", NeedlistWeb do
+    pipe_through [:browser, :require_authenticated_account]
 
+    live_session :authenticated_with_linked_user, on_mount: {NeedlistWeb.AccountAuth, :authenticated_with_linked_user} do
       live "/:username", NeedlistLive
     end
   end

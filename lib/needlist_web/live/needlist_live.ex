@@ -22,24 +22,15 @@ defmodule NeedlistWeb.NeedlistLive do
 
   @impl true
   def mount(%{"username" => username}, _session, socket) do
-    if connected?(socket) and username == socket.assigns.current_account.user.username do
-      {
-        :ok,
-        socket
-        |> assign(:username, username)
-        |> assign(:current_page, nil)
-        |> assign(:loading_page, nil)
-        |> assign(:state, State.default())
-        |> assign(:pending_wantlist_updates, %{})
-      }
-    else
-      {
-        :ok,
-        socket
-        |> put_flash(:error, "You are not authorized to see this user's needlist")
-        |> redirect(to: ~p"/")
-      }
-    end
+    {
+      :ok,
+      socket
+      |> assign(:username, username)
+      |> assign(:current_page, nil)
+      |> assign(:loading_page, nil)
+      |> assign(:state, State.default())
+      |> assign(:pending_wantlist_updates, %{})
+    }
   end
 
   @impl true
