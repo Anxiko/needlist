@@ -19,7 +19,7 @@ defmodule Needlist.Python do
   @spec do_scrape_listings(pid(), integer()) :: Result.result(String.t())
   defp do_scrape_listings(pid, release_id) do
     pid
-    |> :python.call(:discogs_scrapper, :scrape_listings, [release_id])
+    |> :python.call(:discogs_scraper, :scrape_listings, [release_id])
     |> case do
       {~c"error", status_code} -> {:error, {:status_code, status_code}}
       {~c"ok", response} -> {:ok, to_string(response)}

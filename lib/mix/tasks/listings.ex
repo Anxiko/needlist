@@ -11,7 +11,7 @@ defmodule Mix.Tasks.Listings do
   alias Needlist.Releases
   alias Needlist.Repo.Listing
 
-  @scrapped_filename_pattern ~r"release_listings_(?P<release_id>\d+)\.html$"
+  @scraped_filename_pattern ~r"release_listings_(?P<release_id>\d+)\.html$"
 
   @requirements ["app.start"]
 
@@ -21,9 +21,9 @@ defmodule Mix.Tasks.Listings do
     save_to_file(release_id, raw_document)
   end
 
-  def run(["insert", scrapped_file]) do
-    raw_document = File.read!(scrapped_file)
-    release_id = parse_scrapped_filename(scrapped_file)
+  def run(["insert", scraped_file]) do
+    raw_document = File.read!(scraped_file)
+    release_id = parse_scraped_filename(scraped_file)
     insert_listings(release_id, raw_document)
   end
 
@@ -41,7 +41,7 @@ defmodule Mix.Tasks.Listings do
   end
 
   defp save_to_file(release_id, raw_document) do
-    file_path = scrapped_file_path(release_id)
+    file_path = scraped_file_path(release_id)
     File.write!(file_path, raw_document)
     Logger.info("Saved listings to #{file_path}")
   end
@@ -50,10 +50,10 @@ defmodule Mix.Tasks.Listings do
   defp insert_listings(release_id, raw_document) do
     {:ok, document} = Floki.parse_document(raw_document)
 
-    {:ok, scrapped_listings} = Needlist.Discogs.Scraper.parse(document)
+    {:ok, scraped_listings} = Needlist.Discogs.Scraper.Listing.parse(document)
 
     listing_params_list =
-      Enum.map(scrapped_listings, &Listing.params_from_scrapped(&1, release_id))
+      Enum.map(scraped_listings, &Listing.params_from_scraped(&1, release_id))
 
     Logger.info("Found #{length(listing_params_list)} listings for #{release_id}")
 
@@ -63,14 +63,14 @@ defmodule Mix.Tasks.Listings do
     :ok
   end
 
-  @spec scrapped_file_path(integer()) :: String.t()
-  defp scrapped_file_path(release_id) do
+  @spec scraped_file_path(integer()) :: String.t()
+  defp scraped_file_path(release_id) do
     ".payloads/release_listings_#{release_id}.html"
   end
 
-  @spec parse_scrapped_filename(String.t()) :: integer()
-  defp parse_scrapped_filename(scrapped_filename) do
-    %{"release_id" => release_id} = Regex.named_captures(@scrapped_filename_pattern, scrapped_filename)
+  @spec parse_scraped_filename(String.t()) :: integer()
+  defp parse_scraped_filename(scraped_filename) do
+    %{"release_id" => release_id} = Regex.named_captures(@scraped_filename_pattern, scraped_filename)
     String.to_integer(release_id)
   end
 end

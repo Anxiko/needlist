@@ -1,4 +1,4 @@
-defmodule Needlist.Discogs.Scraper.Description do
+defmodule Needlist.Discogs.Scraper.Listing.Description do
   @moduledoc false
 
   @href_listing_pattern ~r"/sell/item/(?P<listing_id>\d+)$"
@@ -13,7 +13,7 @@ defmodule Needlist.Discogs.Scraper.Description do
           sleeve_condition: String.t() | nil
         }
 
-  import Needlist.Discogs.Scraper.Parsing, only: [node_outer_text: 1]
+  import Needlist.Discogs.Scraper.Listing.Parsing, only: [node_outer_text: 1]
 
   @spec parse(Floki.html_node()) :: {:ok, t()} | {:error, any()}
   def parse(row) do

@@ -53,9 +53,9 @@ defmodule Needlist.Repo.Wantlist do
     |> EctoExtra.validate_number(:rating, [:non_neg])
   end
 
-  @spec from_scrapped_want(want :: Want.t(), release_id :: non_neg_integer()) ::
+  @spec from_scraped_want(want :: Want.t(), release_id :: non_neg_integer()) ::
           {:ok, t()} | {:error, Ecto.Changeset.t()}
-  def from_scrapped_want(%Want{id: release_id, notes: notes, rating: rating, date_added: date_added}, user_id) do
+  def from_scraped_want(%Want{id: release_id, notes: notes, rating: rating, date_added: date_added}, user_id) do
     %{user_id: user_id, release_id: release_id, date_added: date_added, notes: notes, rating: rating}
     |> changeset()
     |> Changeset.apply_action(:cast)

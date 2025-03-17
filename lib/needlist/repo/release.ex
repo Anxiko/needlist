@@ -98,6 +98,12 @@ defmodule Needlist.Repo.Release do
     where(query, id: ^release_id)
   end
 
+  @spec contains_id(query :: Ecto.Query.t() | __MODULE__, release_ids :: [integer()]) :: Ecto.Query.t()
+  @spec contains_id(release_ids :: [integer()]) :: Ecto.Query.t()
+  def contains_id(query \\ __MODULE__, release_ids) do
+    where(query, [r], r.id in ^release_ids)
+  end
+
   @spec from_want(Want.t()) :: Result.result(t(), Changeset.t(t()))
   def from_want(%Want{id: id, basic_information: basic_information}) do
     basic_information

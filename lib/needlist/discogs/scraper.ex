@@ -1,50 +1,58 @@
 defmodule Needlist.Discogs.Scraper do
   @moduledoc """
-  Scrape lists of listings from Discogs webpage
+  High level scraping operations.
   """
 
-  alias Needlist.Discogs.Scraper.Description
-  alias Needlist.Discogs.Scraper.Price
+  alias Needlist.Repo.Listing
+  alias Needlist.Repo
+  alias Needlist.Repo.Release
+  alias Needlist.Releases
   alias Nullables.Result
+  alias Needlist.Discogs.Scraper.Listing, as: ListingScraper
 
-  @keys [:description, :price]
-  @enforce_keys @keys
-  defstruct @keys
+  @type listings_src() :: {:release, integer() | [integer()]} | {:outdated, keyword()}
 
-  @type t() :: %__MODULE__{
-          description: Description.t(),
-          price: Price.t()
-        }
-
-  @spec scrape_listings(integer()) :: Result.result([t])
-  def scrape_listings(release_id) do
-    release_id
-    |> download()
-    |> Result.flat_map(&parse/1)
-  end
-
-  @spec download(integer()) :: {:ok, Floki.html_tree()} | {:error, any}
-  def download(release_id) do
-    release_id
-    |> Needlist.Python.scrape_listings()
-    |> Nullables.Result.flat_map(&Floki.parse_document/1)
-  end
-
-  @spec parse(Floki.html_tree()) :: Result.result([t()])
-  def parse(html_tree) do
-    html_tree
-    |> Floki.find(~s/tr[data-release-id]/)
-    |> Enum.map(&parse_row/1)
+  @spec scrape_listings(src :: listings_src()) :: Result.result([Release.t()])
+  def scrape_listings(src) do
+    src
+    |> releases_from_source()
+    |> Task.async_stream(
+      fn release ->
+        with {:ok, listings} <- ListingScraper.scrape_listings(release.id) do
+          listings = Enum.map(listings, &Listing.params_from_scraped(&1, release.id))
+          {:ok, {release, listings}}
+        end
+      end,
+      timeout: 15 * 1_000,
+      on_timeout: :kill_task
+    )
+    |> Stream.map(fn
+      {:ok, {:ok, pair}} -> {:ok, pair}
+      {:ok, {:error, reason}} -> {:error, {:listing, reason}}
+      {:error, reason} -> {:error, {:task, reason}}
+    end)
     |> Result.try_reduce()
+    |> Result.map(fn pairs ->
+      Repo.transaction(fn ->
+        Enum.map(pairs, fn {release, listings} ->
+          case Releases.update_active_listings(release, listings) do
+            {:ok, release} -> release
+            {:error, error} -> Repo.rollback(error)
+          end
+        end)
+      end)
+    end)
   end
 
-  @spec parse_row(Floki.html_node()) :: Result.result(t())
-  defp parse_row(row) do
-    with {_, {:ok, description}} <- {:description, Description.parse(row)},
-         {_, {:ok, price}} <- {:price, Price.parse(row)} do
-      {:ok, %__MODULE__{description: description, price: price}}
-    else
-      {step, {:error, error}} -> {:error, {step, error}}
-    end
+  @spec releases_from_source(listings_src()) :: [Release.t()]
+  defp releases_from_source({:release, id_or_ids}) when is_integer(id_or_ids) or is_list(id_or_ids) do
+    id_or_ids
+    |> List.wrap()
+    |> Releases.get_many_by_id()
+  end
+
+  defp releases_from_source({:outdated, options}) do
+    options
+    |> Releases.outdated_listings()
   end
 end

@@ -27,6 +27,13 @@ defmodule Needlist.Releases do
     |> Nullables.nullable_to_result(:not_found)
   end
 
+  @spec get_many_by_id(release_ids :: [integer()]) :: [Release.t()]
+  def get_many_by_id(release_ids) do
+    Release
+    |> Release.contains_id(release_ids)
+    |> Repo.all()
+  end
+
   @spec update_active_listings(Release.t(), [map()]) :: {:ok, Release.t()} | {:error, Changeset.t()}
   def update_active_listings(%Release{id: release_id} = release, active_listings) do
     timestamp = DateTime.utc_now()
