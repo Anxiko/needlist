@@ -21,27 +21,69 @@ defmodule Needlist.Discogs.Scraper do
 
   @per_page 500
 
-  @spec scrape_listings(src :: listings_src()) :: Result.result([Release.t()])
+  @spec scrape_listings(src :: listings_src()) :: %{:ok => [integer()], :error => [{integer(), atom(), any()}]}
   def scrape_listings(src) do
-    src
-    |> releases_from_source()
+    {scraped_pairs, scraped_error} =
+      get_listings_for_releases(src)
+
+    {inserted_ok, inserted_error} =
+      scraped_pairs
+      |> then(&insert_release_listings_pairs/1)
+      |> case do
+        {:ok, inserted} ->
+          {inserted, []}
+
+        {:error, reason} ->
+          {[], Enum.map(scraped_pairs, fn {release, _listings} -> {:error, {:insert, release, reason}} end)}
+      end
+
+    %{
+      ok: Enum.map(inserted_ok, &Map.fetch!(&1, :id)),
+      error:
+        Enum.map(scraped_error ++ inserted_error, fn {:error, {step, release, details}} ->
+          {release.id, step, details}
+        end)
+    }
+  end
+
+  @spec get_listings_for_releases(listings_src()) :: {[{Release.t(), map()}], [{Release.t(), atom(), any()}]}
+  defp get_listings_for_releases(src) do
+    {ok_pairs, errors} =
+      src
+      |> releases_from_source()
+      |> fetch_listings_async()
+      |> Enum.split_with(fn
+        {:ok, _pair} -> true
+        {:error, _details} -> false
+      end)
+
+    {Enum.map(ok_pairs, fn {:ok, pair} -> pair end), errors}
+  end
+
+  @spec fetch_listings_async([Release.t()]) :: [{:ok, {Release.t(), [map()]}} | {:error, {atom(), Release.t(), any()}}]
+  defp fetch_listings_async(releases) do
+    releases
     |> Task.async_stream(
       fn release ->
-        with {:ok, listings} <- ListingScraper.scrape_listings(release.id) do
-          listings = Enum.map(listings, &Listing.params_from_scraped(&1, release.id))
-          {:ok, {release, listings}}
+        case ListingScraper.scrape_listings(release.id) do
+          {:ok, listings} ->
+            listings = Enum.map(listings, &Listing.params_from_scraped(&1, release.id))
+            {:ok, {release, listings}}
+
+          {:error, reason} ->
+            {:error, {release, reason}}
         end
       end,
       timeout: 15 * 1_000,
-      on_timeout: :kill_task
+      on_timeout: :kill_task,
+      max_concurrency: 5,
+      zip_input_on_exit: true
     )
-    |> Stream.map(fn
+    |> Enum.map(fn
       {:ok, {:ok, pair}} -> {:ok, pair}
-      {:ok, {:error, reason}} -> {:error, {:listing, reason}}
-      {:error, reason} -> {:error, {:task, reason}}
+      {:ok, {:error, {release, reason}}} -> {:error, {:scrape, release, reason}}
+      {:exit, {release, reason}} -> {:error, {:task, release, reason}}
     end)
-    |> Result.try_reduce()
-    |> Result.map(&insert_release_listings_pairs/1)
   end
 
   @spec releases_from_source(listings_src()) :: [Release.t()]
