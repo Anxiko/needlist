@@ -53,7 +53,7 @@ defmodule Mix.Tasks.DownloadWantlist do
 
       wants
       |> Enum.map(fn want ->
-        {:ok, want} = Wantlist.from_scrapped_want(want, user.id)
+        {:ok, want} = Wantlist.from_scraped_want(want, user.id)
         want
       end)
       |> Enum.each(

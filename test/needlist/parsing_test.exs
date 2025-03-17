@@ -122,7 +122,7 @@ defmodule Needlist.ParsingTest do
 
       wantlists =
         items
-        |> Enum.map(&Wantlist.from_scrapped_want(&1, id))
+        |> Enum.map(&Wantlist.from_scraped_want(&1, id))
         |> Enum.map(&Result.unwrap!/1)
         |> Enum.map(&Repo.insert!/1)
 

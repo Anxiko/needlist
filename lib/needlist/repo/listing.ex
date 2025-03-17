@@ -7,7 +7,7 @@ defmodule Needlist.Repo.Listing do
   import Ecto.Query
 
   alias Needlist.Repo.Release
-  alias Needlist.Discogs.Scraper
+  alias Needlist.Discogs.Scraper.Listing, as: ListingScraper
 
   alias Money.Ecto.Composite.Type, as: MoneyEcto
   alias Ecto.Changeset
@@ -48,20 +48,20 @@ defmodule Needlist.Repo.Listing do
     |> Changeset.validate_required(@required_fields)
   end
 
-  @spec params_from_scrapped(Scraper.t(), integer()) :: map()
-  def params_from_scrapped(%Scraper{} = scrapper, release_id) do
-    %Scraper{
-      price: %Scraper.Price{
+  @spec params_from_scraped(ListingScraper.t(), integer()) :: map()
+  def params_from_scraped(%ListingScraper{} = scraper, release_id) do
+    %ListingScraper{
+      price: %ListingScraper.Price{
         base: base_price,
         shipping: shipping_price,
         total: total_price
       },
-      description: %Scraper.Description{
+      description: %ListingScraper.Description{
         media_condition: media_condition,
         sleeve_condition: sleeve_condition,
         listing_id: id
       }
-    } = scrapper
+    } = scraper
 
     %{
       id: id,

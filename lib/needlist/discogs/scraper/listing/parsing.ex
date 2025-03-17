@@ -1,4 +1,4 @@
-defmodule Needlist.Discogs.Scraper.Parsing do
+defmodule Needlist.Discogs.Scraper.Listing.Parsing do
   @moduledoc false
 
   @spec find_node_by_selector(Floki.html_node() | Floki.html_tree(), String.t()) ::

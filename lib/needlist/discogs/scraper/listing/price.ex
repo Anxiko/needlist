@@ -1,13 +1,13 @@
-defmodule Needlist.Discogs.Scraper.Price do
+defmodule Needlist.Discogs.Scraper.Listing.Price do
   @moduledoc """
-  Parse the price information of a listing obtained through the scrapper
+  Parse the price information of a listing obtained through the scraper
   """
 
   @raw_price_pattern ~r/\+?(?P<currency>[^\d]+)(?P<value>[\d\.,]+)$/
   @free_shipping "+no extra shipping"
   @unspecified_shipping "+"
 
-  import Needlist.Discogs.Scraper.Parsing, only: [node_outer_text: 1, find_node_by_selector: 2]
+  import Needlist.Discogs.Scraper.Listing.Parsing, only: [node_outer_text: 1, find_node_by_selector: 2]
 
   @keys [:base, :shipping, :total]
   @enforce_keys @keys

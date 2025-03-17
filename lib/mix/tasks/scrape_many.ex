@@ -6,7 +6,7 @@ defmodule Mix.Tasks.ScrapeMany do
   require Logger
   alias Nullables.Result
   alias Needlist.Repo.Listing
-  alias Needlist.Discogs.Scraper
+  alias Needlist.Discogs.Scraper.Listing, as: ListingScraper
   alias Needlist.Repo.Release
   alias Needlist.Releases
 
@@ -35,20 +35,24 @@ defmodule Mix.Tasks.ScrapeMany do
     Logger.warning("Processed error: #{inspect(error_results, charlists: :as_lists)}")
   end
 
+  def run(args) do
+    IO.puts("Invalid args: #{inspect(args)}")
+  end
+
   @spec scrape_release(Release.t()) :: {integer(), {:ok, Release.t()} | {:error, any()}}
   def scrape_release(%Release{id: release_id} = release) do
     Logger.debug("Starting #{release_id}")
 
     release_id
-    |> Scraper.scrape_listings()
+    |> ListingScraper.scrape_listings()
     |> Result.flat_map(fn listings ->
       listings
-      |> Enum.map(&Listing.params_from_scrapped(&1, release_id))
+      |> Enum.map(&Listing.params_from_scraped(&1, release_id))
       |> then(&Releases.update_active_listings(release, &1))
     end)
     |> tap(fn result ->
       case result do
-        {:ok, _release} -> Logger.info("Scrapped #{release_id}")
+        {:ok, _release} -> Logger.info("Scraped #{release_id}")
         {:error, error} -> Logger.warning("Failed to scrape #{release_id}: #{inspect(error)}")
       end
     end)
