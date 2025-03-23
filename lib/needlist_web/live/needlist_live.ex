@@ -30,6 +30,7 @@ defmodule NeedlistWeb.NeedlistLive do
       |> assign(:loading_page, nil)
       |> assign(:state, State.default())
       |> assign(:pending_wantlist_updates, %{})
+      |> assign(:note_editing, MapSet.new())
     }
   end
 
@@ -84,6 +85,31 @@ defmodule NeedlistWeb.NeedlistLive do
         Wantlists.update_wantlist(username, release_id, rating: score)
       end)
       |> update(:pending_wantlist_updates, &Map.put(&1, release_id, score))
+
+    {:noreply, socket}
+  end
+
+  def handle_event("edit-note", %{"release-id" => release_id}, socket) do
+    release_id = String.to_integer(release_id)
+
+    socket =
+      update(socket, :note_editing, &MapSet.put(&1, release_id))
+
+    {:noreply, socket}
+  end
+
+  def handle_event("cancel-note", %{"release-id" => release_id}, socket) do
+    release_id = String.to_integer(release_id)
+
+    socket = update(socket, :note_editing, &MapSet.delete(&1, release_id))
+
+    {:noreply, socket}
+  end
+
+  def handle_event("save-note", %{"release-id" => release_id}, socket) do
+    release_id = String.to_integer(release_id)
+
+    socket = update(socket, :note_editing, &MapSet.delete(&1, release_id))
 
     {:noreply, socket}
   end
