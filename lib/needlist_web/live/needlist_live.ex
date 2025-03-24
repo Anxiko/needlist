@@ -1,6 +1,6 @@
 defmodule NeedlistWeb.NeedlistLive do
-  alias Needlist.Discogs.Pagination.PageInfo
   alias Needlist.Repo.Pagination
+  alias Needlist.Repo.Pagination.PageInfo
   alias Needlist.Repo.Wantlist
   alias Needlist.Types.QueryOptions
   alias Needlist.Types.QueryOptions.SortKey
