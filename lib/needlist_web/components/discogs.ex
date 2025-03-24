@@ -11,7 +11,7 @@ defmodule NeedlistWeb.Components.Discogs do
 
   alias Phoenix.LiveView.Rendered
 
-  import NeedlistWeb.CoreComponents, only: [styled_link: 1, button: 1]
+  import NeedlistWeb.CoreComponents, only: [styled_link: 1, button: 1, input: 1]
 
   attr :score, :integer, required: true
   attr :max_score, :integer, default: 5
@@ -36,79 +36,90 @@ defmodule NeedlistWeb.Components.Discogs do
   end
 
   attr :notes, :any, required: true
-  attr :editable, :boolean, default: false
+  attr :changeset, :any, required: true
   attr :release_id, :integer, required: true
 
   @spec release_notes(map()) :: Rendered.t()
-  def release_notes(assigns) do
+  def release_notes(%{changeset: nil} = assigns) do
     ~H"""
     <div class="flex flex-row justify-between gap-1 items-center">
-      <%= if @notes == nil and !@editable do %>
+      <%= if @notes == nil do %>
         <span class="italic"> Edit </span>
       <% else %>
-        <p contenteditable={@editable}> {@notes} </p>
+        <p>{@notes}</p>
       <% end %>
-      <div class="flex flex-col justify-self-end">
-        <.button :if={!@editable} phx-click="edit-note" phx-value-release-id={@release_id}>
-          <svg
-            class="w-6 h-6 text-gray-800 dark:text-white"
-            aria-hidden="true"
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            fill="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              fill-rule="evenodd"
-              d="M11.32 6.176H5c-1.105 0-2 .949-2 2.118v10.588C3 20.052 3.895 21 5 21h11c1.105 0 2-.948 2-2.118v-7.75l-3.914 4.144A2.46 2.46 0 0 1 12.81 16l-2.681.568c-1.75.37-3.292-1.263-2.942-3.115l.536-2.839c.097-.512.335-.983.684-1.352l2.914-3.086Z"
-              clip-rule="evenodd"
-            />
-            <path
-              fill-rule="evenodd"
-              d="M19.846 4.318a2.148 2.148 0 0 0-.437-.692 2.014 2.014 0 0 0-.654-.463 1.92 1.92 0 0 0-1.544 0 2.014 2.014 0 0 0-.654.463l-.546.578 2.852 3.02.546-.579a2.14 2.14 0 0 0 .437-.692 2.244 2.244 0 0 0 0-1.635ZM17.45 8.721 14.597 5.7 9.82 10.76a.54.54 0 0 0-.137.27l-.536 2.84c-.07.37.239.696.588.622l2.682-.567a.492.492 0 0 0 .255-.145l4.778-5.06Z"
-              clip-rule="evenodd"
-            />
-          </svg>
-        </.button>
-        <.button :if={@editable} phx-click="save-note" phx-value-release-id={@release_id}>
-          <svg
-            class="w-6 h-6 text-gray-800 dark:text-white"
-            aria-hidden="true"
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            fill="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              fill-rule="evenodd"
-              d="M5 3a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V7.414A2 2 0 0 0 20.414 6L18 3.586A2 2 0 0 0 16.586 3H5Zm10 11a3 3 0 1 1-6 0 3 3 0 0 1 6 0ZM8 7V5h8v2a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1Z"
-              clip-rule="evenodd"
-            />
-          </svg>
-        </.button>
-        <.button :if={@editable} phx-click="cancel-note" phx-value-release-id={@release_id}>
-          <svg
-            class="w-6 h-6 text-gray-800 dark:text-white"
-            aria-hidden="true"
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            fill="none"
-            viewBox="0 0 24 24"
-          >
-            <path
-              stroke="currentColor"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M6 18 17.94 6M18 18 6.06 6"
-            />
-          </svg>
-        </.button>
-      </div>
+      <.button phx-click="edit-note" phx-value-release-id={@release_id} phx-value-notes={@notes}>
+        <svg
+          class="w-6 h-6 text-gray-800 dark:text-white"
+          aria-hidden="true"
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          fill="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            fill-rule="evenodd"
+            d="M11.32 6.176H5c-1.105 0-2 .949-2 2.118v10.588C3 20.052 3.895 21 5 21h11c1.105 0 2-.948 2-2.118v-7.75l-3.914 4.144A2.46 2.46 0 0 1 12.81 16l-2.681.568c-1.75.37-3.292-1.263-2.942-3.115l.536-2.839c.097-.512.335-.983.684-1.352l2.914-3.086Z"
+            clip-rule="evenodd"
+          />
+          <path
+            fill-rule="evenodd"
+            d="M19.846 4.318a2.148 2.148 0 0 0-.437-.692 2.014 2.014 0 0 0-.654-.463 1.92 1.92 0 0 0-1.544 0 2.014 2.014 0 0 0-.654.463l-.546.578 2.852 3.02.546-.579a2.14 2.14 0 0 0 .437-.692 2.244 2.244 0 0 0 0-1.635ZM17.45 8.721 14.597 5.7 9.82 10.76a.54.54 0 0 0-.137.27l-.536 2.84c-.07.37.239.696.588.622l2.682-.567a.492.492 0 0 0 .255-.145l4.778-5.06Z"
+            clip-rule="evenodd"
+          />
+        </svg>
+      </.button>
     </div>
+    """
+  end
+
+  def release_notes(assigns) do
+    ~H"""
+    <.form :let={form} for={@changeset} as={:notes} phx-change="notes-validate" phx-submit="notes-submit">
+      <div class="flex flex-row justify-between gap-1 items-center">
+        <.input type="textarea" field={form[:note]}/>
+        <.input type="hidden" field={form[:release_id]} />
+        <div class="flex flex-col justify-self-end">
+          <.button type="submit">
+            <svg
+              class="w-6 h-6 text-gray-800 dark:text-white"
+              aria-hidden="true"
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              fill="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M5 3a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V7.414A2 2 0 0 0 20.414 6L18 3.586A2 2 0 0 0 16.586 3H5Zm10 11a3 3 0 1 1-6 0 3 3 0 0 1 6 0ZM8 7V5h8v2a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1Z"
+                clip-rule="evenodd"
+              />
+            </svg>
+          </.button>
+          <.button phx-click="cancel-note" phx-value-release-id={@release_id}>
+            <svg
+              class="w-6 h-6 text-gray-800 dark:text-white"
+              aria-hidden="true"
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M6 18 17.94 6M18 18 6.06 6"
+              />
+            </svg>
+          </.button>
+        </div>
+      </div>
+    </.form>
     """
   end
 

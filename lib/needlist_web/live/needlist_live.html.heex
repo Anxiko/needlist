@@ -51,7 +51,7 @@
                 <.release_notes
                   notes={item.notes}
                   release_id={item.release_id}
-                  editable={MapSet.member?(@note_editing, item.release_id)}
+                  changeset={Map.get(@notes_editing, item.release_id)}
                 />
               </td>
               <td class="px-6 py-4">

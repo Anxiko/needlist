@@ -30,7 +30,7 @@ defmodule NeedlistWeb.NeedlistLive do
       |> assign(:loading_page, nil)
       |> assign(:state, State.default())
       |> assign(:pending_wantlist_updates, %{})
-      |> assign(:note_editing, MapSet.new())
+      |> assign(:notes_editing, %{})
     }
   end
 
@@ -89,11 +89,12 @@ defmodule NeedlistWeb.NeedlistLive do
     {:noreply, socket}
   end
 
-  def handle_event("edit-note", %{"release-id" => release_id}, socket) do
+  def handle_event("edit-note", %{"release-id" => release_id, "notes" => notes}, socket) do
     release_id = String.to_integer(release_id)
+    changeset = notes_changeset(%{release_id: release_id, note: notes})
 
     socket =
-      update(socket, :note_editing, &MapSet.put(&1, release_id))
+      update(socket, :notes_editing, &Map.put(&1, release_id, changeset))
 
     {:noreply, socket}
   end
@@ -101,7 +102,7 @@ defmodule NeedlistWeb.NeedlistLive do
   def handle_event("cancel-note", %{"release-id" => release_id}, socket) do
     release_id = String.to_integer(release_id)
 
-    socket = update(socket, :note_editing, &MapSet.delete(&1, release_id))
+    socket = update(socket, :notes_editing, &MapSet.delete(&1, release_id))
 
     {:noreply, socket}
   end
@@ -109,7 +110,53 @@ defmodule NeedlistWeb.NeedlistLive do
   def handle_event("save-note", %{"release-id" => release_id}, socket) do
     release_id = String.to_integer(release_id)
 
-    socket = update(socket, :note_editing, &MapSet.delete(&1, release_id))
+    socket = update(socket, :notes_editing, &MapSet.delete(&1, release_id))
+
+    {:noreply, socket}
+  end
+
+  def handle_event("notes-validate", %{"notes" => %{"release_id" => release_id} = params}, socket) do
+    release_id = String.to_integer(release_id)
+
+    socket =
+      update(
+        socket,
+        :notes_editing,
+        &Map.update!(&1, release_id, fn changeset ->
+          notes_changeset(changeset.data, params)
+        end)
+      )
+
+    {:noreply, socket}
+  end
+
+  def handle_event("notes-submit", %{"notes" => %{"release_id" => release_id} = params}, socket) do
+    release_id = String.to_integer(release_id)
+
+    socket =
+      update(socket, :notes_editing, fn mapped_changesets ->
+        changeset = Map.fetch!(mapped_changesets, release_id)
+
+        case notes_changeset(changeset.data, params) do
+          %Ecto.Changeset{valid?: true} = changeset ->
+            notes = Ecto.Changeset.get_field(changeset, :notes)
+            release_id = Ecto.Changeset.get_field(changeset, :release_id)
+
+            socket
+            |> update(
+              :current_page,
+              &update_page_entry(&1, release_id, fn wantlist -> %{wantlist | notes: notes} end)
+            )
+            |> update(:notes_editing, &Map.delete(&1, release_id))
+
+          changeset ->
+            Logger.warning("Attempted to submit a notes form with errors: #{inspect(changeset)}",
+              error: inspect(changeset.errors)
+            )
+
+            socket
+        end
+      end)
 
     {:noreply, socket}
   end
@@ -247,8 +294,25 @@ defmodule NeedlistWeb.NeedlistLive do
     {:ok, Pagination.from_page(needlist, page, per_page, total)}
   end
 
+  @spec replace_page_entry(current_page :: paginated_wants(), Wantlist.t()) :: paginated_wants()
   defp replace_page_entry(current_page, %Wantlist{release_id: release_id} = wantlist) do
     put_in(current_page, [Access.elem(1), Access.key(:items), Access.find(&(&1.release_id == release_id))], wantlist)
+  end
+
+  @spec update_page_entry(current_page :: paginated_wants(), release_id :: integer(), (Wantlist.t() -> Wantlist.t())) ::
+          paginated_wants()
+  defp update_page_entry(current_page, release_id, updater) do
+    update_in(current_page, [Access.elem(1), Access.key(:items), Access.find(&(&1.release_id == release_id))], updater)
+  end
+
+  @spec notes_changeset(data :: map(), params :: map()) :: Ecto.Changeset.t()
+  @spec notes_changeset(data :: map()) :: Ecto.Changeset.t()
+  defp notes_changeset(data, params \\ %{}) do
+    types = %{release_id: :integer, notes: :string}
+
+    {data, types}
+    |> Ecto.Changeset.cast(params, Map.keys(types))
+    |> Ecto.Changeset.validate_required([:release_id, :notes])
   end
 
   defp want_artists(assigns) do
