@@ -48,7 +48,7 @@ defmodule NeedlistWeb.Components.Discogs do
       <% else %>
         <p>{@notes}</p>
       <% end %>
-      <.button phx-click="edit-note" phx-value-release-id={@release_id} phx-value-notes={@notes}>
+      <.button phx-click="notes-edit" phx-value-release-id={@release_id} phx-value-notes={if @notes, do: @notes, else: ""}>
         <svg
           class="w-6 h-6 text-gray-800 dark:text-white"
           aria-hidden="true"
@@ -78,7 +78,7 @@ defmodule NeedlistWeb.Components.Discogs do
     ~H"""
     <.form :let={form} for={@changeset} as={:notes} phx-change="notes-validate" phx-submit="notes-submit">
       <div class="flex flex-row justify-between gap-1 items-center">
-        <.input type="textarea" field={form[:note]}/>
+        <.input type="textarea" field={form[:notes]}/>
         <.input type="hidden" field={form[:release_id]} />
         <div class="flex flex-col justify-self-end">
           <.button type="submit">
@@ -98,7 +98,7 @@ defmodule NeedlistWeb.Components.Discogs do
               />
             </svg>
           </.button>
-          <.button phx-click="cancel-note" phx-value-release-id={@release_id}>
+          <.button type="button" phx-click="notes-cancel" phx-value-release-id={@release_id}>
             <svg
               class="w-6 h-6 text-gray-800 dark:text-white"
               aria-hidden="true"

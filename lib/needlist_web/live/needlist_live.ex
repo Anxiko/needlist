@@ -89,9 +89,9 @@ defmodule NeedlistWeb.NeedlistLive do
     {:noreply, socket}
   end
 
-  def handle_event("edit-note", %{"release-id" => release_id, "notes" => notes}, socket) do
+  def handle_event("notes-edit", %{"release-id" => release_id, "notes" => notes}, socket) do
     release_id = String.to_integer(release_id)
-    changeset = notes_changeset(%{release_id: release_id, note: notes})
+    changeset = notes_changeset(%{release_id: release_id, notes: notes})
 
     socket =
       update(socket, :notes_editing, &Map.put(&1, release_id, changeset))
@@ -99,18 +99,10 @@ defmodule NeedlistWeb.NeedlistLive do
     {:noreply, socket}
   end
 
-  def handle_event("cancel-note", %{"release-id" => release_id}, socket) do
+  def handle_event("notes-cancel", %{"release-id" => release_id}, socket) do
     release_id = String.to_integer(release_id)
 
-    socket = update(socket, :notes_editing, &MapSet.delete(&1, release_id))
-
-    {:noreply, socket}
-  end
-
-  def handle_event("save-note", %{"release-id" => release_id}, socket) do
-    release_id = String.to_integer(release_id)
-
-    socket = update(socket, :notes_editing, &MapSet.delete(&1, release_id))
+    socket = update(socket, :notes_editing, &Map.delete(&1, release_id))
 
     {:noreply, socket}
   end
@@ -132,31 +124,27 @@ defmodule NeedlistWeb.NeedlistLive do
 
   def handle_event("notes-submit", %{"notes" => %{"release_id" => release_id} = params}, socket) do
     release_id = String.to_integer(release_id)
+    changeset = Map.fetch!(socket.assigns.notes_editing, release_id)
+    changeset = notes_changeset(changeset.data, params)
 
     socket =
-      update(socket, :notes_editing, fn mapped_changesets ->
-        changeset = Map.fetch!(mapped_changesets, release_id)
+      if changeset.valid? do
+        notes = Ecto.Changeset.get_field(changeset, :notes)
+        release_id = Ecto.Changeset.get_field(changeset, :release_id)
 
-        case notes_changeset(changeset.data, params) do
-          %Ecto.Changeset{valid?: true} = changeset ->
-            notes = Ecto.Changeset.get_field(changeset, :notes)
-            release_id = Ecto.Changeset.get_field(changeset, :release_id)
+        socket
+        |> update(
+          :current_page,
+          &update_page_entry(&1, release_id, fn wantlist -> %{wantlist | notes: notes} end)
+        )
+        |> update(:notes_editing, &Map.delete(&1, release_id))
+      else
+        Logger.warning("Attempted to submit a notes form with errors: #{inspect(changeset)}",
+          error: inspect(changeset.errors)
+        )
 
-            socket
-            |> update(
-              :current_page,
-              &update_page_entry(&1, release_id, fn wantlist -> %{wantlist | notes: notes} end)
-            )
-            |> update(:notes_editing, &Map.delete(&1, release_id))
-
-          changeset ->
-            Logger.warning("Attempted to submit a notes form with errors: #{inspect(changeset)}",
-              error: inspect(changeset.errors)
-            )
-
-            socket
-        end
-      end)
+        socket
+      end
 
     {:noreply, socket}
   end
