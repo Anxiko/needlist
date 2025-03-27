@@ -132,12 +132,13 @@ defmodule NeedlistWeb.NeedlistLive do
         notes = Ecto.Changeset.get_field(changeset, :notes)
         release_id = Ecto.Changeset.get_field(changeset, :release_id)
 
+        username = socket.assigns.username
+
         socket
-        |> update(
-          :current_page,
-          &update_page_entry(&1, release_id, fn wantlist -> %{wantlist | notes: notes} end)
-        )
-        |> update(:notes_editing, &Map.delete(&1, release_id))
+        |> start_async({:notes_update, release_id}, fn ->
+          Wantlists.update_wantlist(username, release_id, notes: notes)
+        end)
+        |> update(:notes_editing, &Map.put(&1, release_id, {:pending, notes}))
       else
         Logger.warning("Attempted to submit a notes form with errors: #{inspect(changeset)}",
           error: inspect(changeset.errors)
@@ -186,21 +187,58 @@ defmodule NeedlistWeb.NeedlistLive do
     {:noreply, put_flash(socket, :error, "Failed to load data: #{reason}")}
   end
 
-  def handle_async({:wantlist_update, release_id}, result, socket) do
+  def handle_async({:wantlist_update, release_id}, {:ok, {:ok, wantlist}}, socket) do
     socket =
-      case result do
-        {:ok, {:ok, wantlist}} ->
-          update(socket, :current_page, &replace_page_entry(&1, wantlist))
-
-        {:ok, {:error, error}} ->
-          Logger.warning("Failed to update release #{release_id} for #{socket.assigns.username}: #{inspect(error)}",
-            error: inspect(error)
-          )
-
-        {:exit, reason} ->
-          Logger.error("Release update failed with reason: #{inspect(reason)}", error: inspect(reason))
-      end
+      socket
+      |> update(:current_page, &replace_page_entry(&1, wantlist))
       |> update(:pending_wantlist_updates, &Map.delete(&1, release_id))
+
+    {:noreply, update(socket, :current_page, &replace_page_entry(&1, wantlist))}
+  end
+
+  def handle_async({:wantlist_update, release_id}, error_result, socket) do
+    case error_result do
+      {:ok, {:error, error}} ->
+        Logger.warning("Failed to update release #{release_id} for #{socket.assigns.username}: #{inspect(error)}",
+          error: inspect(error)
+        )
+
+      {:exit, reason} ->
+        Logger.error("Release update failed with reason: #{inspect(reason)}", error: inspect(reason))
+    end
+
+    socket =
+      socket
+      |> put_flash(:error, "Failed to update rating")
+      |> update(:pending_wantlist_updates, &Map.delete(&1, release_id))
+
+    {:noreply, socket}
+  end
+
+  def handle_async({:notes_update, release_id}, {:ok, {:ok, wantlist}}, socket) do
+    socket =
+      socket
+      |> update(:current_page, &replace_page_entry(&1, wantlist))
+      |> update(:notes_editing, &Map.delete(&1, release_id))
+
+    {:noreply, update(socket, :current_page, &replace_page_entry(&1, wantlist))}
+  end
+
+  def handle_async({:notes_update, release_id}, error_result, socket) do
+    case error_result do
+      {:ok, {:error, error}} ->
+        Logger.warning("Failed to update release #{release_id} for #{socket.assigns.username}: #{inspect(error)}",
+          error: inspect(error)
+        )
+
+      {:exit, reason} ->
+        Logger.error("Release update failed with reason: #{inspect(reason)}", error: inspect(reason))
+    end
+
+    socket =
+      socket
+      |> put_flash(:error, "Failed to update notes")
+      |> update(:notes_editing, &Map.delete(&1, release_id))
 
     {:noreply, socket}
   end
@@ -285,12 +323,6 @@ defmodule NeedlistWeb.NeedlistLive do
   @spec replace_page_entry(current_page :: paginated_wants(), Wantlist.t()) :: paginated_wants()
   defp replace_page_entry(current_page, %Wantlist{release_id: release_id} = wantlist) do
     put_in(current_page, [Access.elem(1), Access.key(:items), Access.find(&(&1.release_id == release_id))], wantlist)
-  end
-
-  @spec update_page_entry(current_page :: paginated_wants(), release_id :: integer(), (Wantlist.t() -> Wantlist.t())) ::
-          paginated_wants()
-  defp update_page_entry(current_page, release_id, updater) do
-    update_in(current_page, [Access.elem(1), Access.key(:items), Access.find(&(&1.release_id == release_id))], updater)
   end
 
   @spec notes_changeset(data :: map(), params :: map()) :: Ecto.Changeset.t()

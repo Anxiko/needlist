@@ -36,11 +36,11 @@ defmodule NeedlistWeb.Components.Discogs do
   end
 
   attr :notes, :any, required: true
-  attr :changeset, :any, required: true
+  attr :changes, :any, required: true
   attr :release_id, :integer, required: true
 
   @spec release_notes(map()) :: Rendered.t()
-  def release_notes(%{changeset: nil} = assigns) do
+  def release_notes(%{changes: nil} = assigns) do
     ~H"""
     <div class="flex flex-row justify-between gap-1 items-center">
       <%= if @notes == nil do %>
@@ -74,11 +74,19 @@ defmodule NeedlistWeb.Components.Discogs do
     """
   end
 
-  def release_notes(assigns) do
+  def release_notes(%{changes: {:pending, _notes}} = assigns) do
     ~H"""
-    <.form :let={form} for={@changeset} as={:notes} phx-change="notes-validate" phx-submit="notes-submit">
+    <p class="loader">
+      {elem(@changes, 1)}
+    </p>
+    """
+  end
+
+  def release_notes(%{changes: %Ecto.Changeset{}} = assigns) do
+    ~H"""
+    <.form :let={form} for={@changes} as={:notes} phx-change="notes-validate" phx-submit="notes-submit">
       <div class="flex flex-row justify-between gap-1 items-center">
-        <.input type="textarea" field={form[:notes]}/>
+        <.input type="textarea" field={form[:notes]} />
         <.input type="hidden" field={form[:release_id]} />
         <div class="flex flex-col justify-self-end">
           <.button type="submit">
