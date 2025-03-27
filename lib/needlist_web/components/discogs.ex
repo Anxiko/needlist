@@ -89,7 +89,7 @@ defmodule NeedlistWeb.Components.Discogs do
         <.input type="textarea" field={form[:notes]} />
         <.input type="hidden" field={form[:release_id]} />
         <div class="flex flex-col justify-self-end">
-          <.button type="submit">
+          <.button type="submit" disabled={!@changes.valid? or @changes.changes == %{}}>
             <svg
               class="w-6 h-6 text-gray-800 dark:text-white"
               aria-hidden="true"
