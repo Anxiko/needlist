@@ -50,7 +50,7 @@ defmodule NeedlistWeb.Components.Discogs do
       <% end %>
       <.button phx-click="notes-edit" phx-value-release-id={@release_id} phx-value-notes={if @notes, do: @notes, else: ""}>
         <svg
-          class="w-6 h-6 text-gray-800 dark:text-white"
+          class="w-4 h-4 text-gray-800 dark:text-white"
           aria-hidden="true"
           xmlns="http://www.w3.org/2000/svg"
           width="24"
@@ -85,30 +85,15 @@ defmodule NeedlistWeb.Components.Discogs do
   def release_notes(%{changes: %Ecto.Changeset{}} = assigns) do
     ~H"""
     <.form :let={form} for={@changes} as={:notes} phx-change="notes-validate" phx-submit="notes-submit">
-      <div class="flex flex-row justify-between gap-1 items-center">
-        <.input type="textarea" field={form[:notes]} />
-        <.input type="hidden" field={form[:release_id]} />
-        <div class="flex flex-col justify-self-end">
-          <.button type="submit" disabled={!@changes.valid? or @changes.changes == %{}}>
-            <svg
-              class="w-6 h-6 text-gray-800 dark:text-white"
-              aria-hidden="true"
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              fill="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                fill-rule="evenodd"
-                d="M5 3a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V7.414A2 2 0 0 0 20.414 6L18 3.586A2 2 0 0 0 16.586 3H5Zm10 11a3 3 0 1 1-6 0 3 3 0 0 1 6 0ZM8 7V5h8v2a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1Z"
-                clip-rule="evenodd"
-              />
-            </svg>
-          </.button>
+      <div class="grid grid-cols-2 grid-rows-[1fr_auto]">
+        <div class="col-span-2">
+          <.input type="textarea" field={form[:notes]} />
+          <.input type="hidden" field={form[:release_id]} />
+        </div>
+        <div class="justify-self-center">
           <.button type="button" phx-click="notes-cancel" phx-value-release-id={@release_id}>
             <svg
-              class="w-6 h-6 text-gray-800 dark:text-white"
+              class="w-4 h-4 text-gray-800 dark:text-white"
               aria-hidden="true"
               xmlns="http://www.w3.org/2000/svg"
               width="24"
@@ -122,6 +107,25 @@ defmodule NeedlistWeb.Components.Discogs do
                 stroke-linejoin="round"
                 stroke-width="2"
                 d="M6 18 17.94 6M18 18 6.06 6"
+              />
+            </svg>
+          </.button>
+        </div>
+        <div class="justify-self-center">
+          <.button type="submit" disabled={!@changes.valid? or @changes.changes == %{}}>
+            <svg
+              class="w-4 h-4 text-gray-800 dark:text-white"
+              aria-hidden="true"
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              fill="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M5 3a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V7.414A2 2 0 0 0 20.414 6L18 3.586A2 2 0 0 0 16.586 3H5Zm10 11a3 3 0 1 1-6 0 3 3 0 0 1 6 0ZM8 7V5h8v2a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1Z"
+                clip-rule="evenodd"
               />
             </svg>
           </.button>
