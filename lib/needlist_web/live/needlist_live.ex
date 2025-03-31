@@ -1,6 +1,6 @@
 defmodule NeedlistWeb.NeedlistLive do
-  alias Needlist.Discogs.Pagination.PageInfo
   alias Needlist.Repo.Pagination
+  alias Needlist.Repo.Pagination.PageInfo
   alias Needlist.Repo.Wantlist
   alias Needlist.Types.QueryOptions
   alias Needlist.Types.QueryOptions.SortKey
@@ -30,6 +30,7 @@ defmodule NeedlistWeb.NeedlistLive do
       |> assign(:loading_page, nil)
       |> assign(:state, State.default())
       |> assign(:pending_wantlist_updates, %{})
+      |> assign(:notes_editing, %{})
     }
   end
 
@@ -88,6 +89,67 @@ defmodule NeedlistWeb.NeedlistLive do
     {:noreply, socket}
   end
 
+  def handle_event("notes-edit", %{"release-id" => release_id, "notes" => notes}, socket) do
+    release_id = String.to_integer(release_id)
+    changeset = notes_changeset(%{release_id: release_id, notes: notes})
+
+    socket =
+      update(socket, :notes_editing, &Map.put(&1, release_id, changeset))
+
+    {:noreply, socket}
+  end
+
+  def handle_event("notes-cancel", %{"release-id" => release_id}, socket) do
+    release_id = String.to_integer(release_id)
+
+    socket = update(socket, :notes_editing, &Map.delete(&1, release_id))
+
+    {:noreply, socket}
+  end
+
+  def handle_event("notes-validate", %{"notes" => %{"release_id" => release_id} = params}, socket) do
+    release_id = String.to_integer(release_id)
+
+    socket =
+      update(
+        socket,
+        :notes_editing,
+        &Map.update!(&1, release_id, fn changeset ->
+          notes_changeset(changeset.data, params)
+        end)
+      )
+
+    {:noreply, socket}
+  end
+
+  def handle_event("notes-submit", %{"notes" => %{"release_id" => release_id} = params}, socket) do
+    release_id = String.to_integer(release_id)
+    changeset = Map.fetch!(socket.assigns.notes_editing, release_id)
+    changeset = notes_changeset(changeset.data, params)
+
+    socket =
+      if changeset.valid? do
+        notes = Ecto.Changeset.get_field(changeset, :notes)
+        release_id = Ecto.Changeset.get_field(changeset, :release_id)
+
+        username = socket.assigns.username
+
+        socket
+        |> start_async({:notes_update, release_id}, fn ->
+          Wantlists.update_wantlist(username, release_id, notes: notes)
+        end)
+        |> update(:notes_editing, &Map.put(&1, release_id, {:pending, notes}))
+      else
+        Logger.warning("Attempted to submit a notes form with errors: #{inspect(changeset)}",
+          error: inspect(changeset.errors)
+        )
+
+        socket
+      end
+
+    {:noreply, socket}
+  end
+
   @impl true
   def handle_async(
         :table_data,
@@ -125,21 +187,58 @@ defmodule NeedlistWeb.NeedlistLive do
     {:noreply, put_flash(socket, :error, "Failed to load data: #{reason}")}
   end
 
-  def handle_async({:wantlist_update, release_id}, result, socket) do
+  def handle_async({:wantlist_update, release_id}, {:ok, {:ok, wantlist}}, socket) do
     socket =
-      case result do
-        {:ok, {:ok, wantlist}} ->
-          update(socket, :current_page, &replace_page_entry(&1, wantlist))
-
-        {:ok, {:error, error}} ->
-          Logger.warning("Failed to update release #{release_id} for #{socket.assigns.username}: #{inspect(error)}",
-            error: inspect(error)
-          )
-
-        {:exit, reason} ->
-          Logger.error("Release update failed with reason: #{inspect(reason)}", error: inspect(reason))
-      end
+      socket
+      |> update(:current_page, &replace_page_entry(&1, wantlist))
       |> update(:pending_wantlist_updates, &Map.delete(&1, release_id))
+
+    {:noreply, update(socket, :current_page, &replace_page_entry(&1, wantlist))}
+  end
+
+  def handle_async({:wantlist_update, release_id}, error_result, socket) do
+    case error_result do
+      {:ok, {:error, error}} ->
+        Logger.warning("Failed to update release #{release_id} for #{socket.assigns.username}: #{inspect(error)}",
+          error: inspect(error)
+        )
+
+      {:exit, reason} ->
+        Logger.error("Release update failed with reason: #{inspect(reason)}", error: inspect(reason))
+    end
+
+    socket =
+      socket
+      |> put_flash(:error, "Failed to update rating")
+      |> update(:pending_wantlist_updates, &Map.delete(&1, release_id))
+
+    {:noreply, socket}
+  end
+
+  def handle_async({:notes_update, release_id}, {:ok, {:ok, wantlist}}, socket) do
+    socket =
+      socket
+      |> update(:current_page, &replace_page_entry(&1, wantlist))
+      |> update(:notes_editing, &Map.delete(&1, release_id))
+
+    {:noreply, update(socket, :current_page, &replace_page_entry(&1, wantlist))}
+  end
+
+  def handle_async({:notes_update, release_id}, error_result, socket) do
+    case error_result do
+      {:ok, {:error, error}} ->
+        Logger.warning("Failed to update release #{release_id} for #{socket.assigns.username}: #{inspect(error)}",
+          error: inspect(error)
+        )
+
+      {:exit, reason} ->
+        Logger.error("Release update failed with reason: #{inspect(reason)}", error: inspect(reason))
+    end
+
+    socket =
+      socket
+      |> put_flash(:error, "Failed to update notes")
+      |> update(:notes_editing, &Map.delete(&1, release_id))
 
     {:noreply, socket}
   end
@@ -221,8 +320,19 @@ defmodule NeedlistWeb.NeedlistLive do
     {:ok, Pagination.from_page(needlist, page, per_page, total)}
   end
 
+  @spec replace_page_entry(current_page :: paginated_wants(), Wantlist.t()) :: paginated_wants()
   defp replace_page_entry(current_page, %Wantlist{release_id: release_id} = wantlist) do
     put_in(current_page, [Access.elem(1), Access.key(:items), Access.find(&(&1.release_id == release_id))], wantlist)
+  end
+
+  @spec notes_changeset(data :: map(), params :: map()) :: Ecto.Changeset.t()
+  @spec notes_changeset(data :: map()) :: Ecto.Changeset.t()
+  defp notes_changeset(data, params \\ %{}) do
+    types = %{release_id: :integer, notes: :string}
+
+    {data, types}
+    |> Ecto.Changeset.cast(params, Map.keys(types))
+    |> Ecto.Changeset.validate_required([:release_id, :notes])
   end
 
   defp want_artists(assigns) do
