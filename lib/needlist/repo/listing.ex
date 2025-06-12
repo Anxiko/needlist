@@ -112,6 +112,7 @@ defmodule Needlist.Repo.Listing do
   @spec pricing_for_release(currency :: String.t() | atom()) :: Ecto.Query.t()
   def pricing_for_release(currency) do
     __MODULE__
+    |> filter_by_active(true)
     |> by_total_price_currency(currency)
     |> pricing_stats()
   end
