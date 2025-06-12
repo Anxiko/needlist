@@ -1,0 +1,6 @@
+#!/bin/sh
+if [ "$RUN_TASK" = "true" ]; then
+    elixir -S mix run -e "Scheduled.discogs()"
+else
+    /app/bin/server
+fi

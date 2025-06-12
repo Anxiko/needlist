@@ -114,6 +114,10 @@ ENV LANGUAGE en_US:en
 ENV LC_ALL en_US.UTF-8
 
 WORKDIR "/app"
+
+# Copy the entrypoint
+COPY --chmod=755 entrypoint .
+
 RUN chown nobody /app
 RUN mkdir -p /app/assets
 
@@ -131,4 +135,4 @@ USER nobody
 # above and adding an entrypoint. See https://github.com/krallin/tini for details
 # ENTRYPOINT ["/tini", "--"]
 
-CMD ["/app/bin/server"]
+ENTRYPOINT [ "/app/entrypoint" ]
