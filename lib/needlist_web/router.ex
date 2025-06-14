@@ -2,6 +2,7 @@ defmodule NeedlistWeb.Router do
   use NeedlistWeb, :router
 
   import NeedlistWeb.AccountAuth
+  import NeedlistWeb.ApiAuth, only: [verify_api_conn: 2]
 
   pipeline :browser do
     plug :accepts, ["html"]
@@ -15,6 +16,7 @@ defmodule NeedlistWeb.Router do
 
   pipeline :api do
     plug :accepts, ["json"]
+    plug :verify_api_conn
   end
 
   scope "/", NeedlistWeb do
@@ -38,11 +40,6 @@ defmodule NeedlistWeb.Router do
 
     get "/callback", OauthController, :callback
   end
-
-  # Other scopes may use custom stacks.
-  # scope "/api", NeedlistWeb do
-  #   pipe_through :api
-  # end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development
   if Application.compile_env(:needlist, :dev_routes) do
@@ -97,5 +94,11 @@ defmodule NeedlistWeb.Router do
       live "/accounts/confirm/:token", AccountConfirmationLive, :edit
       live "/accounts/confirm", AccountConfirmationInstructionsLive, :new
     end
+  end
+
+  scope "/api", NeedlistWeb do
+    pipe_through :api
+
+    post "/schedule", ScheduleController, :run
   end
 end
