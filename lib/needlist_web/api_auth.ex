@@ -1,4 +1,8 @@
 defmodule NeedlistWeb.ApiAuth do
+  @moduledoc """
+  API authentication plug for verifying API tokens in requests.
+  """
+
   import Plug.Conn
 
   @salt Application.compile_env!(:needlist, __MODULE__)[:salt]
@@ -16,11 +20,10 @@ defmodule NeedlistWeb.ApiAuth do
 
   @spec verify_api_token(String.t()) :: {:ok, any()} | {:error, any()}
   defp verify_api_token(api_token) do
-    with {:ok, key_id} when key_id == @key_id <- Phoenix.Token.verify(NeedlistWeb.Endpoint, @salt, api_token) do
-      {:ok, key_id}
-    else
-      {:error, _} = error -> error
+    case Phoenix.Token.verify(NeedlistWeb.Endpoint, @salt, api_token) do
+      {:ok, key_id} when key_id == @key_id -> {:ok, key_id}
       {:ok, _unknown_key} -> {:error, :unknown_key}
+      {:error, _} = error -> error
     end
   end
 
