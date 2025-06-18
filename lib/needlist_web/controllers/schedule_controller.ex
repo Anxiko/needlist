@@ -1,16 +1,17 @@
-defmodule NeedlistWeb.ScheduleController do
+defmodule NeedlistWeb.TasksController do
   @moduledoc """
-  Controller used to trigger scheduled tasks.
+  Controller used to trigger tasks through API requests.
   """
 
   use NeedlistWeb, :controller
 
   alias Needlist.Users
 
-  @user_scrape_sleep_ms 1_000
+  @wantlist_scrape_sleep_ms 1_000
+  @listings_scrape_limit 100
 
-  @spec run(Plug.Conn.t(), map()) :: Plug.Conn.t()
-  def run(conn, _options) do
+  @spec wantlist(Plug.Conn.t(), map()) :: Plug.Conn.t()
+  def wantlist(conn, _params) do
     users = Users.all()
     usernames = Enum.map(users, & &1.username)
 
@@ -19,8 +20,22 @@ defmodule NeedlistWeb.ScheduleController do
     conn
     |> put_status(:ok)
     |> json(%{
-      message: "Scheduled tasks have been started.",
-      users: usernames
+      task: "wantlist",
+      status: "started",
+      args: %{users: usernames}
+    })
+  end
+
+  @spec listings(Plug.Conn.t(), map()) :: Plug.Conn.t()
+  def listings(conn, _params) do
+    Task.async(fn -> scrape_listings() end)
+
+    conn
+    |> put_status(:ok)
+    |> json(%{
+      task: "listings",
+      status: "started",
+      args: %{}
     })
   end
 
@@ -28,7 +43,11 @@ defmodule NeedlistWeb.ScheduleController do
     Enum.each(usernames, fn username ->
       Needlist.Discogs.Scraper.scrape_wantlist(username)
       # Sleep to avoid hitting API rate limits
-      Process.sleep(@user_scrape_sleep_ms)
+      Process.sleep(@wantlist_scrape_sleep_ms)
     end)
+  end
+
+  defp scrape_listings() do
+    Needlist.Discogs.Scraper.scrape_listings({:outdated, limit: @listings_scrape_limit})
   end
 end
