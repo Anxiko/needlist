@@ -96,9 +96,11 @@ defmodule NeedlistWeb.Router do
     end
   end
 
-  scope "/api", NeedlistWeb do
+  scope "/api/tasks", NeedlistWeb do
     pipe_through :api
 
-    post "/schedule", ScheduleController, :run
+    post "/wantlist", TasksController, :wantlist
+
+    post "/listings", TasksController, :listings
   end
 end
