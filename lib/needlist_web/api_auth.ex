@@ -7,6 +7,8 @@ defmodule NeedlistWeb.ApiAuth do
 
   @salt Application.compile_env!(:needlist, __MODULE__)[:salt]
   @key_id Application.compile_env!(:needlist, __MODULE__)[:key_id]
+  # 1 year
+  @token_duration_seconds 60 * 60 * 24 * 365
 
   @spec verify_api_conn(Plug.Conn.t(), any()) :: Plug.Conn.t()
   def verify_api_conn(conn, _opts) do
@@ -29,6 +31,6 @@ defmodule NeedlistWeb.ApiAuth do
 
   @spec generate_api_token() :: String.t()
   def generate_api_token do
-    Phoenix.Token.sign(NeedlistWeb.Endpoint, @salt, @key_id)
+    Phoenix.Token.sign(NeedlistWeb.Endpoint, @salt, @key_id, max_age: @token_duration_seconds)
   end
 end
