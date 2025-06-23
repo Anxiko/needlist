@@ -1,13 +1,27 @@
 defmodule Needlist.Repo.Task do
+  @moduledoc """
+  A managed task, usually for scraping data from Discogs.
+  """
+
   use Ecto.Schema
   import Ecto.Changeset
+  import Needlist.Repo.Task.Status, only: [status_final?: 1]
 
-  @valid_statuses [:created, :running, :completed, :failed]
-  @final_statuses [:completed, :failed]
+  alias Needlist.Repo.Task.Status
+
+  @type t() :: %__MODULE__{
+          id: integer(),
+          args: map(),
+          status: Status.t(),
+          type: String.t(),
+          finished_at: DateTime.t() | nil,
+          inserted_at: DateTime.t(),
+          updated_at: DateTime.t()
+        }
 
   schema "tasks" do
     field :args, :map
-    field :status, Ecto.Enum, values: @valid_statuses
+    field :status, Ecto.Enum, values: Status.values()
     field :type, :string
     field :finished_at, :utc_datetime
 
@@ -15,6 +29,7 @@ defmodule Needlist.Repo.Task do
   end
 
   @doc false
+  @spec changeset(task :: t() | %__MODULE__{}, attrs :: map()) :: Ecto.Changeset.t(t())
   def changeset(task, attrs) do
     task
     |> cast(attrs, [:type, :status, :args, :finished_at])
@@ -22,14 +37,13 @@ defmodule Needlist.Repo.Task do
     |> validate_timestamp_on_finish()
   end
 
-  defguardp final_status?(state) when state in @final_statuses
-
+  @spec validate_timestamp_on_finish(Ecto.Changeset.t(t())) :: Ecto.Changeset.t(t())
   defp validate_timestamp_on_finish(changeset) do
     case {get_field(changeset, :status), get_field(changeset, :finished_at)} do
-      {final_status, nil} when final_status?(final_status) ->
+      {final_status, nil} when status_final?(final_status) ->
         add_error(changeset, :finished_at, "must be set when status is final")
 
-      {not_final, finished_at} when not final_status?(not_final) and finished_at != nil ->
+      {not_final, finished_at} when not status_final?(not_final) and finished_at != nil ->
         add_error(changeset, :finished_at, "can't be set when status is not finished")
 
       _ ->
