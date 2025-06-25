@@ -7,6 +7,12 @@
 # General application configuration
 import Config
 
+config :needlist, Oban,
+  engine: Oban.Engines.Basic,
+  notifier: Oban.Notifiers.Postgres,
+  queues: [default: 10],
+  repo: Needlist.Repo
+
 config :needlist,
   ecto_repos: [Needlist.Repo],
   generators: [timestamp_type: :utc_datetime]
