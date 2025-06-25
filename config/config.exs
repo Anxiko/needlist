@@ -10,7 +10,10 @@ import Config
 config :needlist, Oban,
   engine: Oban.Engines.Basic,
   notifier: Oban.Notifiers.Postgres,
-  queues: [default: 10],
+  queues: [
+    wantlist: 5,
+    listings: [limit: 1, dispatch_cooldown: 10_000]
+  ],
   repo: Needlist.Repo
 
 config :needlist,

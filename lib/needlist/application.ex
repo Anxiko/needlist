@@ -7,6 +7,8 @@ defmodule Needlist.Application do
 
   @impl true
   def start(_type, _args) do
+    Oban.Telemetry.attach_default_logger(encode: false, level: :info)
+
     children = [
       {Cachex, [Application.fetch_env!(:needlist, :cache_key)]},
       NeedlistWeb.Telemetry,
