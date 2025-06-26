@@ -12,7 +12,8 @@ config :needlist, Oban,
   notifier: Oban.Notifiers.Postgres,
   queues: [
     wantlist: 5,
-    listings: [limit: 1, dispatch_cooldown: 10_000]
+    listings: [limit: 1, dispatch_cooldown: 10_000],
+    batchjob: 2
   ],
   repo: Needlist.Repo
 
@@ -86,6 +87,8 @@ config :needlist, :cache_key, :needlist
 config :needlist, NeedlistWeb.ApiAuth,
   salt: "RBJCon6tPti?",
   key_id: "needlist_api_key"
+
+config :needlist, :default_listings_scraping_limit, 100
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
