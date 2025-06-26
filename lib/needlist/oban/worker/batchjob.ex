@@ -1,4 +1,8 @@
 defmodule Needlist.Oban.Worker.Batchjob do
+  @moduledoc """
+  Worker for dispatching batch jobs, to be run by other workers.
+  """
+
   use Oban.Worker,
     queue: :batchjob,
     max_attempts: 3,
