@@ -63,6 +63,7 @@ defmodule Needlist.MixProject do
       {:money, "~> 1.12"},
       {:tiny_maps, "~> 3.0"},
       {:oban, "~> 2.19"},
+      {:oban_web, "~> 2.11"},
       {:igniter, "~> 0.5", only: [:dev]}
     ]
   end
