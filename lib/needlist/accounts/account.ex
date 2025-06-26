@@ -12,6 +12,7 @@ defmodule Needlist.Accounts.Account do
           password: String.t() | nil,
           hashed_password: String.t(),
           current_password: String.t() | nil,
+          admin: boolean(),
           confirmed_at: DateTime.t() | nil,
           inserted_at: DateTime.t(),
           updated_at: DateTime.t(),
@@ -25,6 +26,7 @@ defmodule Needlist.Accounts.Account do
     field :hashed_password, :string, redact: true
     field :current_password, :string, virtual: true, redact: true
     field :confirmed_at, :utc_datetime
+    field :admin, :boolean, default: false
     belongs_to :user, User
 
     timestamps(type: :utc_datetime)
@@ -181,5 +183,11 @@ defmodule Needlist.Accounts.Account do
     else
       add_error(changeset, :current_password, "is not valid")
     end
+  end
+
+  def set_admin_flag(changeset, admin) when is_boolean(admin) do
+    changeset
+    |> cast(%{admin: admin}, [:admin])
+    |> validate_required([:admin])
   end
 end

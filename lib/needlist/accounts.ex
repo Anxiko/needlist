@@ -245,6 +245,14 @@ defmodule Needlist.Accounts do
     end
   end
 
+  @spec update_account_admin_flag(Account.t(), boolean()) ::
+          {:ok, Account.t()} | {:error, Changeset.t(Account.t())}
+  def update_account_admin_flag(account, admin) when is_boolean(admin) do
+    account
+    |> Account.set_admin_flag(admin)
+    |> Repo.update()
+  end
+
   ## Session
 
   @doc """
