@@ -1,6 +1,7 @@
 defmodule NeedlistWeb.Router do
   use NeedlistWeb, :router
 
+  import Oban.Web.Router
   import NeedlistWeb.AccountAuth
   import NeedlistWeb.ApiAuth, only: [verify_api_conn: 2]
 
@@ -55,6 +56,12 @@ defmodule NeedlistWeb.Router do
 
       live_dashboard "/dashboard", metrics: NeedlistWeb.Telemetry
       forward "/mailbox", Plug.Swoosh.MailboxPreview
+    end
+
+    scope "/" do
+      pipe_through :browser
+
+      oban_dashboard("/oban")
     end
   end
 

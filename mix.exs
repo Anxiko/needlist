@@ -61,7 +61,10 @@ defmodule Needlist.MixProject do
       {:req, "~> 0.4.0"},
       {:credo, "~> 1.6", only: [:dev, :test], runtime: false},
       {:money, "~> 1.12"},
-      {:tiny_maps, "~> 3.0"}
+      {:tiny_maps, "~> 3.0"},
+      {:oban, "~> 2.19"},
+      {:oban_web, "~> 2.11"},
+      {:igniter, "~> 0.5", only: [:dev]}
     ]
   end
 

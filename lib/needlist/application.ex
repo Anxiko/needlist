@@ -7,11 +7,14 @@ defmodule Needlist.Application do
 
   @impl true
   def start(_type, _args) do
+    Oban.Telemetry.attach_default_logger(encode: false, level: :info)
+
     children = [
       {Cachex, [Application.fetch_env!(:needlist, :cache_key)]},
       NeedlistWeb.Telemetry,
       Needlist.Repo,
       {DNSCluster, query: Application.get_env(:needlist, :dns_cluster_query) || :ignore},
+      {Oban, Application.fetch_env!(:needlist, Oban)},
       {Phoenix.PubSub, name: Needlist.PubSub},
       # Start the Finch HTTP client for sending emails
       {Finch, name: Needlist.Finch},
