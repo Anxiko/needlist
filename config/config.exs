@@ -97,6 +97,8 @@ config :needlist, :default_listings_scraping_limit, 100
 config :needlist, :oban_unique_period, 180
 config :needlist, :oban_timeout, oban_timeout
 
+config :elixir, :time_zone_database, Tzdata.TimeZoneDatabase
+
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{config_env()}.exs"
