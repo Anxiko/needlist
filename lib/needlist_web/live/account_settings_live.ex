@@ -17,6 +17,9 @@ defmodule NeedlistWeb.AccountSettingsLive do
 
     <div class="space-y-12 divide-y">
       <div>
+        <.admin_status account={@current_account} />
+      </div>
+      <div>
         <.link_to_discogs account={@current_account} />
       </div>
       <div>
@@ -192,6 +195,18 @@ defmodule NeedlistWeb.AccountSettingsLive do
       </a>
     </div>
     """
+  end
+
+  defp admin_status(%{account: %Account{admin: true}} = assigns) do
+    ~H"""
+    <div class="text-zinc-800 block text-sm font-semibold leading-6 dark:text-white mb-8">
+      You are an admin!
+    </div>
+    """
+  end
+
+  defp admin_status(assigns) do
+    ~H""
   end
 
   defp link_to_discogs(%{account: %Account{user: %User{}}} = assigns) do
