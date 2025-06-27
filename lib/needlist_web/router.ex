@@ -34,6 +34,15 @@ defmodule NeedlistWeb.Router do
     end
   end
 
+  # Admin routes
+  scope "/admin" do
+    pipe_through [:browser, :require_admin]
+
+    scope "/" do
+      oban_dashboard("/oban")
+    end
+  end
+
   scope "/oauth", NeedlistWeb do
     pipe_through [:browser, :require_authenticated_account]
 
@@ -56,12 +65,6 @@ defmodule NeedlistWeb.Router do
 
       live_dashboard "/dashboard", metrics: NeedlistWeb.Telemetry
       forward "/mailbox", Plug.Swoosh.MailboxPreview
-    end
-
-    scope "/" do
-      pipe_through :browser
-
-      oban_dashboard("/oban")
     end
   end
 
@@ -102,6 +105,8 @@ defmodule NeedlistWeb.Router do
       live "/accounts/confirm", AccountConfirmationInstructionsLive, :new
     end
   end
+
+  # Machine to machine API routes
 
   scope "/api/tasks", NeedlistWeb do
     pipe_through :api
