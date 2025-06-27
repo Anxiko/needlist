@@ -197,18 +197,6 @@ defmodule NeedlistWeb.AccountSettingsLive do
     """
   end
 
-  defp admin_status(%{account: %Account{admin: true}} = assigns) do
-    ~H"""
-    <div class="text-zinc-800 block text-sm font-semibold leading-6 dark:text-white mb-8">
-      You are an admin!
-    </div>
-    """
-  end
-
-  defp admin_status(assigns) do
-    ~H""
-  end
-
   defp link_to_discogs(%{account: %Account{user: %User{}}} = assigns) do
     ~H"""
     <div>
@@ -226,5 +214,17 @@ defmodule NeedlistWeb.AccountSettingsLive do
     ~H"""
     {inspect(assigns.account)}
     """
+  end
+
+  defp admin_status(%{account: %Account{admin: true}} = assigns) do
+    ~H"""
+    <div class="text-zinc-800 block text-sm font-semibold leading-6 dark:text-white mb-8">
+      You are an admin!
+    </div>
+    """
+  end
+
+  defp admin_status(assigns) do
+    ~H""
   end
 end
