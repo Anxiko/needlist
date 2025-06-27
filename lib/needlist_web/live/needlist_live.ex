@@ -1,4 +1,5 @@
 defmodule NeedlistWeb.NeedlistLive do
+  alias Needlist.Users
   alias Needlist.Repo.Pagination
   alias Needlist.Repo.Pagination.PageInfo
   alias Needlist.Repo.Wantlist
@@ -26,6 +27,7 @@ defmodule NeedlistWeb.NeedlistLive do
       :ok,
       socket
       |> assign(:username, username)
+      |> assign(:last_wantlist_update, Users.last_wantlist_update(username))
       |> assign(:current_page, nil)
       |> assign(:loading_page, nil)
       |> assign(:state, State.default())
