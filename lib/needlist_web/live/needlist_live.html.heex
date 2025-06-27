@@ -1,7 +1,14 @@
 <div>
-  <h1 class="dark:text-white pb-10 text-4xl">
-    Needlist for {@username}
-  </h1>
+  <div class="flex items-baseline justify-between">
+    <h1 class="dark:text-white pb-10 text-4xl">
+      Needlist for {@username}
+    </h1>
+    <%= if @last_wantlist_update != nil do %>
+      <span class="dark:text-white">
+        Last updated on {@last_wantlist_update}
+      </span>
+    <% end %>
+  </div>
 
   <%= if @current_page != nil do %>
     <div class="relative overflow-x-auto">
