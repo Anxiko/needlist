@@ -33,6 +33,7 @@ defmodule NeedlistWeb.NeedlistLive do
       |> assign(:state, State.default())
       |> assign(:pending_wantlist_updates, %{})
       |> assign(:notes_editing, %{})
+      |> maybe_assign_timezone()
     }
   end
 
@@ -335,6 +336,19 @@ defmodule NeedlistWeb.NeedlistLive do
     {data, types}
     |> Ecto.Changeset.cast(params, Map.keys(types))
     |> Ecto.Changeset.validate_required([:release_id, :notes])
+  end
+
+  defp maybe_assign_timezone(socket) do
+    maybe_tz =
+      case get_connect_params(socket) do
+        %{"time_zone" => time_zone} ->
+          time_zone
+
+        _ ->
+          "UTC"
+      end
+
+    assign(socket, :time_zone, maybe_tz)
   end
 
   defp want_artists(assigns) do
