@@ -5,49 +5,45 @@ defmodule NeedlistWeb.TasksController do
 
   use NeedlistWeb, :controller
 
-  alias Needlist.Users
-
-  @wantlist_scrape_sleep_ms 1_000
-  @listings_scrape_limit 100
+  alias Needlist.Oban.Dispatcher
 
   @spec wantlist(Plug.Conn.t(), map()) :: Plug.Conn.t()
   def wantlist(conn, _params) do
-    users = Users.all()
-    usernames = Enum.map(users, & &1.username)
-
-    Task.async(fn -> scrape_users(usernames) end)
-
-    conn
-    |> put_status(:ok)
-    |> json(%{
-      task: "wantlist",
-      status: "started",
-      args: %{users: usernames}
-    })
+    result = Dispatcher.dispatch_wantlist_batch()
+    respond_with_dispatch_result(conn, result)
   end
 
   @spec listings(Plug.Conn.t(), map()) :: Plug.Conn.t()
   def listings(conn, _params) do
-    Task.async(fn -> scrape_listings() end)
-
-    conn
-    |> put_status(:ok)
-    |> json(%{
-      task: "listings",
-      status: "started",
-      args: %{}
-    })
+    result = Dispatcher.dispatch_listings_batch()
+    respond_with_dispatch_result(conn, result)
   end
 
-  defp scrape_users(usernames) do
-    Enum.each(usernames, fn username ->
-      Needlist.Discogs.Scraper.scrape_wantlist(username)
-      # Sleep to avoid hitting API rate limits
-      Process.sleep(@wantlist_scrape_sleep_ms)
-    end)
+  defp respond_with_dispatch_result(conn, result) do
+    case result do
+      {:ok, %Oban.Job{} = job} ->
+        conn
+        |> put_status(:ok)
+        |> json(serialize_oban_job(job))
+
+      {:error, reason} ->
+        conn
+        |> put_status(:internal_server_error)
+        |> json(%{
+          error: "Failed to dispatch batch job",
+          reason: inspect(reason)
+        })
+    end
   end
 
-  defp scrape_listings() do
-    Needlist.Discogs.Scraper.scrape_listings({:outdated, limit: @listings_scrape_limit})
+  defp serialize_oban_job(%Oban.Job{} = job) do
+    %{
+      id: job.id,
+      state: job.state,
+      queue: job.queue,
+      worker: job.worker,
+      args: job.args,
+      inserted_at: job.inserted_at
+    }
   end
 end
