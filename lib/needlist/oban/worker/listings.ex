@@ -3,11 +3,13 @@ defmodule Needlist.Oban.Worker.Listings do
   Worker for scrapping a release's listings from Discogs.
   """
 
+  @unique_period Application.compile_env!(:needlist, :oban_unique_period)
+
   use Oban.Worker,
     queue: :listings,
     max_attempts: 3,
     unique: [
-      period: :infinity,
+      period: @unique_period,
       keys: [:release_id]
     ]
 

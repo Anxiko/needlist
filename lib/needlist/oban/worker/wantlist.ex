@@ -3,11 +3,13 @@ defmodule Needlist.Oban.Worker.Wantlist do
   Worker for scrapping a user's wantlist from Discogs.
   """
 
+  @unique_period Application.compile_env!(:needlist, :oban_unique_period)
+
   use Oban.Worker,
     queue: :wantlist,
     max_attempts: 3,
     unique: [
-      period: :infinity,
+      period: @unique_period,
       keys: [:username]
     ]
 
