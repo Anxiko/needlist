@@ -49,4 +49,13 @@ defmodule Needlist.Users do
     |> User.changeset(params)
     |> Repo.insert_or_update()
   end
+
+  @spec last_wantlist_update(username :: String.t()) :: DateTime.t() | nil
+  def last_wantlist_update(username) do
+    Needlist.Jobs.last_wantlist_completed_for_user(username)
+    |> case do
+      %Oban.Job{completed_at: completed_at} -> completed_at
+      nil -> nil
+    end
+  end
 end
