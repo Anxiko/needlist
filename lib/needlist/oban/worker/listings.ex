@@ -4,6 +4,7 @@ defmodule Needlist.Oban.Worker.Listings do
   """
 
   @unique_period Application.compile_env!(:needlist, :oban_unique_period)
+  @timeout Application.compile_env!(:needlist, :oban_timeout)
 
   use Oban.Worker,
     queue: :listings,
@@ -12,9 +13,6 @@ defmodule Needlist.Oban.Worker.Listings do
       period: @unique_period,
       keys: [:release_id]
     ]
-
-  # 1 minute
-  @timeout_ms 1_000 * 60
 
   @impl true
   def perform(%Oban.Job{args: %{"release_id" => release_id}}) do
@@ -28,5 +26,5 @@ defmodule Needlist.Oban.Worker.Listings do
   end
 
   @impl true
-  def timeout(%Oban.Job{}), do: @timeout_ms
+  def timeout(_job), do: @timeout
 end

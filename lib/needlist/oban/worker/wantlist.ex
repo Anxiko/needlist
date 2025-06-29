@@ -4,6 +4,7 @@ defmodule Needlist.Oban.Worker.Wantlist do
   """
 
   @unique_period Application.compile_env!(:needlist, :oban_unique_period)
+  @timeout Application.compile_env!(:needlist, :oban_timeout)
 
   use Oban.Worker,
     queue: :wantlist,
@@ -13,14 +14,11 @@ defmodule Needlist.Oban.Worker.Wantlist do
       keys: [:username]
     ]
 
-  # 1 minute
-  @timeout_ms 1_000 * 60
-
   @impl true
   def perform(%Oban.Job{args: %{"username" => username}}) do
     Needlist.Discogs.Scraper.scrape_wantlist(username)
   end
 
   @impl true
-  def timeout(%Oban.Job{}), do: @timeout_ms
+  def timeout(_job), do: @timeout
 end
