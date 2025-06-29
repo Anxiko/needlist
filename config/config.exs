@@ -15,7 +15,10 @@ config :needlist, Oban,
     listings: [limit: 1, dispatch_cooldown: 10_000],
     batchjob: 2
   ],
-  repo: Needlist.Repo
+  repo: Needlist.Repo,
+  plugins: [
+    Oban.Plugins.Lifeline
+  ]
 
 config :needlist,
   ecto_repos: [Needlist.Repo],
