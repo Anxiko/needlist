@@ -16,6 +16,7 @@ defmodule Needlist.Oban.Worker.Batchjob do
   alias Needlist.Repo.Release
 
   @scraping_limit Application.compile_env!(:needlist, :default_listings_scraping_limit)
+  @timeout Application.compile_env!(:needlist, :oban_timeout)
 
   @impl true
   def perform(%Oban.Job{args: %{"type" => "wantlist"}}) do
@@ -46,4 +47,7 @@ defmodule Needlist.Oban.Worker.Batchjob do
       end
     end)
   end
+
+  @impl true
+  def timeout(_job), do: @timeout
 end
