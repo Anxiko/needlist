@@ -7,6 +7,8 @@
 # General application configuration
 import Config
 
+oban_timeout = :timer.minutes(1)
+
 config :needlist, Oban,
   engine: Oban.Engines.Basic,
   notifier: Oban.Notifiers.Postgres,
@@ -15,7 +17,10 @@ config :needlist, Oban,
     listings: [limit: 1, dispatch_cooldown: 10_000],
     batchjob: 2
   ],
-  repo: Needlist.Repo
+  repo: Needlist.Repo,
+  plugins: [
+    {Oban.Plugins.Lifeline, rescue_after: oban_timeout, interval: :timer.seconds(30)}
+  ]
 
 config :needlist,
   ecto_repos: [Needlist.Repo],
@@ -90,7 +95,7 @@ config :needlist, NeedlistWeb.ApiAuth,
 
 config :needlist, :default_listings_scraping_limit, 100
 config :needlist, :oban_unique_period, 180
-config :needlist, :oban_timeout, 60_000
+config :needlist, :oban_timeout, oban_timeout
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
