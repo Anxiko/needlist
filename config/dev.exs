@@ -62,9 +62,6 @@ config :needlist, NeedlistWeb.Endpoint,
     ]
   ]
 
-# Enable dev routes for dashboard and mailbox
-config :needlist, dev_routes: true
-
 config :logger, :console, format: "[$level] $message $metadata\n"
 
 # Set a higher stacktrace during development. Avoid configuring such
