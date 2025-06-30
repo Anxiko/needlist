@@ -20,7 +20,7 @@ defmodule Needlist.MixProject do
   def application do
     [
       mod: {Needlist.Application, []},
-      extra_applications: [:logger, :runtime_tools]
+      extra_applications: [:logger, :runtime_tools, :os_mon]
     ]
   end
 
