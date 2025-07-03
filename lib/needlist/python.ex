@@ -12,6 +12,7 @@ defmodule Needlist.Python do
     GenServer.call(__MODULE__, {:scrape_listings, release_id})
   end
 
+  @spec start_link(keyword()) :: GenServer.on_start()
   def start_link(opts) do
     GenServer.start_link(__MODULE__, opts, name: __MODULE__)
   end
