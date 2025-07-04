@@ -483,4 +483,14 @@ defmodule NeedlistWeb.NeedlistLive do
     </th>
     """
   end
+
+  attr :datetime, DateTime, required: true
+  attr :timezone, :string, default: "UTC"
+  defp local_datetime(assigns) do
+    ~H"""
+    <span>
+      {@datetime |> DateTime.shift_zone!(@timezone) |> DateTime.to_string()}
+    </span>
+    """
+  end
 end

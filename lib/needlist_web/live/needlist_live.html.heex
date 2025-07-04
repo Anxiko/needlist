@@ -5,7 +5,7 @@
     </h1>
     <%= if @last_wantlist_update != nil do %>
       <span class="dark:text-white">
-        Last updated on {@last_wantlist_update}
+        Last updated on <.local_datetime datetime={@last_wantlist_update} timezone={@time_zone}/>
       </span>
     <% end %>
   </div>
