@@ -18,6 +18,7 @@ defmodule NeedlistWeb.NeedlistLive do
   require Logger
 
   @initial_sorting_order :asc
+  @datetime_format Application.compile_env!(:needlist, :datetime_format)
 
   @typep paginated_wants() :: Pagination.t(Wantlist.t())
 
@@ -486,11 +487,19 @@ defmodule NeedlistWeb.NeedlistLive do
 
   attr :datetime, DateTime, required: true
   attr :timezone, :string, default: "UTC"
+
   defp local_datetime(assigns) do
     ~H"""
     <span>
-      {@datetime |> DateTime.shift_zone!(@timezone) |> DateTime.to_string()}
+      {format_timestamp(@datetime, @timezone)}
     </span>
     """
+  end
+
+  @spec format_timestamp(DateTime.t(), String.t()) :: String.t()
+  defp format_timestamp(datetime, timezone) do
+    datetime
+    |> DateTime.shift_zone!(timezone)
+    |> Timex.format!(@datetime_format)
   end
 end

@@ -96,6 +96,7 @@ config :needlist, NeedlistWeb.ApiAuth,
 config :needlist, :default_listings_scraping_limit, 100
 config :needlist, :oban_unique_period, 180
 config :needlist, :oban_timeout, oban_timeout
+config :needlist, :datetime_format, "{ISOdate} {h24}:{m}:{s} {Zabbr}"
 
 config :elixir, :time_zone_database, Tzdata.TimeZoneDatabase
 
