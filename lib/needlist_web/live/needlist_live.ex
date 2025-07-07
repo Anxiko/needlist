@@ -1,5 +1,6 @@
 defmodule NeedlistWeb.NeedlistLive do
   alias Needlist.Users
+  alias Needlist.Oban.Dispatcher, as: ObanDispatcher
   alias Needlist.Repo.Pagination
   alias Needlist.Repo.Pagination.PageInfo
   alias Needlist.Repo.Wantlist
@@ -19,6 +20,9 @@ defmodule NeedlistWeb.NeedlistLive do
 
   @initial_sorting_order :asc
   @datetime_format Application.compile_env!(:needlist, :datetime_format)
+  @update_interval :needlist
+                   |> Application.compile_env!(:wantlist_update_interval_seconds)
+                   |> Timex.Duration.from_seconds()
 
   @typep paginated_wants() :: Pagination.t(Wantlist.t())
 
@@ -28,13 +32,13 @@ defmodule NeedlistWeb.NeedlistLive do
       :ok,
       socket
       |> assign(:username, username)
-      |> assign(:last_wantlist_update, Users.last_wantlist_update(username))
       |> assign(:current_page, nil)
       |> assign(:loading_page, nil)
       |> assign(:state, State.default())
       |> assign(:pending_wantlist_updates, %{})
       |> assign(:notes_editing, %{})
       |> maybe_assign_timezone()
+      |> assign_last_wantlist_update()
     }
   end
 
@@ -152,6 +156,26 @@ defmodule NeedlistWeb.NeedlistLive do
       end
 
     {:noreply, socket}
+  end
+
+  def handle_event("refresh-wantlist", _params, socket) do
+    username = socket.assigns.username
+
+    case ObanDispatcher.dispatch_wantlist(username) do
+      :ok ->
+        {:noreply,
+         socket
+         |> put_flash(:info, "Needlist refresh in progress...")
+         |> assign_last_wantlist_update()}
+
+      {:error, reason} ->
+        Logger.error("Failed to dispatch wantlist refresh for #{username}: #{inspect(reason)}",
+          error: inspect(reason),
+          user: username
+        )
+
+        {:noreply, put_flash(socket, :error, "Failed to refresh needlist! Please try again later.")}
+    end
   end
 
   @impl true
@@ -352,6 +376,14 @@ defmodule NeedlistWeb.NeedlistLive do
     assign(socket, :time_zone, maybe_tz)
   end
 
+  defp assign_last_wantlist_update(socket) do
+    last_wantlist_update = Users.last_wantlist_update(socket.assigns.username)
+
+    socket
+    |> assign(:last_wantlist_update, last_wantlist_update)
+    |> assign(:refresh_ready, wantlist_refresh_ready(last_wantlist_update, Timex.now()))
+  end
+
   defp want_artists(assigns) do
     ~H"""
     <%= for artist <- @artists do %>
@@ -496,10 +528,42 @@ defmodule NeedlistWeb.NeedlistLive do
     """
   end
 
+  attr :refresh_ready, :any, required: true
+  attr :time_zone, :string, required: true
+
+  def refresh_wantlist(%{refresh_ready: nil} = assigns) do
+    ~H"""
+    <.button phx-click="refresh-wantlist" phx-disable-with="Refreshing...">
+      Refresh needlist
+    </.button>
+    """
+  end
+
+  def refresh_wantlist(%{refresh_ready: %DateTime{}} = assigns) do
+    ~H"""
+    <.button phx-click="refresh-wantlist" disabled>
+      Refresh ready at {format_timestamp(@refresh_ready, @time_zone)}
+    </.button>
+    """
+  end
+
   @spec format_timestamp(DateTime.t(), String.t()) :: String.t()
   defp format_timestamp(datetime, timezone) do
     datetime
     |> DateTime.shift_zone!(timezone)
     |> Timex.format!(@datetime_format)
+  end
+
+  @spec wantlist_refresh_ready(last_update :: DateTime.t() | nil, current_time :: DateTime.t()) :: DateTime.t() | nil
+  defp wantlist_refresh_ready(nil, _current_time), do: nil
+
+  defp wantlist_refresh_ready(last_update, current_time) do
+    next_update = Timex.add(last_update, @update_interval)
+
+    if Timex.compare(current_time, next_update) < 0 do
+      next_update
+    else
+      nil
+    end
   end
 end
