@@ -6,7 +6,7 @@
     <span :if={@last_wantlist_update != nil} class="dark:text-white">
       Last updated on <.local_datetime datetime={@last_wantlist_update} timezone={@time_zone} />
     </span>
-    <.refresh_wantlist refresh_ready={@refresh_ready} time_zone={@time_zone}/>
+    <.refresh_wantlist refresh_ready={@refresh_ready} time_zone={@time_zone} />
   </div>
 
   <%= if @current_page != nil do %>

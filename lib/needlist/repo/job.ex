@@ -12,9 +12,15 @@ defmodule Needlist.Repo.Job do
     from(Job)
   end
 
-  @spec by_state(query :: Ecto.Query.t(), state :: String.t()) :: Ecto.Query.t()
-  def by_state(query, state) do
+  @spec by_state(query :: Ecto.Query.t(), state_or_states :: String.t() | [String.t()] | nil) :: Ecto.Query.t()
+  def by_state(query, nil), do: query
+
+  def by_state(query, state) when is_binary(state) do
     where(query, [j], j.state == ^state)
+  end
+
+  def by_state(query, states) when is_list(states) do
+    where(query, [j], j.state in ^states)
   end
 
   @spec by_queue(query :: Ecto.Query.t(), queue :: String.t()) :: Ecto.Query.t()
@@ -32,10 +38,11 @@ defmodule Needlist.Repo.Job do
     where(query, [j], fragment("?->>'username'", j.args) == ^username)
   end
 
-  @spec last_completed_for_queue(queue :: String.t()) :: Ecto.Query.t()
-  def last_completed_for_queue(queue) do
+  @spec last_in_queue(queue :: String.t(), state_or_states :: String.t() | [String.t()] | nil) :: Ecto.Query.t()
+  @spec last_in_queue(queue :: String.t()) :: Ecto.Query.t()
+  def last_in_queue(queue, state_or_states \\ nil) do
     base_query()
-    |> by_state("completed")
+    |> by_state(state_or_states)
     |> by_queue(queue)
     |> ordered_by_completed_at()
     |> first()

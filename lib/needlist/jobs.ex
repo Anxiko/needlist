@@ -7,9 +7,16 @@ defmodule Needlist.Jobs do
   alias Needlist.Repo.Job, as: CoreJob
   alias Oban.Job
 
-  @spec last_wantlist_completed_for_user(username:: String.t()) :: Job.t() | nil
-  def last_wantlist_completed_for_user(username) do
-    CoreJob.last_completed_for_queue("wantlist")
+  @spec last_wantlist_update_for_user(username :: String.t(), successful? :: boolean()) :: Job.t() | nil
+  def last_wantlist_update_for_user(username, successful?) do
+    job_state =
+      if successful? do
+        "completed"
+      else
+        nil
+      end
+
+    CoreJob.last_in_queue("wantlist", job_state)
     |> CoreJob.by_username_arg(username)
     |> Repo.one()
   end

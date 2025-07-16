@@ -162,7 +162,7 @@ defmodule NeedlistWeb.NeedlistLive do
     username = socket.assigns.username
 
     case ObanDispatcher.dispatch_wantlist(username) do
-      :ok ->
+      {:ok, _job} ->
         {:noreply,
          socket
          |> put_flash(:info, "Needlist refresh in progress...")
@@ -377,11 +377,12 @@ defmodule NeedlistWeb.NeedlistLive do
   end
 
   defp assign_last_wantlist_update(socket) do
-    last_wantlist_update = Users.last_wantlist_update(socket.assigns.username)
+    last_wantlist_update = Users.last_wantlist_update(socket.assigns.username, true)
+    last_wantlist_update_attempt = Users.last_wantlist_update(socket.assigns.username, false)
 
     socket
     |> assign(:last_wantlist_update, last_wantlist_update)
-    |> assign(:refresh_ready, wantlist_refresh_ready(last_wantlist_update, Timex.now()))
+    |> assign(:refresh_ready, wantlist_refresh_ready(last_wantlist_update_attempt, Timex.now()))
   end
 
   defp want_artists(assigns) do
