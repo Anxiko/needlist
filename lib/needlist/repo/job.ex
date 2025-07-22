@@ -43,6 +43,7 @@ defmodule Needlist.Repo.Job do
     where(query, [j], fragment("?->>'username'", j.args) == ^username)
   end
 
+  @spec by_id(query :: Ecto.Query.t(), id :: integer()) :: Ecto.Query.t()
   def by_id(query, id) do
     where(query, [j], j.id == ^id)
   end
