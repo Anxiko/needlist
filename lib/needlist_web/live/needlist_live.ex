@@ -402,7 +402,11 @@ defmodule NeedlistWeb.NeedlistLive do
     refresh_ready = socket.assigns.refresh_ready
 
     if connected?(socket) and refresh_ready != nil do
-      Process.send_after(self(), :refresh_ready, Timex.diff(refresh_ready, Timex.now(), :millisecond) + @refresh_ready_offset_ms)
+      Process.send_after(
+        self(),
+        :refresh_ready,
+        Timex.diff(refresh_ready, Timex.now(), :millisecond) + @refresh_ready_offset_ms
+      )
     end
 
     socket
