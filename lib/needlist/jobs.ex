@@ -9,15 +9,25 @@ defmodule Needlist.Jobs do
 
   @spec last_wantlist_update_for_user(username :: String.t(), successful? :: boolean()) :: Job.t() | nil
   def last_wantlist_update_for_user(username, successful?) do
-    job_state =
+    state_filter =
       if successful? do
         "completed"
       else
         nil
       end
 
-    CoreJob.last_in_queue("wantlist", job_state)
+    CoreJob.base_query()
+    |> CoreJob.by_queue("wantlist")
+    |> CoreJob.by_state(state_filter)
     |> CoreJob.by_username_arg(username)
+    |> then(fn query ->
+      if successful? do
+        CoreJob.ordered_by_completed_at(query)
+      else
+        CoreJob.ordered_by_inserted_at(query)
+      end
+    end)
+    |> Ecto.Query.first()
     |> Repo.one()
   end
 end

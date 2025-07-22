@@ -39,6 +39,7 @@ defmodule NeedlistWeb.NeedlistLive do
       |> assign(:notes_editing, %{})
       |> maybe_assign_timezone()
       |> assign_last_wantlist_update()
+      |> maybe_schedule_refresh_ready()
     }
   end
 
@@ -56,6 +57,14 @@ defmodule NeedlistWeb.NeedlistLive do
       |> load_page()
 
     {:noreply, socket}
+  end
+
+  @impl true
+  def handle_info(:refresh_ready, socket) do
+    {:noreply,
+     socket
+     |> assign_last_wantlist_update()
+     |> maybe_schedule_refresh_ready()}
   end
 
   @impl true
@@ -383,6 +392,16 @@ defmodule NeedlistWeb.NeedlistLive do
     socket
     |> assign(:last_wantlist_update, last_wantlist_update)
     |> assign(:refresh_ready, wantlist_refresh_ready(last_wantlist_update_attempt, Timex.now()))
+  end
+
+  defp maybe_schedule_refresh_ready(socket) do
+    refresh_ready = socket.assigns.refresh_ready
+
+    if connected?(socket) and refresh_ready != nil do
+      Process.send_after(self(), :refresh_ready, Timex.diff(refresh_ready, Timex.now(), :millisecond) + 1)
+    end
+
+    socket
   end
 
   defp want_artists(assigns) do

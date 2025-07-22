@@ -33,18 +33,17 @@ defmodule Needlist.Repo.Job do
     order_by(query, [j], desc_nulls_last: j.completed_at)
   end
 
+  @spec ordered_by_inserted_at(query :: Ecto.Query.t()) :: Ecto.Query.t()
+  def ordered_by_inserted_at(query) do
+    order_by(query, [j], desc_nulls_last: j.inserted_at)
+  end
+
   @spec by_username_arg(query :: Ecto.Query.t(), username :: String.t()) :: Ecto.Query.t()
   def by_username_arg(query, username) do
     where(query, [j], fragment("?->>'username'", j.args) == ^username)
   end
 
-  @spec last_in_queue(queue :: String.t(), state_or_states :: String.t() | [String.t()] | nil) :: Ecto.Query.t()
-  @spec last_in_queue(queue :: String.t()) :: Ecto.Query.t()
-  def last_in_queue(queue, state_or_states \\ nil) do
-    base_query()
-    |> by_state(state_or_states)
-    |> by_queue(queue)
-    |> ordered_by_completed_at()
-    |> first()
+  def by_id(query, id) do
+    where(query, [j], j.id == ^id)
   end
 end
