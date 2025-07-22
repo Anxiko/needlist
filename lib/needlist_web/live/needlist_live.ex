@@ -175,7 +175,8 @@ defmodule NeedlistWeb.NeedlistLive do
         {:noreply,
          socket
          |> put_flash(:info, "Needlist refresh in progress...")
-         |> assign_last_wantlist_update()}
+         |> assign_last_wantlist_update()
+         |> maybe_schedule_refresh_ready()}
 
       {:error, reason} ->
         Logger.error("Failed to dispatch wantlist refresh for #{username}: #{inspect(reason)}",
