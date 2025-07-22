@@ -24,6 +24,9 @@ defmodule NeedlistWeb.NeedlistLive do
                    |> Application.compile_env!(:wantlist_update_interval_seconds)
                    |> Timex.Duration.from_seconds()
 
+  # Just a small offset to ensure the timer expires after we're allowed to request a new wantlist refresh
+  @refresh_ready_offset_ms 1
+
   @typep paginated_wants() :: Pagination.t(Wantlist.t())
 
   @impl true
@@ -399,7 +402,7 @@ defmodule NeedlistWeb.NeedlistLive do
     refresh_ready = socket.assigns.refresh_ready
 
     if connected?(socket) and refresh_ready != nil do
-      Process.send_after(self(), :refresh_ready, Timex.diff(refresh_ready, Timex.now(), :millisecond) + 1)
+      Process.send_after(self(), :refresh_ready, Timex.diff(refresh_ready, Timex.now(), :millisecond) + @refresh_ready_offset_ms)
     end
 
     socket
