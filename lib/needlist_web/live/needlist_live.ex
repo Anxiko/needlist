@@ -559,7 +559,7 @@ defmodule NeedlistWeb.NeedlistLive do
   attr :refresh_ready, :any, required: true
   attr :time_zone, :string, required: true
 
-  def refresh_wantlist(%{refresh_ready: nil} = assigns) do
+  defp refresh_wantlist(%{refresh_ready: nil} = assigns) do
     ~H"""
     <.button phx-click="refresh-wantlist" phx-disable-with="Refreshing...">
       Refresh needlist
@@ -567,7 +567,7 @@ defmodule NeedlistWeb.NeedlistLive do
     """
   end
 
-  def refresh_wantlist(%{refresh_ready: %DateTime{}} = assigns) do
+  defp refresh_wantlist(%{refresh_ready: %DateTime{}} = assigns) do
     ~H"""
     <.button phx-click="refresh-wantlist" disabled>
       Refresh ready at {format_timestamp(@refresh_ready, @time_zone)}
