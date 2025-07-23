@@ -64,7 +64,9 @@ defmodule Needlist.MixProject do
       {:tiny_maps, "~> 3.0"},
       {:oban, "~> 2.19"},
       {:oban_web, "~> 2.11"},
-      {:igniter, "~> 0.5", only: [:dev]}
+      {:igniter, "~> 0.5", only: [:dev]},
+      {:tzdata, "~> 1.1"},
+      {:timex, "~> 3.0"}
     ]
   end
 

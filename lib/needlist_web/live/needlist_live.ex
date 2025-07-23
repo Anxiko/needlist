@@ -1,4 +1,6 @@
 defmodule NeedlistWeb.NeedlistLive do
+  alias Needlist.Users
+  alias Needlist.Oban.Dispatcher, as: ObanDispatcher
   alias Needlist.Repo.Pagination
   alias Needlist.Repo.Pagination.PageInfo
   alias Needlist.Repo.Wantlist
@@ -17,6 +19,13 @@ defmodule NeedlistWeb.NeedlistLive do
   require Logger
 
   @initial_sorting_order :asc
+  @datetime_format Application.compile_env!(:needlist, :datetime_format)
+  @update_interval :needlist
+                   |> Application.compile_env!(:wantlist_update_interval_seconds)
+                   |> Timex.Duration.from_seconds()
+
+  # Just a small offset to ensure the timer expires after we're allowed to request a new wantlist refresh
+  @refresh_ready_offset_ms 1
 
   @typep paginated_wants() :: Pagination.t(Wantlist.t())
 
@@ -31,6 +40,9 @@ defmodule NeedlistWeb.NeedlistLive do
       |> assign(:state, State.default())
       |> assign(:pending_wantlist_updates, %{})
       |> assign(:notes_editing, %{})
+      |> maybe_assign_timezone()
+      |> assign_last_wantlist_update()
+      |> maybe_schedule_refresh_ready()
     }
   end
 
@@ -48,6 +60,14 @@ defmodule NeedlistWeb.NeedlistLive do
       |> load_page()
 
     {:noreply, socket}
+  end
+
+  @impl true
+  def handle_info(:refresh_ready, socket) do
+    {:noreply,
+     socket
+     |> assign_last_wantlist_update()
+     |> maybe_schedule_refresh_ready()}
   end
 
   @impl true
@@ -148,6 +168,27 @@ defmodule NeedlistWeb.NeedlistLive do
       end
 
     {:noreply, socket}
+  end
+
+  def handle_event("refresh-wantlist", _params, socket) do
+    username = socket.assigns.username
+
+    case ObanDispatcher.dispatch_wantlist(username) do
+      {:ok, _job} ->
+        {:noreply,
+         socket
+         |> put_flash(:info, "Needlist refresh in progress...")
+         |> assign_last_wantlist_update()
+         |> maybe_schedule_refresh_ready()}
+
+      {:error, reason} ->
+        Logger.error("Failed to dispatch wantlist refresh for #{username}: #{inspect(reason)}",
+          error: inspect(reason),
+          user: username
+        )
+
+        {:noreply, put_flash(socket, :error, "Failed to refresh needlist! Please try again later.")}
+    end
   end
 
   @impl true
@@ -335,6 +376,42 @@ defmodule NeedlistWeb.NeedlistLive do
     |> Ecto.Changeset.validate_required([:release_id, :notes])
   end
 
+  defp maybe_assign_timezone(socket) do
+    maybe_tz =
+      case get_connect_params(socket) do
+        %{"time_zone" => time_zone} ->
+          time_zone
+
+        _ ->
+          "UTC"
+      end
+
+    assign(socket, :time_zone, maybe_tz)
+  end
+
+  defp assign_last_wantlist_update(socket) do
+    last_wantlist_update = Users.last_wantlist_update(socket.assigns.username, true)
+    last_wantlist_update_attempt = Users.last_wantlist_update(socket.assigns.username, false)
+
+    socket
+    |> assign(:last_wantlist_update, last_wantlist_update)
+    |> assign(:refresh_ready, wantlist_refresh_ready(last_wantlist_update_attempt, Timex.now()))
+  end
+
+  defp maybe_schedule_refresh_ready(socket) do
+    refresh_ready = socket.assigns.refresh_ready
+
+    if connected?(socket) and refresh_ready != nil do
+      Process.send_after(
+        self(),
+        :refresh_ready,
+        Timex.diff(refresh_ready, Timex.now(), :millisecond) + @refresh_ready_offset_ms
+      )
+    end
+
+    socket
+  end
+
   defp want_artists(assigns) do
     ~H"""
     <%= for artist <- @artists do %>
@@ -466,5 +543,55 @@ defmodule NeedlistWeb.NeedlistLive do
       </span>
     </th>
     """
+  end
+
+  attr :datetime, DateTime, required: true
+  attr :timezone, :string, default: "UTC"
+
+  defp local_datetime(assigns) do
+    ~H"""
+    <span>
+      {format_timestamp(@datetime, @timezone)}
+    </span>
+    """
+  end
+
+  attr :refresh_ready, :any, required: true
+  attr :time_zone, :string, required: true
+
+  defp refresh_wantlist(%{refresh_ready: nil} = assigns) do
+    ~H"""
+    <.button phx-click="refresh-wantlist" phx-disable-with="Refreshing...">
+      Refresh needlist
+    </.button>
+    """
+  end
+
+  defp refresh_wantlist(%{refresh_ready: %DateTime{}} = assigns) do
+    ~H"""
+    <.button phx-click="refresh-wantlist" disabled>
+      Refresh ready at {format_timestamp(@refresh_ready, @time_zone)}
+    </.button>
+    """
+  end
+
+  @spec format_timestamp(DateTime.t(), String.t()) :: String.t()
+  defp format_timestamp(datetime, timezone) do
+    datetime
+    |> DateTime.shift_zone!(timezone)
+    |> Timex.format!(@datetime_format)
+  end
+
+  @spec wantlist_refresh_ready(last_update :: DateTime.t() | nil, current_time :: DateTime.t()) :: DateTime.t() | nil
+  defp wantlist_refresh_ready(nil, _current_time), do: nil
+
+  defp wantlist_refresh_ready(last_update, current_time) do
+    next_update = Timex.add(last_update, @update_interval)
+
+    if Timex.compare(current_time, next_update) < 0 do
+      next_update
+    else
+      nil
+    end
   end
 end
