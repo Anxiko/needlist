@@ -18,6 +18,7 @@
 import Datepicker from 'flowbite-datepicker/Datepicker';
 import "flowbite/dist/flowbite.phoenix.js";
 
+import FlashyHooks from "flashy";
 
 // Include phoenix_html to handle method=PUT/DELETE in forms and buttons.
 import "phoenix_html";
@@ -27,7 +28,7 @@ import { LiveSocket } from "phoenix_live_view";
 import topbar from "../vendor/topbar";
 import { initDarkMode, onDarkModeToggle } from "./darkMode";
 
-Hooks = {}
+Hooks = {...FlashyHooks}
 
 Hooks.Datepicker = {
     mounted() {

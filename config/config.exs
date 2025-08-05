@@ -101,6 +101,9 @@ config :needlist, :wantlist_update_interval_seconds, 5 * 60
 
 config :elixir, :time_zone_database, Tzdata.TimeZoneDatabase
 
+config :flashy,
+  disconnected_module: NeedlistWeb.Components.Notifications.Disconnected
+
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{config_env()}.exs"

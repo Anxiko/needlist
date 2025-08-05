@@ -47,6 +47,8 @@ defmodule NeedlistWeb do
       import NeedlistWeb.Gettext
 
       unquote(verified_routes())
+
+      import Flashy
     end
   end
 
@@ -99,6 +101,8 @@ defmodule NeedlistWeb do
 
       # For annotating function components
       alias Phoenix.LiveView.Rendered
+
+      import Flashy
     end
   end
 
