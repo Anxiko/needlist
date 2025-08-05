@@ -9,6 +9,7 @@ defmodule NeedlistWeb.NeedlistLive do
   alias Needlist.Types.QueryOptions.SortOrder
   alias Needlist.Wantlists
   alias NeedlistWeb.NeedlistLive.State
+  alias NeedlistWeb.Components.Notifications.Normal, as: NormalNotification
   alias Nullables.Fallible
   alias Phoenix.LiveView.Socket
 
@@ -177,7 +178,7 @@ defmodule NeedlistWeb.NeedlistLive do
       {:ok, _job} ->
         {:noreply,
          socket
-         |> put_flash(:info, "Needlist refresh in progress...")
+         |> put_notification(NormalNotification.new(:info, "Needlist refresh started."))
          |> assign_last_wantlist_update()
          |> maybe_schedule_refresh_ready()}
 
@@ -189,6 +190,16 @@ defmodule NeedlistWeb.NeedlistLive do
 
         {:noreply, put_flash(socket, :error, "Failed to refresh needlist! Please try again later.")}
     end
+  end
+
+  def handle_event("notification", _params, socket) do
+    socket =
+      put_notification(
+        socket,
+        NormalNotification.new(:info, "This is a test notification. It should be replaced by a real one.", Flashy.Normal.Options.new(dismissible?: true))
+      )
+
+    {:noreply, socket}
   end
 
   @impl true
