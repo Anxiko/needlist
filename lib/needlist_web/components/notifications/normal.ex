@@ -14,7 +14,7 @@ defmodule NeedlistWeb.Components.Notifications.Normal do
     ~H"""
     <Flashy.Normal.render key={@key} notification={@notification}>
       <div
-        class="flex items-center w-full max-w-xs p-4 text-gray-500 rounded-lg shadow-sm dark:text-gray-400 bg-gray-300 dark:bg-gray-700"
+        class="relative overflow-hidden flex items-center w-full max-w-xs p-4 text-gray-500 rounded-lg shadow-sm dark:text-gray-400 bg-gray-300 dark:bg-gray-700"
         role="alert"
       >
         <div class="inline-flex items-center justify-center shrink-0 w-8 h-8 text-blue-500 bg-blue-100 rounded-lg dark:bg-blue-800 dark:text-blue-200">
@@ -29,7 +29,9 @@ defmodule NeedlistWeb.Components.Notifications.Normal do
           </svg>
           <span class="sr-only">Fire icon</span>
         </div>
+
         <div class="ms-3 text-sm font-normal">{Phoenix.HTML.raw(@notification.message)}</div>
+
         <button
           type="button"
           class="ms-auto -mx-1.5 -my-1.5 bg-white text-gray-400 hover:text-gray-900 rounded-lg focus:ring-2 focus:ring-gray-300 p-1.5 hover:bg-gray-100 inline-flex items-center justify-center h-8 w-8 dark:text-gray-500 dark:hover:text-white dark:bg-gray-800 dark:hover:bg-gray-700"
@@ -48,8 +50,18 @@ defmodule NeedlistWeb.Components.Notifications.Normal do
             />
           </svg>
         </button>
+
+        <.progress_bar :if={@notification.options.dismissible?} id={"#{@key}-progress"} />
       </div>
     </Flashy.Normal.render>
+    """
+  end
+
+  attr :id, :string, required: true
+
+  defp progress_bar(assigns) do
+    ~H"""
+    <div id={@id} class="absolute bottom-0 left-0 h-1 bg-black/10 dark:bg-white/10" style="width: 0%" />
     """
   end
 end

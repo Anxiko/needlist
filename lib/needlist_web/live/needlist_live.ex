@@ -196,7 +196,11 @@ defmodule NeedlistWeb.NeedlistLive do
     socket =
       put_notification(
         socket,
-        NormalNotification.new(:info, "This is a test notification. It should be replaced by a real one.", Flashy.Normal.Options.new(dismissible?: true))
+        NormalNotification.new(
+          :info,
+          "This is a test notification. It should be replaced by a real one.",
+          Flashy.Normal.Options.new(dismissible?: true)
+        )
       )
 
     {:noreply, socket}
