@@ -6,12 +6,14 @@ const fs = require("fs")
 const path = require("path")
 
 module.exports = {
+  safelist: [],
   darkMode: 'class',
   content: [
     "./js/**/*.js",
     "../lib/needlist_web.ex",
     "../lib/needlist_web/**/*.*ex",
-    './node_modules/flowbite/**/*.js'
+    './node_modules/flowbite/**/*.js',
+    '../deps/flashy/**/*.*ex'
   ],
   theme: {
     extend: {
