@@ -30,7 +30,7 @@ defmodule NeedlistWeb.Components.Notifications.Normal do
           <span class="sr-only">Fire icon</span>
         </div>
 
-        <div class="ms-3 text-sm font-normal">{Phoenix.HTML.raw(@notification.message)}</div>
+        <div class="ms-3 text-sm font-normal">{@notification.message}</div>
 
         <button
           type="button"
