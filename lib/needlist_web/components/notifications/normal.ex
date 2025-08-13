@@ -17,18 +17,7 @@ defmodule NeedlistWeb.Components.Notifications.Normal do
         class="relative overflow-hidden flex items-center w-full max-w-xs p-4 text-gray-500 rounded-lg shadow-sm dark:text-gray-400 bg-gray-300 dark:bg-gray-700"
         role="alert"
       >
-        <div class="inline-flex items-center justify-center shrink-0 w-8 h-8 text-blue-500 bg-blue-100 rounded-lg dark:bg-blue-800 dark:text-blue-200">
-          <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 20">
-            <path
-              stroke="currentColor"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M15.147 15.085a7.159 7.159 0 0 1-6.189 3.307A6.713 6.713 0 0 1 3.1 15.444c-2.679-4.513.287-8.737.888-9.548A4.373 4.373 0 0 0 5 1.608c1.287.953 6.445 3.218 5.537 10.5 1.5-1.122 2.706-3.01 2.853-6.14 1.433 1.049 3.993 5.395 1.757 9.117Z"
-            />
-          </svg>
-          <span class="sr-only">Fire icon</span>
-        </div>
+        <.notification_icon type={@notification.type} />
 
         <div class="ms-3 text-sm font-normal">{@notification.message}</div>
 
@@ -62,6 +51,27 @@ defmodule NeedlistWeb.Components.Notifications.Normal do
   defp progress_bar(assigns) do
     ~H"""
     <div id={@id} class="absolute bottom-0 left-0 h-1 bg-black/10 dark:bg-white/10" style="width: 0%" />
+    """
+  end
+
+  attr :type, :atom, required: true
+
+  defp notification_icon(assigns) do
+    {heroicon, icon_color, bg_color} =
+      case assigns.type do
+        :success -> {"hero-check", "text-green-500", "bg-green-100"}
+        :info -> {"hero-information-circle-solid", "text-blue-500", "bg-blue-100"}
+        :warning -> {"hero-exclamation-circle-solid", "text-amber-500", "bg-amber-100"}
+        :danger -> {"hero-x-circle-solid", "text-red-500", "bg-red-100"}
+      end
+
+    assigns = assign(assigns, heroicon: heroicon, icon_color: icon_color, bg_color: bg_color)
+
+    ~H"""
+    <div class={["inline-flex items-center justify-center shrink-0 w-8 h-8 rounded-lg", @icon_color, @bg_color]}>
+      <.icon name={@heroicon} />
+      <span class="sr-only">Icon for {@type} notification</span>
+    </div>
     """
   end
 end

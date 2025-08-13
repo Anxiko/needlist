@@ -192,12 +192,12 @@ defmodule NeedlistWeb.NeedlistLive do
     end
   end
 
-  def handle_event("notification", _params, socket) do
+  def handle_event("notification", %{"value" => value}, socket) do
     socket =
       put_notification(
         socket,
         NormalNotification.new(
-          :info,
+          String.to_existing_atom(value),
           "This is a test notification. It should be replaced by a real one.",
           Flashy.Normal.Options.new(dismissible?: true)
         )
