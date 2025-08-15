@@ -7,6 +7,8 @@ defmodule NeedlistWeb.Components.Notifications.Normal do
 
   use Flashy.Normal, types: [:info, :success, :warning, :danger]
 
+  @type notification_type() :: :info | :success | :warning | :danger
+
   attr :key, :string, required: true
   attr :notification, Flashy.Normal, required: true
 

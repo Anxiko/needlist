@@ -10,6 +10,7 @@ defmodule NeedlistWeb.NeedlistLive do
   alias Needlist.Wantlists
   alias NeedlistWeb.NeedlistLive.State
   alias NeedlistWeb.Components.Notifications.Normal, as: NormalNotification
+  alias NeedlistWeb.Toaster
   alias Nullables.Fallible
   alias Phoenix.LiveView.Socket
 
@@ -194,13 +195,10 @@ defmodule NeedlistWeb.NeedlistLive do
 
   def handle_event("notification", %{"value" => value}, socket) do
     socket =
-      put_notification(
+      Toaster.put_flash(
         socket,
-        NormalNotification.new(
-          String.to_existing_atom(value),
-          "This is a test notification. It should be replaced by a real one.",
-          Flashy.Normal.Options.new(dismissible?: true)
-        )
+        String.to_existing_atom(value),
+        "This is a test notification. It should be replaced by a real one."
       )
 
     {:noreply, socket}
