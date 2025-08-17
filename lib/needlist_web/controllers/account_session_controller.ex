@@ -31,7 +31,6 @@ defmodule NeedlistWeb.AccountSessionController do
       # In order to prevent user enumeration attacks, don't disclose whether the email is registered.
       conn
       |> Toaster.put_flash(:error, "Invalid email or password")
-      |> Toaster.put_flash(:email, String.slice(email, 0, 160))
       |> redirect(to: ~p"/accounts/log_in")
     end
   end
