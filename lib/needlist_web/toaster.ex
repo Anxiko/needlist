@@ -7,8 +7,8 @@ defmodule NeedlistWeb.Toaster do
 
   @type flash_type :: NormalNotification.notification_type() | :error
 
-  @spec put_flash(socket_or_conn :: Phoenix.Socket.t() | Plug.Conn.t(), type :: atom(), message :: String.t()) ::
-          Phoenix.Socket.t() | Plug.Conn.t()
+  @spec put_flash(socket_or_conn :: Phoenix.LiveView.Socket.t() | Plug.Conn.t(), type :: atom(), message :: String.t()) ::
+          Phoenix.LiveView.Socket.t() | Plug.Conn.t()
   def put_flash(socket_or_conn, type, message) do
     Flashy.put_notification(socket_or_conn, NormalNotification.new(flash_type(type), message))
   end
