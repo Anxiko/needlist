@@ -2,6 +2,7 @@ defmodule NeedlistWeb.AccountResetPasswordLive do
   use NeedlistWeb, :live_view
 
   alias Needlist.Accounts
+  alias NeedlistWeb.Toaster
 
   @impl true
   def render(assigns) do
@@ -52,7 +53,7 @@ defmodule NeedlistWeb.AccountResetPasswordLive do
       {:ok, _} ->
         {:noreply,
          socket
-         |> put_flash(:info, "Password reset successfully.")
+         |> Toaster.put_flash(:info, "Password reset successfully.")
          |> redirect(to: ~p"/accounts/log_in")}
 
       {:error, changeset} ->
@@ -70,7 +71,7 @@ defmodule NeedlistWeb.AccountResetPasswordLive do
       assign(socket, account: account, token: token)
     else
       socket
-      |> put_flash(:error, "Reset password link is invalid or it has expired.")
+      |> Toaster.put_flash(:error, "Reset password link is invalid or it has expired.")
       |> redirect(to: ~p"/")
     end
   end

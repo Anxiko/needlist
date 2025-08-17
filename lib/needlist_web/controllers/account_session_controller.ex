@@ -3,6 +3,7 @@ defmodule NeedlistWeb.AccountSessionController do
 
   alias Needlist.Accounts
   alias NeedlistWeb.AccountAuth
+  alias NeedlistWeb.Toaster
 
   @spec create(Plug.Conn.t(), map()) :: Plug.Conn.t()
   def create(conn, %{"_action" => "registered"} = params) do
@@ -24,13 +25,13 @@ defmodule NeedlistWeb.AccountSessionController do
 
     if account = Accounts.get_account_by_email_and_password(email, password) do
       conn
-      |> put_flash(:info, info)
+      |> Toaster.put_flash(:info, info)
       |> AccountAuth.log_in_account(account, account_params)
     else
       # In order to prevent user enumeration attacks, don't disclose whether the email is registered.
       conn
-      |> put_flash(:error, "Invalid email or password")
-      |> put_flash(:email, String.slice(email, 0, 160))
+      |> Toaster.put_flash(:error, "Invalid email or password")
+      |> Toaster.put_flash(:email, String.slice(email, 0, 160))
       |> redirect(to: ~p"/accounts/log_in")
     end
   end
@@ -38,7 +39,7 @@ defmodule NeedlistWeb.AccountSessionController do
   @spec delete(Plug.Conn.t(), map()) :: Plug.Conn.t()
   def delete(conn, _params) do
     conn
-    |> put_flash(:info, "Logged out successfully.")
+    |> Toaster.put_flash(:info, "Logged out successfully.")
     |> AccountAuth.log_out_account()
   end
 end
