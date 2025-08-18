@@ -12,6 +12,7 @@ defmodule NeedlistWeb.Components.Notifications.Normal do
   attr :key, :string, required: true
   attr :notification, Flashy.Normal, required: true
 
+  @spec render(map()) :: Phoenix.LiveView.Rendered.t()
   def render(assigns) do
     ~H"""
     <Flashy.Normal.render key={@key} notification={@notification}>
