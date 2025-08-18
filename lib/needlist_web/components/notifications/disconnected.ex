@@ -11,11 +11,11 @@ defmodule NeedlistWeb.Components.Notifications.Disconnected do
     ~H"""
     <Flashy.Disconnected.render key={@key}>
       <div
-        id="toast-simple"
-        class="flex items-center w-full max-w-xs p-4 space-x-4 rtl:space-x-reverse text-gray-500 bg-white divide-x rtl:divide-x-reverse divide-gray-200 rounded-lg shadow-sm dark:text-gray-400 dark:divide-gray-700 dark:bg-gray-800"
+        class="flex items-center gap-1 w-full max-w-xs p-4 text-gray-500 rounded-lg shadow-sm dark:text-gray-400 bg-gray-300 dark:bg-gray-700"
         role="alert"
       >
-        <div class="ps-4 text-sm font-normal">Attempting to reconnect.</div>
+        <.icon name="hero-arrow-path" class="animate-spin" />
+        <div class="text-sm font-normal">Attempting to reconnect...</div>
       </div>
     </Flashy.Disconnected.render>
     """
