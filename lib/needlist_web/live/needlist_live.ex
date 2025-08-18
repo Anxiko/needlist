@@ -195,17 +195,6 @@ defmodule NeedlistWeb.NeedlistLive do
     end
   end
 
-  def handle_event("notification", %{"value" => value}, socket) do
-    socket =
-      Toaster.put_flash(
-        socket,
-        String.to_existing_atom(value),
-        "This is a test notification. It should be replaced by a real one."
-      )
-
-    {:noreply, socket}
-  end
-
   @impl true
   def handle_async(
         :table_data,

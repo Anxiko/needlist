@@ -4,10 +4,6 @@
       Needlist for {@username}
     </h1>
     <div>
-      <.button phx-click="notification" value="success">Pop success</.button>
-      <.button phx-click="notification" value="info">Pop info</.button>
-      <.button phx-click="notification" value="warning">Pop warning</.button>
-      <.button phx-click="notification" value="danger">Pop danger</.button>
       <span :if={@last_wantlist_update != nil} class="dark:text-white">
         Last updated on <.local_datetime datetime={@last_wantlist_update} timezone={@time_zone} />
       </span>
