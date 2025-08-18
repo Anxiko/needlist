@@ -13,6 +13,17 @@ defmodule NeedlistWeb.Toaster do
     Flashy.put_notification(socket_or_conn, NormalNotification.new(flash_type(type), message))
   end
 
+  @spec get_flash(flash_assigns :: map(), type :: flash_type()) :: [String.t()]
+  def get_flash(flash_assigns, type) do
+    flash_assigns
+    |> Map.values()
+    |> Enum.filter(fn
+      %Flashy.Normal{type: ^type} -> true
+      _ -> false
+    end)
+    |> Enum.map(fn %Flashy.Normal{message: message} -> message end)
+  end
+
   @spec flash_type(flash_type()) :: NormalNotification.type()
   defp flash_type(:error), do: :danger
   defp flash_type(valid) when valid in [:success, :info, :warning, :danger], do: valid

@@ -3,6 +3,7 @@ defmodule NeedlistWeb.AccountConfirmationInstructionsLiveTest do
 
   import Phoenix.LiveViewTest
   import Needlist.AccountsFixtures
+  import NeedlistWeb.Asserters
 
   alias Needlist.Accounts
   alias Needlist.Repo
@@ -26,8 +27,7 @@ defmodule NeedlistWeb.AccountConfirmationInstructionsLiveTest do
         |> render_submit()
         |> follow_redirect(conn, ~p"/")
 
-      assert Phoenix.Flash.get(conn.assigns.flash, :info) =~
-               "If your email is in our system"
+      assert contains_flash_message?(conn, :info, "If your email is in our system")
 
       assert Repo.get_by!(Accounts.AccountToken, account_id: account.id).context == "confirm"
     end
@@ -43,8 +43,7 @@ defmodule NeedlistWeb.AccountConfirmationInstructionsLiveTest do
         |> render_submit()
         |> follow_redirect(conn, ~p"/")
 
-      assert Phoenix.Flash.get(conn.assigns.flash, :info) =~
-               "If your email is in our system"
+      assert contains_flash_message?(conn, :info, "If your email is in our system")
 
       refute Repo.get_by(Accounts.AccountToken, account_id: account.id)
     end
@@ -58,8 +57,8 @@ defmodule NeedlistWeb.AccountConfirmationInstructionsLiveTest do
         |> render_submit()
         |> follow_redirect(conn, ~p"/")
 
-      assert Phoenix.Flash.get(conn.assigns.flash, :info) =~
-               "If your email is in our system"
+
+      assert contains_flash_message?(conn, :info, "If your email is in our system")
 
       assert Repo.all(Accounts.AccountToken) == []
     end

@@ -3,6 +3,7 @@ defmodule NeedlistWeb.AccountResetPasswordLiveTest do
 
   import Phoenix.LiveViewTest
   import Needlist.AccountsFixtures
+  import NeedlistWeb.Asserters
 
   alias Needlist.Accounts
 
@@ -27,10 +28,8 @@ defmodule NeedlistWeb.AccountResetPasswordLiveTest do
     test "does not render reset password with invalid token", %{conn: conn} do
       {:error, {:redirect, to}} = live(conn, ~p"/accounts/reset_password/invalid")
 
-      assert to == %{
-               flash: %{"error" => "Reset password link is invalid or it has expired."},
-               to: ~p"/"
-             }
+      assert ~p"/" == to.to
+      assert contains_flash_message?(to.flash, :danger, "Reset password link is invalid or it has expired.")
     end
 
     test "renders errors for invalid data", %{conn: conn, token: token} do
@@ -62,7 +61,7 @@ defmodule NeedlistWeb.AccountResetPasswordLiveTest do
         |> follow_redirect(conn, ~p"/accounts/log_in")
 
       refute get_session(conn, :account_token)
-      assert Phoenix.Flash.get(conn.assigns.flash, :info) =~ "Password reset successfully"
+      assert contains_flash_message?(conn, :info, "Password reset successfully")
       assert Accounts.get_account_by_email_and_password(account.email, "new valid password")
     end
 

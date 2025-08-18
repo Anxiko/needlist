@@ -5,6 +5,7 @@ defmodule NeedlistWeb.AccountAuthTest do
   alias Needlist.Accounts
   alias NeedlistWeb.AccountAuth
   import Needlist.AccountsFixtures
+  import NeedlistWeb.Asserters
 
   @remember_me_cookie "_needlist_web_account_remember_me"
 
@@ -233,8 +234,7 @@ defmodule NeedlistWeb.AccountAuthTest do
 
       assert redirected_to(conn) == ~p"/accounts/log_in"
 
-      assert Phoenix.Flash.get(conn.assigns.flash, :error) ==
-               "You must log in to access this page."
+      assert contains_flash_message?(conn, :danger, "You must log in to access this page.")
     end
 
     test "stores the path to redirect to on GET", %{conn: conn} do

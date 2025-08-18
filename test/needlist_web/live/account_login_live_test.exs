@@ -3,6 +3,7 @@ defmodule NeedlistWeb.AccountLoginLiveTest do
 
   import Phoenix.LiveViewTest
   import Needlist.AccountsFixtures
+  import NeedlistWeb.Asserters
 
   describe "Log in page" do
     test "renders log in page", %{conn: conn} do
@@ -49,8 +50,7 @@ defmodule NeedlistWeb.AccountLoginLiveTest do
 
       conn = submit_form(form, conn)
 
-      assert Phoenix.Flash.get(conn.assigns.flash, :error) == "Invalid email or password"
-
+      assert contains_flash_message?(conn, :danger, "Invalid email or password")
       assert redirected_to(conn) == "/accounts/log_in"
     end
   end
