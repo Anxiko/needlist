@@ -29,6 +29,7 @@ defmodule NeedlistWeb.AccountSessionController do
       |> AccountAuth.log_in_account(account, account_params)
     else
       # In order to prevent user enumeration attacks, don't disclose whether the email is registered.
+      # credo:disable-for-next-line Credo.Check.Design.TagTODO
       # TODO: include the email from the failed login attempt, so it can be prefilled on the form
       conn
       |> Toaster.put_flash(:error, "Invalid email or password")

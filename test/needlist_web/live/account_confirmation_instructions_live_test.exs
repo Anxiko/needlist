@@ -57,7 +57,6 @@ defmodule NeedlistWeb.AccountConfirmationInstructionsLiveTest do
         |> render_submit()
         |> follow_redirect(conn, ~p"/")
 
-
       assert contains_flash_message?(conn, :info, "If your email is in our system")
 
       assert Repo.all(Accounts.AccountToken) == []

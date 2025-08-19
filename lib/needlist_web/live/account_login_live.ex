@@ -38,6 +38,7 @@ defmodule NeedlistWeb.AccountLoginLive do
 
   @impl true
   def mount(_params, _session, socket) do
+    # credo:disable-for-next-line Credo.Check.Design.TagTODO
     # TODO: receive the email from an unsuccessful login attempt
     email = nil
     form = to_form(%{"email" => email}, as: "account")
