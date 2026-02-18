@@ -3,6 +3,7 @@ defmodule NeedlistWeb.AccountConfirmationInstructionsLive do
   use NeedlistWeb, :live_view
 
   alias Needlist.Accounts
+  alias NeedlistWeb.Toaster
 
   def render(assigns) do
     ~H"""
@@ -45,7 +46,7 @@ defmodule NeedlistWeb.AccountConfirmationInstructionsLive do
 
     {:noreply,
      socket
-     |> put_flash(:info, info)
+     |> Toaster.put_flash(:info, info)
      |> redirect(to: ~p"/")}
   end
 end

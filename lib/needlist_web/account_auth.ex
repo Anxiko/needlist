@@ -8,6 +8,7 @@ defmodule NeedlistWeb.AccountAuth do
   alias Needlist.Repo.User
   alias Needlist.Accounts
   alias Needlist.Accounts.Account
+  alias NeedlistWeb.Toaster
 
   # Make the remember me cookie valid for 60 days.
   # If you want bump or reduce this value, also change
@@ -160,7 +161,7 @@ defmodule NeedlistWeb.AccountAuth do
     else
       socket =
         socket
-        |> Phoenix.LiveView.put_flash(:error, "You must log in to access this page.")
+        |> Toaster.put_flash(:error, "You must log in to access this page.")
         |> Phoenix.LiveView.redirect(to: ~p"/accounts/log_in")
 
       {:halt, socket}
@@ -184,7 +185,7 @@ defmodule NeedlistWeb.AccountAuth do
       nil ->
         socket =
           socket
-          |> Phoenix.LiveView.put_flash(:error, "You must log in to access this page.")
+          |> Toaster.put_flash(:error, "You must log in to access this page.")
           |> Phoenix.LiveView.redirect(to: ~p"/accounts/log_in")
 
         {:halt, socket}
@@ -192,7 +193,7 @@ defmodule NeedlistWeb.AccountAuth do
       %Account{user: nil} ->
         socket =
           socket
-          |> Phoenix.LiveView.put_flash(:error, "You must first link your Discogs account.")
+          |> Toaster.put_flash(:error, "You must first link your Discogs account.")
           |> Phoenix.LiveView.redirect(to: ~p"/accounts/settings")
 
         {:halt, socket}
@@ -203,7 +204,7 @@ defmodule NeedlistWeb.AccountAuth do
       %Account{user: %User{username: other_username}} ->
         socket =
           socket
-          |> Phoenix.LiveView.put_flash(:error, "You may only see your own needlist.")
+          |> Toaster.put_flash(:error, "You may only see your own needlist.")
           |> Phoenix.LiveView.redirect(to: ~p"/needlist/#{other_username}")
 
         {:halt, socket}
@@ -242,7 +243,7 @@ defmodule NeedlistWeb.AccountAuth do
       conn
     else
       conn
-      |> put_flash(:error, "You must log in to access this page.")
+      |> Toaster.put_flash(:error, "You must log in to access this page.")
       |> maybe_store_return_to()
       |> redirect(to: ~p"/accounts/log_in")
       |> halt()
@@ -256,13 +257,13 @@ defmodule NeedlistWeb.AccountAuth do
 
       %Account{admin: false} ->
         conn
-        |> put_flash(:error, "You must be an admin to access this page.")
+        |> Toaster.put_flash(:error, "You must be an admin to access this page.")
         |> redirect(to: signed_in_path(conn))
         |> halt()
 
       nil ->
         conn
-        |> put_flash(:error, "You must log in to access this page.")
+        |> Toaster.put_flash(:error, "You must log in to access this page.")
         |> maybe_store_return_to()
         |> redirect(to: ~p"/accounts/log_in")
         |> halt()

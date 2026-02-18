@@ -43,12 +43,12 @@ defmodule Needlist.MixProject do
       {:postgrex, ">= 0.0.0"},
       {:phoenix_html, "~> 3.3"},
       {:phoenix_live_reload, "~> 1.2", only: :dev},
-      {:phoenix_live_view, "~> 1.0.5"},
+      {:phoenix_live_view, "~> 1.0.12"},
       {:floki, "~> 0.36.0"},
       {:phoenix_live_dashboard, "~> 0.8.2"},
       {:oauther, "~> 1.3"},
-      {:esbuild, "~> 0.8", runtime: Mix.env() == :dev},
-      {:tailwind, "~> 0.2.0", runtime: Mix.env() == :dev},
+      {:esbuild, "~> 0.10", runtime: Mix.env() == :dev},
+      {:tailwind, "~> 0.3.1", runtime: Mix.env() == :dev},
       {:swoosh, "~> 1.3"},
       {:finch, "~> 0.13"},
       {:telemetry_metrics, "~> 0.6"},
@@ -66,7 +66,8 @@ defmodule Needlist.MixProject do
       {:oban_web, "~> 2.11"},
       {:igniter, "~> 0.5", only: [:dev]},
       {:tzdata, "~> 1.1"},
-      {:timex, "~> 3.0"}
+      {:timex, "~> 3.0"},
+      {:flashy, "~> 0.3.1"}
     ]
   end
 

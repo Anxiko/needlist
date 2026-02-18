@@ -2,6 +2,7 @@ defmodule NeedlistWeb.AccountSessionControllerTest do
   use NeedlistWeb.ConnCase, async: true
 
   import Needlist.AccountsFixtures
+  import NeedlistWeb.Asserters
 
   setup do
     %{account: account_fixture()}
@@ -51,7 +52,7 @@ defmodule NeedlistWeb.AccountSessionControllerTest do
         })
 
       assert redirected_to(conn) == "/foo/bar"
-      assert Phoenix.Flash.get(conn.assigns.flash, :info) =~ "Welcome back!"
+      assert contains_flash_message?(conn, :info, "Welcome back!")
     end
 
     test "login following registration", %{conn: conn, account: account} do
@@ -66,7 +67,7 @@ defmodule NeedlistWeb.AccountSessionControllerTest do
         })
 
       assert redirected_to(conn) == ~p"/"
-      assert Phoenix.Flash.get(conn.assigns.flash, :info) =~ "Account created successfully"
+      assert contains_flash_message?(conn, :info, "Account created successfully")
     end
 
     test "login following password update", %{conn: conn, account: account} do
@@ -81,7 +82,7 @@ defmodule NeedlistWeb.AccountSessionControllerTest do
         })
 
       assert redirected_to(conn) == ~p"/accounts/settings"
-      assert Phoenix.Flash.get(conn.assigns.flash, :info) =~ "Password updated successfully"
+      assert contains_flash_message?(conn, :info, "Password updated successfully")
     end
 
     test "redirects to login page with invalid credentials", %{conn: conn} do
@@ -90,7 +91,7 @@ defmodule NeedlistWeb.AccountSessionControllerTest do
           "account" => %{"email" => "invalid@email.com", "password" => "invalid_password"}
         })
 
-      assert Phoenix.Flash.get(conn.assigns.flash, :error) == "Invalid email or password"
+      assert contains_flash_message?(conn, :danger, "Invalid email or password")
       assert redirected_to(conn) == ~p"/accounts/log_in"
     end
   end
@@ -100,14 +101,14 @@ defmodule NeedlistWeb.AccountSessionControllerTest do
       conn = conn |> log_in_account(account) |> delete(~p"/accounts/log_out")
       assert redirected_to(conn) == ~p"/"
       refute get_session(conn, :account_token)
-      assert Phoenix.Flash.get(conn.assigns.flash, :info) =~ "Logged out successfully"
+      assert contains_flash_message?(conn, :info, "Logged out successfully")
     end
 
     test "succeeds even if the account is not logged in", %{conn: conn} do
       conn = delete(conn, ~p"/accounts/log_out")
       assert redirected_to(conn) == ~p"/"
       refute get_session(conn, :account_token)
-      assert Phoenix.Flash.get(conn.assigns.flash, :info) =~ "Logged out successfully"
+      assert contains_flash_message?(conn, :info, "Logged out successfully")
     end
   end
 end

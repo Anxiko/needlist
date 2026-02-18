@@ -9,6 +9,7 @@ defmodule NeedlistWeb.OauthController do
   alias Needlist.Discogs.Api
   alias Needlist.Discogs.Api.Types.Identity
   alias Needlist.Discogs.Oauth
+  alias NeedlistWeb.Toaster
 
   @cache Application.compile_env!(:needlist, :cache_key)
 
@@ -42,7 +43,7 @@ defmodule NeedlistWeb.OauthController do
          {:ok, _} <- Accounts.associate_with_user(account, user) do
       conn
       |> put_status(:found)
-      |> put_flash(:info, "Your account is now linked to your Discogs user #{username}")
+      |> Toaster.put_flash(:info, "Your account is now linked to your Discogs user #{username}")
       |> redirect(to: ~p"/accounts/settings")
       |> halt()
     else

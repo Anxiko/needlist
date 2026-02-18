@@ -6,6 +6,7 @@ defmodule NeedlistWeb.AccountSettingsLive do
   alias Needlist.Repo.User
   alias Needlist.Accounts.Account
   alias Needlist.Accounts
+  alias NeedlistWeb.Toaster
 
   @impl true
   def render(assigns) do
@@ -75,10 +76,10 @@ defmodule NeedlistWeb.AccountSettingsLive do
     socket =
       case Accounts.update_account_email(socket.assigns.current_account, token) do
         :ok ->
-          put_flash(socket, :info, "Email changed successfully.")
+          Toaster.put_flash(socket, :info, "Email changed successfully.")
 
         :error ->
-          put_flash(socket, :error, "Email change link is invalid or it has expired.")
+          Toaster.put_flash(socket, :error, "Email change link is invalid or it has expired.")
       end
 
     {:ok, push_navigate(socket, to: ~p"/accounts/settings")}
@@ -127,7 +128,7 @@ defmodule NeedlistWeb.AccountSettingsLive do
         )
 
         info = "A link to confirm your email change has been sent to the new address."
-        {:noreply, socket |> put_flash(:info, info) |> assign(email_form_current_password: nil)}
+        {:noreply, socket |> Toaster.put_flash(:info, info) |> assign(email_form_current_password: nil)}
 
       {:error, changeset} ->
         {:noreply, assign(socket, :email_form, to_form(Map.put(changeset, :action, :insert)))}
@@ -172,7 +173,7 @@ defmodule NeedlistWeb.AccountSettingsLive do
 
         {:error, error} ->
           Logger.warning("Failed to unlink Discogs from account: #{inspect(error)}", error: error)
-          put_flash(socket, :error, "Failed to unlink user")
+          Toaster.put_flash(socket, :error, "Failed to unlink user")
       end
 
     {:noreply, socket}

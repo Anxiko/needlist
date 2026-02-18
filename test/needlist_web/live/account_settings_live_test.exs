@@ -4,6 +4,7 @@ defmodule NeedlistWeb.AccountSettingsLiveTest do
   alias Needlist.Accounts
   import Phoenix.LiveViewTest
   import Needlist.AccountsFixtures
+  import NeedlistWeb.Asserters
 
   describe "Settings page" do
     test "renders settings page", %{conn: conn} do
@@ -21,7 +22,7 @@ defmodule NeedlistWeb.AccountSettingsLiveTest do
 
       assert {:redirect, %{to: path, flash: flash}} = redirect
       assert path == ~p"/accounts/log_in"
-      assert %{"error" => "You must log in to access this page."} = flash
+      assert contains_flash_message?(flash, :danger, "You must log in to access this page.")
     end
   end
 
@@ -112,8 +113,7 @@ defmodule NeedlistWeb.AccountSettingsLiveTest do
 
       assert get_session(new_password_conn, :account_token) != get_session(conn, :account_token)
 
-      assert Phoenix.Flash.get(new_password_conn.assigns.flash, :info) =~
-               "Password updated successfully"
+      assert contains_flash_message?(new_password_conn, :info, "Password updated successfully")
 
       assert Accounts.get_account_by_email_and_password(account.email, new_password)
     end
@@ -176,25 +176,22 @@ defmodule NeedlistWeb.AccountSettingsLiveTest do
 
       assert {:live_redirect, %{to: path, flash: flash}} = redirect
       assert path == ~p"/accounts/settings"
-      assert %{"info" => message} = flash
-      assert message == "Email changed successfully."
+      assert contains_flash_message?(flash, :info, "Email changed successfully.")
       refute Accounts.get_account_by_email(account.email)
       assert Accounts.get_account_by_email(email)
 
       # use confirm token again
       {:error, redirect} = live(conn, ~p"/accounts/settings/confirm_email/#{token}")
       assert {:live_redirect, %{to: path, flash: flash}} = redirect
+      assert contains_flash_message?(flash, :danger, "Email change link is invalid or it has expired.")
       assert path == ~p"/accounts/settings"
-      assert %{"error" => message} = flash
-      assert message == "Email change link is invalid or it has expired."
     end
 
     test "does not update email with invalid token", %{conn: conn, account: account} do
       {:error, redirect} = live(conn, ~p"/accounts/settings/confirm_email/oops")
       assert {:live_redirect, %{to: path, flash: flash}} = redirect
       assert path == ~p"/accounts/settings"
-      assert %{"error" => message} = flash
-      assert message == "Email change link is invalid or it has expired."
+      assert contains_flash_message?(flash, :danger, "Email change link is invalid or it has expired.")
       assert Accounts.get_account_by_email(account.email)
     end
 
@@ -203,8 +200,7 @@ defmodule NeedlistWeb.AccountSettingsLiveTest do
       {:error, redirect} = live(conn, ~p"/accounts/settings/confirm_email/#{token}")
       assert {:redirect, %{to: path, flash: flash}} = redirect
       assert path == ~p"/accounts/log_in"
-      assert %{"error" => message} = flash
-      assert message == "You must log in to access this page."
+      assert contains_flash_message?(flash, :danger, "You must log in to access this page.")
     end
   end
 end

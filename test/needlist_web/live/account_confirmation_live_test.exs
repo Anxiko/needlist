@@ -3,6 +3,7 @@ defmodule NeedlistWeb.AccountConfirmationLiveTest do
 
   import Phoenix.LiveViewTest
   import Needlist.AccountsFixtures
+  import NeedlistWeb.Asserters
 
   alias Needlist.Accounts
   alias Needlist.Repo
@@ -33,8 +34,7 @@ defmodule NeedlistWeb.AccountConfirmationLiveTest do
 
       assert {:ok, conn} = result
 
-      assert Phoenix.Flash.get(conn.assigns.flash, :info) =~
-               "Account confirmed successfully"
+      assert contains_flash_message?(conn, :info, "Account confirmed successfully")
 
       assert Accounts.get_account!(account.id).confirmed_at
       refute get_session(conn, :account_token)
@@ -51,8 +51,7 @@ defmodule NeedlistWeb.AccountConfirmationLiveTest do
 
       assert {:ok, conn} = result
 
-      assert Phoenix.Flash.get(conn.assigns.flash, :error) =~
-               "Account confirmation link is invalid or it has expired"
+      assert contains_flash_message?(conn, :danger, "Account confirmation link is invalid or it has expired")
 
       # when logged in
       conn =
@@ -80,8 +79,7 @@ defmodule NeedlistWeb.AccountConfirmationLiveTest do
         |> render_submit()
         |> follow_redirect(conn, ~p"/")
 
-      assert Phoenix.Flash.get(conn.assigns.flash, :error) =~
-               "Account confirmation link is invalid or it has expired"
+      assert contains_flash_message?(conn, :danger, "Account confirmation link is invalid or it has expired")
 
       refute Accounts.get_account!(account.id).confirmed_at
     end

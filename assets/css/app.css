@@ -1,6 +1,7 @@
 @import "tailwindcss/base";
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
+@source "../../deps/flashy/**/*.*ex";
 
 /* This file is for your main application CSS */
 .loader {

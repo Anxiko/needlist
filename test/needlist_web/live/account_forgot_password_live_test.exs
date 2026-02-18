@@ -3,6 +3,7 @@ defmodule NeedlistWeb.AccountForgotPasswordLiveTest do
 
   import Phoenix.LiveViewTest
   import Needlist.AccountsFixtures
+  import NeedlistWeb.Asserters
 
   alias Needlist.Accounts
   alias Needlist.Repo
@@ -41,7 +42,7 @@ defmodule NeedlistWeb.AccountForgotPasswordLiveTest do
         |> render_submit()
         |> follow_redirect(conn, "/")
 
-      assert Phoenix.Flash.get(conn.assigns.flash, :info) =~ "If your email is in our system"
+      assert contains_flash_message?(conn, :info, "If your email is in our system")
 
       assert Repo.get_by!(Accounts.AccountToken, account_id: account.id).context ==
                "reset_password"
@@ -56,7 +57,7 @@ defmodule NeedlistWeb.AccountForgotPasswordLiveTest do
         |> render_submit()
         |> follow_redirect(conn, "/")
 
-      assert Phoenix.Flash.get(conn.assigns.flash, :info) =~ "If your email is in our system"
+      assert contains_flash_message?(conn, :info, "If your email is in our system")
       assert Repo.all(Accounts.AccountToken) == []
     end
   end

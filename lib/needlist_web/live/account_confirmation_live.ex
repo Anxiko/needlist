@@ -3,6 +3,7 @@ defmodule NeedlistWeb.AccountConfirmationLive do
   use NeedlistWeb, :live_view
 
   alias Needlist.Accounts
+  alias NeedlistWeb.Toaster
 
   def render(%{live_action: :edit} = assigns) do
     ~H"""
@@ -35,7 +36,7 @@ defmodule NeedlistWeb.AccountConfirmationLive do
       {:ok, _} ->
         {:noreply,
          socket
-         |> put_flash(:info, "Account confirmed successfully.")
+         |> Toaster.put_flash(:info, "Account confirmed successfully.")
          |> redirect(to: ~p"/")}
 
       :error ->
@@ -50,7 +51,7 @@ defmodule NeedlistWeb.AccountConfirmationLive do
           %{} ->
             {:noreply,
              socket
-             |> put_flash(:error, "Account confirmation link is invalid or it has expired.")
+             |> Toaster.put_flash(:error, "Account confirmation link is invalid or it has expired.")
              |> redirect(to: ~p"/")}
         end
     end

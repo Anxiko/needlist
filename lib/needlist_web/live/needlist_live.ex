@@ -1,4 +1,6 @@
 defmodule NeedlistWeb.NeedlistLive do
+  use NeedlistWeb, :live_view
+
   alias Needlist.Users
   alias Needlist.Oban.Dispatcher, as: ObanDispatcher
   alias Needlist.Repo.Pagination
@@ -9,10 +11,10 @@ defmodule NeedlistWeb.NeedlistLive do
   alias Needlist.Types.QueryOptions.SortOrder
   alias Needlist.Wantlists
   alias NeedlistWeb.NeedlistLive.State
+  alias NeedlistWeb.Toaster
+
   alias Nullables.Fallible
   alias Phoenix.LiveView.Socket
-
-  use NeedlistWeb, :live_view
 
   import NeedlistWeb.Navigation.Components, only: [pagination: 1]
 
@@ -177,7 +179,7 @@ defmodule NeedlistWeb.NeedlistLive do
       {:ok, _job} ->
         {:noreply,
          socket
-         |> put_flash(:info, "Needlist refresh in progress...")
+         |> Toaster.put_flash(:info, "Needlist refresh started.")
          |> assign_last_wantlist_update()
          |> maybe_schedule_refresh_ready()}
 
@@ -187,7 +189,7 @@ defmodule NeedlistWeb.NeedlistLive do
           user: username
         )
 
-        {:noreply, put_flash(socket, :error, "Failed to refresh needlist! Please try again later.")}
+        {:noreply, Toaster.put_flash(socket, :error, "Failed to refresh needlist! Please try again later.")}
     end
   end
 
@@ -225,7 +227,7 @@ defmodule NeedlistWeb.NeedlistLive do
   end
 
   def handle_async(:table_data, {:exit, reason}, socket) do
-    {:noreply, put_flash(socket, :error, "Failed to load data: #{reason}")}
+    {:noreply, Toaster.put_flash(socket, :error, "Failed to load data: #{reason}")}
   end
 
   def handle_async({:wantlist_update, release_id}, {:ok, {:ok, wantlist}}, socket) do
@@ -250,7 +252,7 @@ defmodule NeedlistWeb.NeedlistLive do
 
     socket =
       socket
-      |> put_flash(:error, "Failed to update rating")
+      |> Toaster.put_flash(:error, "Failed to update rating")
       |> update(:pending_wantlist_updates, &Map.delete(&1, release_id))
 
     {:noreply, socket}
@@ -278,7 +280,7 @@ defmodule NeedlistWeb.NeedlistLive do
 
     socket =
       socket
-      |> put_flash(:error, "Failed to update notes")
+      |> Toaster.put_flash(:error, "Failed to update notes")
       |> update(:notes_editing, &Map.delete(&1, release_id))
 
     {:noreply, socket}

@@ -396,4 +396,21 @@ defmodule Needlist.Accounts do
       {:error, :account, changeset, _} -> {:error, changeset}
     end
   end
+
+  @doc """
+  Forces a password update for the account with the given email.
+  """
+  @spec force_password_for_email(email :: String.t(), password :: String.t()) ::
+          {:ok, Account.t()} | {:error, any()}
+  def force_password_for_email(email, password) do
+    case get_account_by_email(email) do
+      %Account{} = account ->
+        account
+        |> Account.password_changeset(%{password: password, password_confirmation: password})
+        |> Repo.update()
+
+      nil ->
+        {:error, :not_found}
+    end
+  end
 end
