@@ -4,7 +4,7 @@
 #
 
 app = 'needlist'
-primary_region = 'mad'
+primary_region = 'cdg'
 kill_signal = 'SIGTERM'
 
 [build]
