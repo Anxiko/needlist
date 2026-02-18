@@ -11,7 +11,6 @@ defmodule NeedlistWeb.NeedlistLive do
   alias Needlist.Types.QueryOptions.SortOrder
   alias Needlist.Wantlists
   alias NeedlistWeb.NeedlistLive.State
-  alias NeedlistWeb.Components.Notifications.Normal, as: NormalNotification
   alias NeedlistWeb.Toaster
 
   alias Nullables.Fallible
@@ -180,7 +179,7 @@ defmodule NeedlistWeb.NeedlistLive do
       {:ok, _job} ->
         {:noreply,
          socket
-         |> put_notification(NormalNotification.new(:info, "Needlist refresh started."))
+         |> Toaster.put_flash(:info, "Needlist refresh started.")
          |> assign_last_wantlist_update()
          |> maybe_schedule_refresh_ready()}
 
