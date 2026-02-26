@@ -571,7 +571,13 @@ defmodule NeedlistWeb.NeedlistLive do
 
   defp refresh_wantlist(%{refresh_ready: %DateTime{}} = assigns) do
     ~H"""
-    <.button phx-click="refresh-wantlist" disabled>
+    <.button
+      id="refresh-wantlist-button"
+      phx-click="refresh-wantlist"
+      phx-hook="Countdown"
+      data-end-timestamp={DateTime.to_unix(@refresh_ready, :millisecond)}
+      disabled
+    >
       Refresh ready at {format_timestamp(@refresh_ready, @time_zone)}
     </.button>
     """

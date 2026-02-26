@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "countdown": "^2.6.0",
     "flowbite": "^2.2.1",
     "flowbite-datepicker": "^1.2.6"
   }
