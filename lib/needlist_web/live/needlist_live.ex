@@ -26,9 +26,6 @@ defmodule NeedlistWeb.NeedlistLive do
                    |> Application.compile_env!(:wantlist_update_interval_seconds)
                    |> Timex.Duration.from_seconds()
 
-  # Just a small offset to ensure the timer expires after we're allowed to request a new wantlist refresh
-  @refresh_ready_offset_ms 1
-
   @typep paginated_wants() :: Pagination.t(Wantlist.t())
 
   @impl true
@@ -44,7 +41,6 @@ defmodule NeedlistWeb.NeedlistLive do
       |> assign(:notes_editing, %{})
       |> maybe_assign_timezone()
       |> assign_last_wantlist_update()
-      |> maybe_schedule_refresh_ready()
     }
   end
 
@@ -62,14 +58,6 @@ defmodule NeedlistWeb.NeedlistLive do
       |> load_page()
 
     {:noreply, socket}
-  end
-
-  @impl true
-  def handle_info(:refresh_ready, socket) do
-    {:noreply,
-     socket
-     |> assign_last_wantlist_update()
-     |> maybe_schedule_refresh_ready()}
   end
 
   @impl true
@@ -180,8 +168,7 @@ defmodule NeedlistWeb.NeedlistLive do
         {:noreply,
          socket
          |> Toaster.put_flash(:info, "Needlist refresh started.")
-         |> assign_last_wantlist_update()
-         |> maybe_schedule_refresh_ready()}
+         |> assign_last_wantlist_update()}
 
       {:error, reason} ->
         Logger.error("Failed to dispatch wantlist refresh for #{username}: #{inspect(reason)}",
@@ -398,20 +385,6 @@ defmodule NeedlistWeb.NeedlistLive do
     socket
     |> assign(:last_wantlist_update, last_wantlist_update)
     |> assign(:refresh_ready, wantlist_refresh_ready(last_wantlist_update_attempt, Timex.now()))
-  end
-
-  defp maybe_schedule_refresh_ready(socket) do
-    refresh_ready = socket.assigns.refresh_ready
-
-    if connected?(socket) and refresh_ready != nil do
-      Process.send_after(
-        self(),
-        :refresh_ready,
-        Timex.diff(refresh_ready, Timex.now(), :millisecond) + @refresh_ready_offset_ms
-      )
-    end
-
-    socket
   end
 
   defp want_artists(assigns) do
