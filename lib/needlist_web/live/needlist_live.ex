@@ -160,6 +160,12 @@ defmodule NeedlistWeb.NeedlistLive do
     {:noreply, socket}
   end
 
+  def handle_event("countdown-over", %{"id" => element_id}, socket) do
+    Logger.info("Received countdown over from #{element_id}")
+
+    {:noreply, assign_last_wantlist_update(socket)}
+  end
+
   def handle_event("refresh-wantlist", _params, socket) do
     username = socket.assigns.username
 
@@ -548,6 +554,8 @@ defmodule NeedlistWeb.NeedlistLive do
       id="refresh-wantlist-button"
       phx-click="refresh-wantlist"
       phx-hook="Countdown"
+      data-countdown-template="Ready in {{countdown}}"
+      data-countdown-over="Refresh needlist"
       data-end-timestamp={DateTime.to_unix(@refresh_ready, :millisecond)}
       disabled
     >
