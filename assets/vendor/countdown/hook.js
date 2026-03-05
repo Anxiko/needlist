@@ -9,12 +9,16 @@ export const Countdown = {
 
     const endTimestamp = new Date(Number.parseInt(rawEndTimestamp));
     this.timerId = countdown((ts) => {
-      const countdownText = ts.toString()
-      if (ts.value < 0 || !countdownText.length) {
+      if (ts.value < 0) {
         this.el.textContent = this.el.dataset.countdownOver;
         this.pushEvent("countdown-over", { id: this.el.id });
         this.destroyed();
         return;
+      }
+
+      let countdownText = ts.toString();
+      if (countdownText.length === 0) {
+        countdownText = "0 seconds";
       }
       this.el.textContent = this.el.dataset.countdownTemplate.replace("{{countdown}}", countdownText);
     }, endTimestamp, countdown.HOURS | countdown.MINUTES | countdown.SECONDS, 2);
