@@ -15,7 +15,18 @@ defmodule Needlist.Oban.Worker.Listings do
     ]
 
   @impl true
-  def perform(%Oban.Job{args: %{"release_id" => release_id}}) do
+  def perform(%Oban.Job{args: %{"release_id" => release_id}} = job) do
+    with {_, %{ok: [^release_id]}} <- {:scrape, Needlist.Discogs.Scraper.scrape_listings({:release, release_id})},
+         {_, :ok} <- {:notify, Needlist.PubSub.job_finished(__MODULE__, job)} do
+      :ok
+    else
+      {:scrape, %{error: [{^release_id, step, details}]}} ->
+        {:error, {step, details}}
+
+      {:notify, {:error, details}} ->
+        {:error, {:notify, details}}
+    end
+
     case Needlist.Discogs.Scraper.scrape_listings({:release, release_id}) do
       %{ok: [^release_id]} ->
         :ok

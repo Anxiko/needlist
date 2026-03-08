@@ -3,6 +3,7 @@ defmodule NeedlistWeb.NeedlistLive do
 
   alias Needlist.Users
   alias Needlist.Oban.Dispatcher, as: ObanDispatcher
+  alias Needlist.Oban.Worker.Wantlist, as: WantlistWorker
   alias Needlist.Repo.Pagination
   alias Needlist.Repo.Pagination.PageInfo
   alias Needlist.Repo.Wantlist
@@ -30,6 +31,10 @@ defmodule NeedlistWeb.NeedlistLive do
 
   @impl true
   def mount(%{"username" => username}, _session, socket) do
+    if connected?(socket) do
+      Needlist.PubSub.subscribe_finished_wantlist(username)
+    end
+
     {
       :ok,
       socket
@@ -56,6 +61,20 @@ defmodule NeedlistWeb.NeedlistLive do
       socket
       |> assign(:state, parsed_state)
       |> load_page()
+
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_info(
+        {:job_update, %{worker: WantlistWorker, status: :finished, job: %Oban.Job{args: %{"username" => username}}}},
+        %Socket{assigns: %{username: username}} = socket
+      ) do
+    {:noreply, Toaster.put_flash(socket, :info, "Refresh finished!")}
+  end
+
+  def handle_info({:job_update, update}, socket) do
+    Logger.warning("Received uninteresting job update: #{inspect(update)}")
 
     {:noreply, socket}
   end

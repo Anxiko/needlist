@@ -19,7 +19,7 @@ defmodule Needlist.Oban.Worker.Batchjob do
   @timeout Application.compile_env!(:needlist, :oban_timeout)
 
   @impl true
-  def perform(%Oban.Job{args: %{"type" => "wantlist"}}) do
+  def perform(%Oban.Job{args: %{"type" => "wantlist"}} = job) do
     users = Users.all()
     usernames = Enum.map(users, & &1.username)
 
@@ -32,9 +32,13 @@ defmodule Needlist.Oban.Worker.Batchjob do
           {:halt, {:error, {username, reason}}}
       end
     end)
+    |> case do
+      :ok -> notify_finished(job)
+      {:error, reason} -> {:error, reason}
+    end
   end
 
-  def perform(%Oban.Job{args: %{"type" => "listings"}}) do
+  def perform(%Oban.Job{args: %{"type" => "listings"}} = job) do
     releases = Releases.outdated_listings(limit: @scraping_limit)
 
     Enum.reduce_while(releases, :ok, fn %Release{id: release_id}, :ok ->
@@ -46,6 +50,17 @@ defmodule Needlist.Oban.Worker.Batchjob do
           {:halt, {:error, {release_id, reason}}}
       end
     end)
+    |> case do
+      :ok -> notify_finished(job)
+      {:error, reason} -> {:error, reason}
+    end
+  end
+
+  defp notify_finished(%Oban.Job{} = job) do
+    case Needlist.PubSub.job_finished(__MODULE__, job) do
+      :ok -> :ok
+      {:error, details} -> {:error, {:notify, details}}
+    end
   end
 
   @impl true

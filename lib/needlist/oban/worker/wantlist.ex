@@ -15,8 +15,13 @@ defmodule Needlist.Oban.Worker.Wantlist do
     ]
 
   @impl true
-  def perform(%Oban.Job{args: %{"username" => username}}) do
-    Needlist.Discogs.Scraper.scrape_wantlist(username)
+  def perform(%Oban.Job{args: %{"username" => username}} = job) do
+    :ok = Needlist.Discogs.Scraper.scrape_wantlist(username)
+
+    case Needlist.PubSub.job_finished(__MODULE__, job) do
+      :ok -> :ok
+      {:error, details} -> {:error, {:notify, details}}
+    end
   end
 
   @impl true
