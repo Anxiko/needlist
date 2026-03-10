@@ -50,12 +50,14 @@ defmodule Needlist.Users do
     |> Repo.insert_or_update()
   end
 
-  @spec last_wantlist_update(username :: String.t(), update_successful? :: boolean()) :: DateTime.t() | nil
+  @spec last_wantlist_update(username :: String.t(), update_successful? :: boolean()) :: {:completed | :failed | :running, DateTime.t()} | nil
   def last_wantlist_update(username, update_successful?) do
     Needlist.Jobs.last_wantlist_update_for_user(username, update_successful?)
     |> case do
-      %Oban.Job{completed_at: completed_at} when update_successful? -> completed_at
-      %Oban.Job{inserted_at: inserted_at} -> inserted_at
+      %Oban.Job{completed_at: %DateTime{} = completed_at} -> {:completed, completed_at}
+      %Oban.Job{discarded_at: %DateTime{} = failed_at} -> {:failed, failed_at}
+      %Oban.Job{cancelled_at: %DateTime{} = failed_at} -> {:failed, failed_at}
+      %Oban.Job{inserted_at: inserted_at} -> {:running, inserted_at}
       nil -> nil
     end
   end
