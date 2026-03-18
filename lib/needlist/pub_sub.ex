@@ -14,12 +14,21 @@ defmodule Needlist.PubSub do
   @type worker() :: BatchjobWorker | ListingsWorker | WantlistWorker
 
   @spec job_finished(worker(), Job.t()) :: :ok | {:error, any()}
-  def job_finished(worker, %Job{args: args} = job) do
-    PubSub.broadcast(@name, job_channel(worker, args), {:job_update, %{job: job, worker: worker, status: :finished}})
+  def job_finished(worker, %Job{} = job) do
+    job_update(worker, job, :finished)
   end
 
-  @spec subscribe_finished_wantlist(username :: String.t()) :: :ok | {:error, {:already_registered, pid()}}
-  def subscribe_finished_wantlist(username) do
+  @spec job_failed(worker(), Oban.Job.t()) :: :ok | {:error, any()}
+  def job_failed(worker, %Job{} = job) do
+    job_update(worker, job, :failed)
+  end
+
+  defp job_update(worker, %Job{args: args} = job, status) do
+    PubSub.broadcast(@name, job_channel(worker, args), {:job_update, %{job: job, worker: worker, status: status}})
+  end
+
+  @spec subscribe_wantlist_updates(username :: String.t()) :: :ok | {:error, {:already_registered, pid()}}
+  def subscribe_wantlist_updates(username) do
     PubSub.subscribe(@name, "job:wantlist:#{username}")
   end
 

@@ -33,8 +33,7 @@ defmodule NeedlistWeb.NeedlistLive do
   @impl true
   def mount(%{"username" => username}, _session, socket) do
     if connected?(socket) do
-      # TODO: subscribe to job failures too
-      Needlist.PubSub.subscribe_finished_wantlist(username)
+      Needlist.PubSub.subscribe_wantlist_updates(username)
     end
 
     {
@@ -69,13 +68,13 @@ defmodule NeedlistWeb.NeedlistLive do
 
   @impl true
   def handle_info(
-        {:job_update, %{worker: WantlistWorker, status: :finished, job: %Oban.Job{args: %{"username" => username}}}},
+        {:job_update, %{worker: WantlistWorker, status: status, job: %Oban.Job{args: %{"username" => username}}}},
         %Socket{assigns: %{username: username}} = socket
       ) do
     # This hack is necessary because the PubSub notification arrives before Oban updates the job on the table
     # Without it, the button refreshes but stays as running
-    # FIXME: process optimistic job update directly, instead of loading back into the table
-    Process.send_after(self(), :delayed_job_completed, 2_000)
+    # FIXME: process optimistic job update directly, instead of looking back into the table
+    Process.send_after(self(), {:delayed_job_update, status}, 2_000)
     {:noreply, socket}
   end
 
@@ -85,11 +84,18 @@ defmodule NeedlistWeb.NeedlistLive do
     {:noreply, socket}
   end
 
-  def handle_info(:delayed_job_completed, socket) do
+  def handle_info({:delayed_job_update, :finished}, socket) do
     # TODO: reload the active needlist?
     {:noreply,
      socket
      |> Toaster.put_flash(:info, "Refresh finished!")
+     |> assign_last_wantlist_update()}
+  end
+
+  def handle_info({:delayed_job_update, :failed}, socket) do
+    {:noreply,
+     socket
+     |> Toaster.put_flash(:error, "Needlist refresh failed, please try again later")
      |> assign_last_wantlist_update()}
   end
 

@@ -110,7 +110,7 @@ defmodule Needlist.Discogs.Scraper do
     end)
   end
 
-  @spec scrape_wantlist(username :: String.t()) :: :ok
+  @spec scrape_wantlist(username :: String.t()) :: :ok | {:error, any()}
   def scrape_wantlist(username) do
     {:ok, user_from_api} = Api.get_user(username)
     {:ok, wants} = get_needlist(username)

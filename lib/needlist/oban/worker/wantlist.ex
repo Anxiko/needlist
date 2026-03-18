@@ -15,12 +15,30 @@ defmodule Needlist.Oban.Worker.Wantlist do
     ]
 
   @impl true
-  def perform(%Oban.Job{args: %{"username" => username}} = job) do
-    :ok = Needlist.Discogs.Scraper.scrape_wantlist(username)
+  def perform(%Oban.Job{} = job) do
+    case do_perform(job) do
+      :ok ->
+        Needlist.PubSub.job_finished(__MODULE__, job)
+        :ok
 
-    case Needlist.PubSub.job_finished(__MODULE__, job) do
-      :ok -> :ok
-      {:error, details} -> {:error, {:notify, details}}
+      {:error, error} ->
+        if job.attempt == job.max_attempts do
+          Needlist.PubSub.job_failed(__MODULE__, job)
+        end
+
+        {:error, error}
+    end
+  end
+
+  @spec do_perform(Oban.Job.t()) :: :ok | {:error, any()}
+  defp do_perform(%Oban.Job{args: %{"username" => username}}) do
+    try do
+      case Needlist.Discogs.Scraper.scrape_wantlist(username) do
+        :ok -> :ok
+        {:error, error} -> {:error, {:scrape, error}}
+      end
+    rescue
+      e -> {:error, {:exception, Exception.message(e)}}
     end
   end
 
