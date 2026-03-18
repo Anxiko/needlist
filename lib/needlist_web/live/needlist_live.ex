@@ -18,6 +18,7 @@ defmodule NeedlistWeb.NeedlistLive do
   alias Phoenix.LiveView.Socket
 
   import NeedlistWeb.Navigation.Components, only: [pagination: 1]
+  import Needlist.Guards, only: [is_initial_job_state: 1]
 
   require Logger
 
@@ -202,11 +203,16 @@ defmodule NeedlistWeb.NeedlistLive do
     username = socket.assigns.username
 
     case ObanDispatcher.dispatch_wantlist(username) do
-      {:ok, _job} ->
+      {:ok, %Oban.Job{state: state}} when is_initial_job_state(state) ->
         {:noreply,
          socket
          |> Toaster.put_flash(:info, "Needlist refresh started.")
          |> assign_last_wantlist_update()}
+
+      {:ok, %Oban.Job{} = job} ->
+        Logger.warning("Needlist refresh is still in cooldown, previous job: #{inspect(job)}")
+
+        {:noreply, Toaster.put_flash(socket, :warning, "Refresh is still in cooldown, please try again later")}
 
       {:error, reason} ->
         Logger.error("Failed to dispatch wantlist refresh for #{username}: #{inspect(reason)}",

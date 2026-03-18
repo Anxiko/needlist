@@ -12,4 +12,6 @@ defmodule Needlist.Guards do
            when is_integer(integer_or_raw) or is_binary(integer_or_raw)
 
   defguard is_final_job_state(state) when state in ["completed", "cancelled ", "discarded "]
+
+  defguard is_initial_job_state(state) when state in ["available", "scheduled"]
 end
