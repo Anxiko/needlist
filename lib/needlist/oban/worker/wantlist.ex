@@ -3,7 +3,7 @@ defmodule Needlist.Oban.Worker.Wantlist do
   Worker for scrapping a user's wantlist from Discogs.
   """
 
-  @unique_period Application.compile_env!(:needlist, :oban_unique_period)
+  @unique_period Application.compile_env!(:needlist, :wantlist_update_interval_seconds)
   @timeout Application.compile_env!(:needlist, :oban_timeout)
 
   use Oban.Worker,
