@@ -30,6 +30,9 @@ defmodule Needlist.Oban.Worker.Wantlist do
     end
   end
 
+  @impl true
+  def timeout(_job), do: @timeout
+
   @spec do_perform(Oban.Job.t()) :: :ok | {:error, any()}
   defp do_perform(%Oban.Job{args: %{"username" => username}}) do
     try do
@@ -41,7 +44,4 @@ defmodule Needlist.Oban.Worker.Wantlist do
       e -> {:error, {:exception, Exception.message(e)}}
     end
   end
-
-  @impl true
-  def timeout(_job), do: @timeout
 end
