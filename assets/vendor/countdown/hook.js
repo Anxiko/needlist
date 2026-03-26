@@ -24,7 +24,6 @@ export const Countdown = {
     }, endTimestamp, countdown.HOURS | countdown.MINUTES | countdown.SECONDS, 2);
   },
   destroyed() {
-    console.log(`Destroyed: ${this.timerId}`)
     if (this.timerId) {
       window.clearInterval(this.timerId)
     }

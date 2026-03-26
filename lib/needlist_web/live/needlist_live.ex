@@ -220,9 +220,7 @@ defmodule NeedlistWeb.NeedlistLive do
          |> Toaster.put_flash(:info, "Needlist refresh started.")
          |> assign_last_wantlist_update()}
 
-      {:ok, %Oban.Job{} = job} ->
-        Logger.warning("Needlist refresh is still in cooldown, previous job: #{inspect(job)}")
-
+      {:ok, %Oban.Job{}} ->
         {:noreply, Toaster.put_flash(socket, :warning, "Refresh is still in cooldown, please try again later")}
 
       {:error, reason} ->
