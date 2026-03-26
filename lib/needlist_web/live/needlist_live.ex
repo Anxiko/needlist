@@ -3,6 +3,7 @@ defmodule NeedlistWeb.NeedlistLive do
 
   alias Needlist.Users
   alias Needlist.Oban.Dispatcher, as: ObanDispatcher
+  alias Needlist.Oban.Worker.Wantlist, as: WantlistWorker
   alias Needlist.Repo.Pagination
   alias Needlist.Repo.Pagination.PageInfo
   alias Needlist.Repo.Wantlist
@@ -17,6 +18,7 @@ defmodule NeedlistWeb.NeedlistLive do
   alias Phoenix.LiveView.Socket
 
   import NeedlistWeb.Navigation.Components, only: [pagination: 1]
+  import Needlist.Guards, only: [is_initial_job_state: 1]
 
   require Logger
 
@@ -26,13 +28,14 @@ defmodule NeedlistWeb.NeedlistLive do
                    |> Application.compile_env!(:wantlist_update_interval_seconds)
                    |> Timex.Duration.from_seconds()
 
-  # Just a small offset to ensure the timer expires after we're allowed to request a new wantlist refresh
-  @refresh_ready_offset_ms 1
-
   @typep paginated_wants() :: Pagination.t(Wantlist.t())
 
   @impl true
   def mount(%{"username" => username}, _session, socket) do
+    if connected?(socket) do
+      Needlist.PubSub.subscribe_wantlist_updates(username)
+    end
+
     {
       :ok,
       socket
@@ -44,7 +47,6 @@ defmodule NeedlistWeb.NeedlistLive do
       |> assign(:notes_editing, %{})
       |> maybe_assign_timezone()
       |> assign_last_wantlist_update()
-      |> maybe_schedule_refresh_ready()
     }
   end
 
@@ -65,11 +67,40 @@ defmodule NeedlistWeb.NeedlistLive do
   end
 
   @impl true
-  def handle_info(:refresh_ready, socket) do
+  def handle_info(
+        {:job_update, %{worker: WantlistWorker, status: status, job: %Oban.Job{args: %{"username" => username}}}},
+        %Socket{assigns: %{username: username}} = socket
+      ) do
+    # This hack is necessary because the PubSub notification arrives before Oban updates the job on the table
+    # Without it, the button refreshes but stays as running
+    # FIXME: process optimistic job update directly, instead of looking back into the table
+    Process.send_after(self(), {:delayed_job_update, status}, 2_000)
+    {:noreply, socket}
+  end
+
+  def handle_info({:job_update, update}, socket) do
+    Logger.warning("Received uninteresting job update: #{inspect(update)}")
+
+    {:noreply, socket}
+  end
+
+  def handle_info({:delayed_job_update, :finished}, socket) do
+    # TODO: reload the active needlist?
     {:noreply,
      socket
-     |> assign_last_wantlist_update()
-     |> maybe_schedule_refresh_ready()}
+     |> Toaster.put_flash(:info, "Refresh finished!")
+     |> assign_last_wantlist_update()}
+  end
+
+  def handle_info({:delayed_job_update, :failed}, socket) do
+    {:noreply,
+     socket
+     |> Toaster.put_flash(:error, "Needlist refresh failed, please try again later")
+     |> assign_last_wantlist_update()}
+  end
+
+  def handle_info(:delayed_countdown_over, socket) do
+    {:noreply, assign_last_wantlist_update(socket)}
   end
 
   @impl true
@@ -172,16 +203,25 @@ defmodule NeedlistWeb.NeedlistLive do
     {:noreply, socket}
   end
 
+  def handle_event("countdown-over", %{"id" => _element_id}, socket) do
+    # FIXME: countdown on the button finishes < 1 sec before the refresh is ready, so this is necessary so the button doesn't stay disabled
+    Process.send_after(self(), :delayed_countdown_over, 1_000)
+
+    {:noreply, socket}
+  end
+
   def handle_event("refresh-wantlist", _params, socket) do
     username = socket.assigns.username
 
     case ObanDispatcher.dispatch_wantlist(username) do
-      {:ok, _job} ->
+      {:ok, %Oban.Job{state: state}} when is_initial_job_state(state) ->
         {:noreply,
          socket
          |> Toaster.put_flash(:info, "Needlist refresh started.")
-         |> assign_last_wantlist_update()
-         |> maybe_schedule_refresh_ready()}
+         |> assign_last_wantlist_update()}
+
+      {:ok, %Oban.Job{}} ->
+        {:noreply, Toaster.put_flash(socket, :warning, "Refresh is still in cooldown, please try again later")}
 
       {:error, reason} ->
         Logger.error("Failed to dispatch wantlist refresh for #{username}: #{inspect(reason)}",
@@ -392,26 +432,19 @@ defmodule NeedlistWeb.NeedlistLive do
   end
 
   defp assign_last_wantlist_update(socket) do
-    last_wantlist_update = Users.last_wantlist_update(socket.assigns.username, true)
+    last_wantlist_update =
+      socket.assigns.username
+      |> Users.last_wantlist_update(true)
+      |> case do
+        {:completed, completed_at} -> completed_at
+        nil -> nil
+      end
+
     last_wantlist_update_attempt = Users.last_wantlist_update(socket.assigns.username, false)
 
     socket
     |> assign(:last_wantlist_update, last_wantlist_update)
     |> assign(:refresh_ready, wantlist_refresh_ready(last_wantlist_update_attempt, Timex.now()))
-  end
-
-  defp maybe_schedule_refresh_ready(socket) do
-    refresh_ready = socket.assigns.refresh_ready
-
-    if connected?(socket) and refresh_ready != nil do
-      Process.send_after(
-        self(),
-        :refresh_ready,
-        Timex.diff(refresh_ready, Timex.now(), :millisecond) + @refresh_ready_offset_ms
-      )
-    end
-
-    socket
   end
 
   defp want_artists(assigns) do
@@ -569,9 +602,25 @@ defmodule NeedlistWeb.NeedlistLive do
     """
   end
 
+  defp refresh_wantlist(%{refresh_ready: :running} = assigns) do
+    ~H"""
+    <.button phx-click="refresh-wantlist" phx-disable-with="Refreshing..." disabled>
+      Refreshing
+    </.button>
+    """
+  end
+
   defp refresh_wantlist(%{refresh_ready: %DateTime{}} = assigns) do
     ~H"""
-    <.button phx-click="refresh-wantlist" disabled>
+    <.button
+      id="refresh-wantlist-button"
+      phx-click="refresh-wantlist"
+      phx-hook="Countdown"
+      data-countdown-template="Ready in {{countdown}}"
+      data-countdown-over="Refresh needlist"
+      data-end-timestamp={DateTime.to_unix(@refresh_ready, :millisecond)}
+      disabled
+    >
       Refresh ready at {format_timestamp(@refresh_ready, @time_zone)}
     </.button>
     """
@@ -584,10 +633,17 @@ defmodule NeedlistWeb.NeedlistLive do
     |> Timex.format!(@datetime_format)
   end
 
-  @spec wantlist_refresh_ready(last_update :: DateTime.t() | nil, current_time :: DateTime.t()) :: DateTime.t() | nil
+  @spec wantlist_refresh_ready(
+          last_update :: {:completed, :failed, :running, DateTime.t()} | nil,
+          current_time :: DateTime.t()
+        ) :: DateTime.t() | :running | nil
   defp wantlist_refresh_ready(nil, _current_time), do: nil
 
-  defp wantlist_refresh_ready(last_update, current_time) do
+  defp wantlist_refresh_ready({:running, _inserted_at}, _current_time) do
+    :running
+  end
+
+  defp wantlist_refresh_ready({final_state, last_update}, current_time) when final_state in [:completed, :failed] do
     next_update = Timex.add(last_update, @update_interval)
 
     if Timex.compare(current_time, next_update) < 0 do

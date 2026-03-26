@@ -15,12 +15,17 @@ defmodule Needlist.Oban.Worker.Listings do
     ]
 
   @impl true
-  def perform(%Oban.Job{args: %{"release_id" => release_id}}) do
+  def perform(%Oban.Job{args: %{"release_id" => release_id}} = job) do
     case Needlist.Discogs.Scraper.scrape_listings({:release, release_id}) do
       %{ok: [^release_id]} ->
+        Needlist.PubSub.job_finished(__MODULE__, job)
         :ok
 
       %{error: [{^release_id, step, details}]} ->
+        if job.attempt == job.max_attempts do
+          Needlist.PubSub.job_failed(__MODULE__, job)
+        end
+
         {:error, {step, details}}
     end
   end

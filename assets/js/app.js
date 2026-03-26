@@ -26,6 +26,7 @@ import "phoenix_html";
 import { Socket } from "phoenix";
 import { LiveSocket } from "phoenix_live_view";
 import topbar from "../vendor/topbar";
+import { Countdown } from '../vendor/countdown/hook';
 import { initDarkMode, onDarkModeToggle } from "./darkMode";
 
 Hooks = {...FlashyHooks}
@@ -41,6 +42,8 @@ Hooks.Datepicker = {
         this.mounted();
     }
 }
+
+Hooks.Countdown = Countdown;
 
 let csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")
 let liveSocket = new LiveSocket("/live", Socket, { params: { _csrf_token: csrfToken, time_zone: Intl.DateTimeFormat().resolvedOptions().timeZone }, hooks: Hooks })
