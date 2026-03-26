@@ -99,6 +99,10 @@ defmodule NeedlistWeb.NeedlistLive do
      |> assign_last_wantlist_update()}
   end
 
+  def handle_info(:delayed_countdown_over, socket) do
+    {:noreply, assign_last_wantlist_update(socket)}
+  end
+
   @impl true
   def handle_event("sort-by", %{"key" => key}, socket) do
     state = socket.assigns.state
@@ -199,10 +203,11 @@ defmodule NeedlistWeb.NeedlistLive do
     {:noreply, socket}
   end
 
-  def handle_event("countdown-over", %{"id" => element_id}, socket) do
-    Logger.info("Received countdown over from #{element_id}")
+  def handle_event("countdown-over", %{"id" => _element_id}, socket) do
+    # FIXME: countdown on the button finishes < 1 sec before the refresh is ready, so this is necessary so the button doesn't stay disabled
+    Process.send_after(self(), :delayed_countdown_over, 1_000)
 
-    {:noreply, assign_last_wantlist_update(socket)}
+    {:noreply, socket}
   end
 
   def handle_event("refresh-wantlist", _params, socket) do
