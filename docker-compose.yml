@@ -1,9 +1,9 @@
 services:
-  needlist:
+  web:
     build:
       context: .
       args:
-        MIX_ENV: dev
+        MIX_ENV: prod
     ports:
       - "8080:8080"
     env_file:
